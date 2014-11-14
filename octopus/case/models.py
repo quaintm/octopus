@@ -48,16 +48,16 @@ class Case(SurrogatePK, Model):
     start_date = Column(db.Date(), unique=False, nullable=False)
     end_date = Column(db.Date(), unique=False, nullable=True)
 
-    case_type_id = ReferenceCol('case_type', nullable=False)
+    case_type_id = ReferenceCol('case_types', nullable=False)
     case_type = relationship('CaseType', backref='case_type')
 
-    region_id = ReferenceCol('region', nullable=False)
+    region_id = ReferenceCol('regions', nullable=False)
     region = relationship('Region', backref='region')
 
-    primary_id = ReferenceCol('user', nullable=False)
+    primary_id = ReferenceCol('users', nullable=False)
     primary = relationship('User', backref='users')
 
-    secondary_id = ReferenceCol('user', nullable=False)
+    secondary_id = ReferenceCol('users', nullable=False)
     secondary = relationship('User', backref='users')
 
     def __init__(self, username, email, password=None, **kwargs):
