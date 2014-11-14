@@ -2,10 +2,7 @@ from flask_wtf import Form
 from wtforms import StringField, SelectField
 from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField, IntegerField
-from .models import Regions
-
-from .models import User
-
+from .models import Region
 
 class CaseForm(Form):
     crd_number = IntegerField('CRD Number',
