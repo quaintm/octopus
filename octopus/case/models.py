@@ -55,10 +55,10 @@ class Case(SurrogatePK, Model):
     region = relationship('Region', backref='region')
 
     primary_id = ReferenceCol('users', nullable=False)
-    primary = relationship('User', backref='users')
+    primary = relationship('User', foreign_keys=[primary_id])
 
     secondary_id = ReferenceCol('users', nullable=False)
-    secondary = relationship('User', backref='users')
+    secondary = relationship('User', foreign_keys=[secondary_id])
 
     def __init__(self, username, email, password=None, **kwargs):
         db.Model.__init__(self, username=username, email=email, **kwargs)
