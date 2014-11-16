@@ -4,7 +4,7 @@ from flask import (Blueprint, request, render_template, flash, url_for,
                     redirect, session)
 from flask.ext.login import login_user, login_required, logout_user
 
-from octopus.extensions import login_manager
+from octopus.extensions import login_manager, nav
 from octopus.user.models import User
 from octopus.public.forms import LoginForm
 from octopus.user.forms import RegisterForm
@@ -12,6 +12,11 @@ from octopus.utils import flash_errors
 from octopus.database import db
 
 blueprint = Blueprint('public', __name__, static_folder="../static")
+
+nav.Bar('public', [
+    nav.Item('Home', 'public.home'),
+    nav.Item('About', 'public.about'),
+])
 
 @login_manager.user_loader
 def load_user(id):
