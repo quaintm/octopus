@@ -13,6 +13,7 @@ from octopus.database import (
     SurrogatePK,
 )
 
+
 class CaseType(Model):
     __tablename__ = 'case_types'
     id = Column(db.String(15), unique=True, primary_key=True, nullable=False)
@@ -39,10 +40,27 @@ class Region(Model):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<Region({code})>'.format(name=self.code)
+        return '<Region({code})>'.format(name=self.id)
+
+
+class RiskTags(Model):
+    __tablename__ = 'risk_tags'
+    id = Column(db.String(4), unique=True, primary_key=True, nullable=False)
+    tag = Column(db.Text(), unique=True)
+
+    def __init__(self, **kwargs):
+        db.Model.__init__(self, **kwargs)
+
+    def __repr__(self):
+        return '<RiskTag({code})>'.format(name=self.code)
+
+
+case_risk_tags = db.Table('case_risk_tags',
+                          db.Column('risk_tag_id', db.Integer, db.ForeignKey('risk_tags.id')),
+                          db.Column('case_id', db.Integer, db.ForeignKey('cases.id')))
+
 
 class Case(SurrogatePK, Model):
-
     __tablename__ = 'cases'
     crd_number = Column(db.Integer(), unique=False, nullable=False)
     start_date = Column(db.Date(), unique=False, nullable=False)
@@ -59,6 +77,12 @@ class Case(SurrogatePK, Model):
 
     secondary_id = ReferenceCol('users', nullable=False)
     secondary = relationship('User', foreign_keys=[secondary_id])
+
+    mars_risk_score = Column(db.Integer, unique=False, nullable=True)
+    qau_risk_score = Column(db.Integer, unique=False, nullable=True)
+    examiner_risk_score = Column(db.Integer, unique=False, nullable=True)
+    risk_tag_id = db.relationship('CaseTags', secondary=case_risk_tags,
+                                  backref=db.backref('cases', lazy='dynamic'))
 
     def __init__(self, username, email, password=None, **kwargs):
         db.Model.__init__(self, username=username, email=email, **kwargs)
