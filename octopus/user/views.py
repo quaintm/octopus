@@ -14,7 +14,9 @@ blueprint = Blueprint("user", __name__, url_prefix='/users',
 nav.Bar('user', [
     nav.Item('User', '', items=[
         nav.Item('Members', 'user.members'),
-        nav.Item('Edit My Profile', 'user.edit_profile')
+        nav.Item('My Profile', 'user.profile',
+                 items=[nav.Item('Edit My Profile', 'user.edit_profile')
+        ])
     ])
 ])
 
@@ -23,6 +25,21 @@ nav.Bar('user', [
 @login_required
 def members():
     return render_template("users/members.html")
+
+@blueprint.route("/profile")
+@blueprint.route("/profile/<int:id>")
+@login_required
+def profile(id=None):
+    if id is None:
+        user = current_user
+        id = current_user.id
+    else:
+        user = User.query.filter_by(id=id).first_or_404()
+
+    return render_template("users/profile.html", user=user)
+
+
+
 
 @blueprint.route("/profile/<int:id>/edit", methods=["GET", "POST"])
 @blueprint.route("/profile/edit", methods=["GET", "POST"])
