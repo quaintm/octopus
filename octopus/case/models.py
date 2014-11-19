@@ -63,7 +63,7 @@ case_risk_tags = db.Table('case_risk_tags',
 class Case(SurrogatePK, Model):
     __tablename__ = 'cases'
     crd_number = Column(db.Integer(), unique=False, nullable=False)
-    case_name = Column(db.Text(), unique=False, nullable=False)
+    # case_name = Column(db.Text(), unique=False, nullable=False)
     start_date = Column(db.Date(), unique=False, nullable=False)
     end_date = Column(db.Date(), unique=False, nullable=True)
 
@@ -73,10 +73,10 @@ class Case(SurrogatePK, Model):
     region_id = ReferenceCol('regions', nullable=False)
     region = relationship('Region', backref='region')
 
-    primary_id = ReferenceCol('user', nullable=False)
+    primary_id = ReferenceCol('users', nullable=False)
     primary = relationship('User', foreign_keys=[primary_id])
 
-    secondary_id = ReferenceCol('user', nullable=False)
+    secondary_id = ReferenceCol('users', nullable=False)
     secondary = relationship('User', foreign_keys=[secondary_id])
 
     mars_risk_score = Column(db.Integer, unique=False, nullable=True)
