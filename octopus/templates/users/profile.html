@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+<div class="container">
+<div class="row">
+<div class="col-lg-11">
+    <h1>{{ user.username }}'s profile</h1>
+</div>
+<div class="col-lg-1">
+    <a href="{{ url_for('user.edit_profile', id=user.id)}}" type="button" class="btn btn-default btn-lg">Edit</a>
+</div>
+</div>
+
+<div class="row">
+<div class="col-lg-6">
+
+</div>
+
+<div class="col-lg-6">
+    <table class="table table-striped">
+        <tbody>
+        <tr>
+            <td>Username</td>
+            <td>{{ user.username|default('Undefined') }}</td>
+        </tr>
+        <tr>
+            <td>First Name</td>
+            <td>{{ user.first_name|default('Undefined') }}</td>
+        </tr>
+        <tr>
+            <td>Last Name</td>
+            <td>{{ user.last_name|default('Undefined') }}</td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>{{ user.email|default('Undefined') }}</td>
+        </tr>
+            <tr>
+                <td>Status</td>
+                <td>{{ user.is_active()|default('Undefined') }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</div>
+</div>
+{% endblock %}
+
