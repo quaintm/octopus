@@ -14,28 +14,34 @@ blueprint = Blueprint("user", __name__, url_prefix='/users',
 nav.Bar('user', [
     nav.Item('User', '', items=[
         nav.Item('Members', 'user.members'),
-        nav.Item('Edit My Profile', 'edit_profile')
+        nav.Item('Edit My Profile', 'user.edit_profile')
     ])
 ])
 
 @blueprint.route("/")
+@blueprint.route("/members")
 @login_required
 def members():
     return render_template("users/members.html")
 
 @blueprint.route("/profile/<int:id>/edit", methods=["GET", "POST"])
-@blueprint.route("profile/edit", methods=["GET", "POST"])
+@blueprint.route("/profile/edit", methods=["GET", "POST"])
 @login_required
-def edit_profile(id=current_user.get_id()):
-    user = User.query.filter_by(id=id).first_or_404()
-    form = EditUserProfile(request.form, user)
+def edit_profile(id=None):
+    if id is None:
+        user = current_user
+        id = current_user.id
+    else:
+        user = User.query.filter_by(id=id).first_or_404()
+
+    form = EditUserProfile(request.form)
     if request.method == 'POST':
         if form.validate_on_submit():
             save_profile_edits(form)
             flash("User Profile Edits Saved")
-            redirect_url = request.args.get("next") or url_for("user.profile", id=id)
+            redirect_url = request.args.get("next") or url_for("user.members")
             return redirect(redirect_url)
         else:
             flash_errors(form)
-    return render_template("users/edit_profile.html", user=user)
+    return render_template("users/edit_profile.html", form=form, user=user)
 

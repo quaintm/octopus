@@ -40,20 +40,24 @@ class EditUserProfile(Form):
                            validators=[Optional(), Length(min=3, max=25)])
     email = StringField('Email',
                         validators=[Optional(), Email(), Length(min=6, max=40)])
-    old_password_confirm = PasswordField('Old Password',
-                             validators=[RequiredIf('new_password'), Length(min=6, max=40)])
-    new_password = PasswordField('New Password',
-                             validators=[Length(min=6, max=40)])
-    new_confirm = PasswordField('Verify New Password',
-                            [RequiredIf('new_password'), EqualTo('new_password', message='Passwords must match')])
     first_name = StringField('First Name',
                              validators=[Optional()])
-    last_name = StringField('Last Name', validators=[Optional()])
+    last_name = StringField('Last Name',
+                            validators=[Optional()])
 
-    def __init__(self, user, *args, **kwargs):
+    old_password_confirm = PasswordField('Old Password',
+                             validators=[Optional(), Length(min=6, max=40)])
+    new_password = PasswordField('New Password',
+                             validators=[Optional(), Length(min=6, max=40)])
+    new_confirm = PasswordField('Verify New Password',
+                            [Optional(), EqualTo('new_password', message='Passwords must match')])
+
+    def __init__(self, *args, **kwargs):
         super(EditUserProfile, self).__init__(*args, **kwargs)
-        self.user = user
-        self.updated_attrs = dict()
+        self.username.placeholder = current_user.username if current_user.username else "Username"
+        self.email.placeholder = current_user.email if current_user.email else "Email Address"
+        self.first_name.placeholder = current_user.first_name if current_user.first_name else "First Name"
+        self.last_name.placeholder = current_user.last_name if current_user.last_name else "Last Name"
 
     def validate(self):
         initial_validation = super(EditUserProfile, self).validate()
@@ -82,22 +86,26 @@ class EditUserProfile(Form):
                 # Usernames should be unique
                 self.username.errors.append('This username is already taken')
                 valid = False
+        if not current_user.first_name and not self.first_name.data:
+            self.first_name.errors.append('First Name is required')
+            valid = False
+        if not current_user.last_name and not self.last_name.data:
+            self.last_name.errors.append('Last Name is required')
+            valid = False
 
         return valid
 
 def save_profile_edits(form):
     if form.new_password.data:
         current_user.set_password(form.new_password.data)
-    current_user.first_name = form.first_name.data
-    current_user.last_name = form.last_name.data
-
-    if not current_user.username == form.username.data:
-        #need to relogin the user as their username has changed
-        relogin = True
-    else:
-        relogin = False
-    current_user.username = form.last_name.data
-    current_user.email = form.last_name.data
+    if form.first_name.data:
+        current_user.first_name = form.first_name.data
+    if form.last_name.data:
+        current_user.last_name = form.last_name.data
+    if form.username.data:
+        current_user.username = form.username.data
+    if form.email.data:
+        current_user.email = form.email.data
     current_user.save()
 
 
