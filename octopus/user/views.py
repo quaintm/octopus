@@ -9,22 +9,24 @@ from octopus.utils import flash_errors
 
 
 blueprint = Blueprint("user", __name__, url_prefix='/users',
-                        static_folder="../static")
+                      static_folder="../static")
 
 nav.Bar('user', [
     nav.Item('User', '', items=[
-        nav.Item('Members', 'user.members'),
+        nav.Item('All Users', 'user.members'),
         nav.Item('My Profile', 'user.profile',
                  items=[nav.Item('Edit My Profile', 'user.edit_profile')
-        ])
+                 ])
     ])
 ])
+
 
 @blueprint.route("/")
 @blueprint.route("/members")
 @login_required
 def members():
     return render_template("users/members.html", users=User.query.order_by(User.id.desc()))
+
 
 @blueprint.route("/profile")
 @blueprint.route("/profile/<int:id>")
@@ -37,8 +39,6 @@ def profile(id=None):
         user = User.query.filter_by(id=id).first_or_404()
 
     return render_template("users/profile.html", user=user)
-
-
 
 
 @blueprint.route("/profile/<int:id>/edit", methods=["GET", "POST"])
