@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask.ext.login import login_required, current_user
 
-from octopus.extensions import nav
+from octopus.extensions import nav, db
 from octopus.case.models import Region, CaseType, Case
 from octopus.user.forms import EditUserProfile, save_profile_edits
 from octopus.user.models import User
@@ -14,37 +14,63 @@ blueprint = Blueprint("case", __name__, url_prefix='/case',
 
 nav.Bar('case', [
     nav.Item('Case', '', items=[
-        nav.Item('All Cases', 'user.members'),
-        nav.Item('My Cases', 'case.'),
+        nav.Item('All Cases', 'case.query'),
+        nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
         nav.Item('Create New Case', 'case.new_case')
     ])
 ])
 
 
 @blueprint.route("/")
-@blueprint.route("/members")
+@blueprint.route("/query")
 @login_required
 def members():
-    return render_template("users/members.html", users=User.query.order_by(User.id.desc()))
+    conditions = []
+    valid = True
+    user_id = request.args.get('user_id')
+    if user_id:
+        if user_id == "me":
+            user_id = current_user.id
+        else:
+            try:
+                user_id = int(user_id)
+            except ValueError:
+                flash('Invalid User Id Entered')
+                valid = False
+        if valid:
+            conditions.append(Case.primary_id == user_id)
+            conditions.append(Case.secondary_id == user_id)
 
-
-@blueprint.route("/profile")
-@blueprint.route("/profile/<int:id>")
-@login_required
-def profile(id=None):
-    if id is None:
-        user = current_user
-        id = current_user.id
+    if valid:
+        if conditions:
+            return render_template("case/query.html",
+                                   cases=Case.query.filter(db.or_(*conditions)).order_by(Case.id.desc()))
+        else:
+            return render_template("case/query.html",
+                                   cases=Case.query.order_by(Case.id.desc()))
     else:
-        user = User.query.filter_by(id=id).first_or_404()
+        return render_template("case/query.html",
+                               cases=Case.query.order_by(Case.id.desc()))
 
-    return render_template("users/profile.html", user=user)
-
-
-@blueprint.route("/profile/<int:id>/edit", methods=["GET", "POST"])
-@blueprint.route("/profile/edit", methods=["GET", "POST"])
+@blueprint.route("/new_case", methods=["GET", "POST"])
 @login_required
-def edit_profile(id=None):
+def edit_profile():
+    form = EditUserProfile(request.form)
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            save_profile_edits(form)
+            flash("User Profile Edits Saved")
+            redirect_url = request.args.get("next") or url_for("user.members")
+            return redirect(redirect_url)
+        else:
+            flash_errors(form)
+    return render_template("user/edit_profile.html", form=form, user=user)
+
+
+@blueprint.route("/edit_case", methods=["GET", "POST"])
+@login_required
+def edit_profile():
+    case_id = request.args.get("case_id")
     if id is None:
         user = current_user
         id = current_user.id
@@ -60,4 +86,4 @@ def edit_profile(id=None):
             return redirect(redirect_url)
         else:
             flash_errors(form)
-    return render_template("users/edit_profile.html", form=form, user=user)
+    return render_template("user/edit_profile.html", form=form, user=user)

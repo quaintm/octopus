@@ -8,7 +8,7 @@ from octopus.user.models import User
 from octopus.utils import flash_errors
 
 
-blueprint = Blueprint("user", __name__, url_prefix='/users',
+blueprint = Blueprint("user", __name__, url_prefix='/user',
                       static_folder="../static")
 
 nav.Bar('user', [
@@ -25,7 +25,7 @@ nav.Bar('user', [
 @blueprint.route("/members")
 @login_required
 def members():
-    return render_template("users/members.html", users=User.query.order_by(User.id.desc()))
+    return render_template("user/members.html", users=User.query.order_by(User.id.desc()))
 
 
 @blueprint.route("/profile")
@@ -38,7 +38,7 @@ def profile(id=None):
     else:
         user = User.query.filter_by(id=id).first_or_404()
 
-    return render_template("users/profile.html", user=user)
+    return render_template("user/profile.html", user=user)
 
 
 @blueprint.route("/profile/<int:id>/edit", methods=["GET", "POST"])
@@ -60,5 +60,5 @@ def edit_profile(id=None):
             return redirect(redirect_url)
         else:
             flash_errors(form)
-    return render_template("users/edit_profile.html", form=form, user=user)
+    return render_template("user/edit_profile.html", form=form, user=user)
 
