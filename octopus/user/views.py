@@ -24,7 +24,7 @@ nav.Bar('user', [
 @blueprint.route("/members")
 @login_required
 def members():
-    return render_template("users/members.html")
+    return render_template("users/members.html", users=User.query.order_by(User.id.desc()))
 
 @blueprint.route("/profile")
 @blueprint.route("/profile/<int:id>")
