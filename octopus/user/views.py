@@ -25,6 +25,7 @@ nav.Bar('user', [
 @login_required
 def members():
     users = db.session.query(User.id.label("ID"),
+                             User.username.label("Username"),
                              User.first_name.label("First Name"),
                              User.last_name.label("Last Name"),
                              User.email.label("Email")

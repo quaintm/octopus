@@ -14,10 +14,7 @@
     </tr>
 {%- endmacro %}
 
-{% macro render_table(id, heading, sql_query, size="col-lg-12") -%}
-<!-- /.row -->
-<div class="row">
-<div class="{{ size }}">
+{% macro render_table(id, heading, sql_query) -%}
 <div class="panel panel-default">
 <div class="panel-heading">
     {{ heading }}
@@ -41,10 +38,6 @@
 <!-- /.panel-body -->
 </div>
 <!-- /.panel -->
-</div>
-<!-- /.col-lg-12 -->
-</div>
-<!-- /.row -->
 {%- endmacro %}
 
 {% macro render_js(id) %}
