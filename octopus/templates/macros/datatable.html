@@ -49,6 +49,11 @@
 
 {% macro render_js(id) %}
 $(document).ready( function () {
-    $('#{{ id|safe }}').DataTable();
-});
+    $('#{{ id|safe }}').DataTable({
+        "dom": 'T<"clear">lfrtip',
+        "tableTools": {
+            "sSwfPath": "/static/swf/copy_csv_xls_pdf.swf"
+        }
+    } );
+} );
 {% endmacro %}

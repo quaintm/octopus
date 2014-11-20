@@ -4,6 +4,7 @@ from flask.ext.assets import Bundle, Environment
 css = Bundle(
     "libs/bootstrap/dist/css/bootstrap.css",
     "libs/dataTables/dataTables.bootstrap.css",
+    "libs/dataTables/dataTables.tableTools.css",
     "libs/font-awesome4/css/font-awesome.css",
     "css/style.css",
     filters="cssmin",
@@ -16,6 +17,7 @@ js = Bundle(
     "js/plugins.js",
     "libs/dataTables/jquery.dataTables.js",
     "libs/dataTables/dataTables.bootstrap.js",
+    "libs/dataTables/dataTables.tableTools.js",
     filters='jsmin',
     output="public/js/common.js"
 )
