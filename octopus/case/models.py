@@ -67,8 +67,8 @@ case_assignments = db.Table('case_assignments',
 class Case(SurrogatePK, Model):
     __tablename__ = 'cases'
     crd_number = Column(db.Integer(), unique=False, nullable=False)
-    case_name = Column(db.Text(), unique=False, nullable=False)
-    case_desc = Column(db.Text(), unique=False, nullable=False)
+    case_name = Column(db.Text(), unique=False, nullable=True)
+    case_desc = Column(db.Text(), unique=False, nullable=True)
     start_date = Column(db.Date(), unique=False, nullable=False)
     end_date = Column(db.Date(), unique=False, nullable=True)
 
