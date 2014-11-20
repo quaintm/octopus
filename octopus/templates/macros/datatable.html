@@ -46,3 +46,9 @@
 </div>
 <!-- /.row -->
 {%- endmacro %}
+
+{% macro render_js(id) %}
+$(document).ready( function () {
+    $('#{{ id|safe }}').DataTable();
+});
+{% endmacro %}
