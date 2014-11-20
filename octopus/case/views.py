@@ -13,12 +13,17 @@ blueprint = Blueprint("case", __name__, url_prefix='/case',
 
 nav.Bar('case', [
     nav.Item('Case', '', items=[
+        nav.Item('Dashboard', 'case.dashboard'),
         nav.Item('All Cases', 'case.query'),
         nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
         nav.Item('Create New Case', 'case.new_case')
     ])
 ])
 
+@blueprint.route("/")
+@blueprint.route("/dashboard")
+def dashboard():
+    return render_template("case/dashboard.html")
 
 @blueprint.route("/query")
 @login_required

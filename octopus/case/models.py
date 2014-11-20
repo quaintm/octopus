@@ -63,7 +63,8 @@ case_risk_tags = db.Table('case_risk_tags',
 class Case(SurrogatePK, Model):
     __tablename__ = 'cases'
     crd_number = Column(db.Integer(), unique=False, nullable=False)
-    # case_name = Column(db.Text(), unique=False, nullable=False)
+    case_name = Column(db.Text(), unique=False, nullable=False)
+    case_desc = Column(db.Text(), unique=False, nullable=False)
     start_date = Column(db.Date(), unique=False, nullable=False)
     end_date = Column(db.Date(), unique=False, nullable=True)
 
