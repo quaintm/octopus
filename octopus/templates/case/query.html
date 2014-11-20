@@ -7,6 +7,7 @@
 <div class="col-lg-12">
     <table class="table table-striped">
         <thead>
+        {% for header in columns %}
             <tr>
                 <th>User ID</th>
                 <th>Username</th>
@@ -14,8 +15,10 @@
                 <th>Last Name</th>
                 <th></th>
             </tr>
+        {% endfor %}
         </thead>
         <tbody>
+
         {% for user in users %}
             <tr>
                 <td>{{ user.username|default('Undefined') }}</td>
