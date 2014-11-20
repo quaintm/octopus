@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask.ext.login import login_required, current_user
 
-from octopus.extensions import nav
+from octopus.extensions import nav, db
 from octopus.user.forms import EditUserProfile, save_profile_edits
 from octopus.user.models import User
 from octopus.utils import flash_errors
@@ -15,8 +15,7 @@ nav.Bar('user', [
     nav.Item('User', '', items=[
         nav.Item('All Users', 'user.members'),
         nav.Item('My Profile', 'user.profile',
-                 items=[nav.Item('Edit My Profile', 'user.edit_profile')
-                 ])
+                 items=[nav.Item('Edit My Profile', 'user.edit_profile')])
     ])
 ])
 
@@ -25,7 +24,12 @@ nav.Bar('user', [
 @blueprint.route("/members")
 @login_required
 def members():
-    return render_template("user/members.html", users=User.query.order_by(User.id.desc()))
+    users = db.session.query(User.id.label("ID"),
+                             User.first_name.label("First Name"),
+                             User.last_name.label("Last Name"),
+                             User.email.label("Email")
+                             ).order_by(User.id.desc())
+    return render_template("user/members.html", users=users)
 
 
 @blueprint.route("/profile")
