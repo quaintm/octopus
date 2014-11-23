@@ -30,7 +30,22 @@ def members():
                              User.last_name.label("Last Name"),
                              User.email.label("Email")
                              ).order_by(User.id.desc())
-    return render_template("user/members.html", users=users)
+    extra_cols = [
+        {'header': {'text': "View/Edit"},
+         'td-class': 'text-center',
+         'contents': [
+             {'func': lambda x: url_for('user.profile', id=getattr(x, 'ID')),
+              'text': 'View',
+              'type': 'button',
+              'class': 'btn btn-primary btn-sm'},
+             {'func': lambda x: url_for('user.edit_profile', id=getattr(x, 'ID')),
+              'text': 'Edit',
+              'type': 'button',
+              'class': 'btn btn-warning btn-sm'}
+         ]
+         }
+    ]
+    return render_template("user/members.html", users=users, extra_cols=extra_cols)
 
 
 @blueprint.route("/profile")
