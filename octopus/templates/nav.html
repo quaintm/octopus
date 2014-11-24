@@ -1,5 +1,5 @@
 {% macro render_nav_item(item) %}
-    <li class="{{ 'active' if item.is_active else '' }}"><a href="{{ item.url }}">{{ item.label }}</a></li>
+    <li class="{{ 'active' if item.is_active else '' }}"><a href="{{ item.url }}">{{ item.label|safe }}</a></li>
 {% endmacro %}
 
 {% macro render_nav_items(parent, is_top=false) %}
@@ -7,7 +7,7 @@
         {% if is_top %}
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-               role="button" aria-expanded="false">{{ parent.label }}</a>
+               role="button" aria-expanded="false">{{ parent.label|safe }}</a>
             <ul class="dropdown-menu" role="menu">
         {% else %}
             <li class="dropdown-submenu">
