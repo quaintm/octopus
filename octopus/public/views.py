@@ -14,8 +14,7 @@ from octopus.database import db
 blueprint = Blueprint('public', __name__, static_folder="../static")
 
 nav.Bar('public', [
-    nav.Item('Home', 'public.home'),
-    nav.Item('About', 'public.about'),
+    nav.Item('<i class="fa fa-home"></i>', 'public.home')
 ])
 
 @login_manager.user_loader
