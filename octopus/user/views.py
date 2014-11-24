@@ -84,5 +84,5 @@ def edit(id=None):
             return redirect(redirect_url)
         else:
             flash_errors(form)
-    return render_template("user/edit_profile.html", form=form, user=user)
+    return render_template("user/edit.html", form=form, user=user)
 
