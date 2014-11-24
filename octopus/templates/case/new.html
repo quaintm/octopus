@@ -1,5 +1,21 @@
 
 {% extends "layout.html" %}
+
+{% macro make_datepicker_tag(label, id) %}
+    <label for="{{ id|safe }}">{{ label }} <i class="fa fa-calendar"></i></label>
+    <input class="form-control" id="{{ id|safe }}" name="{{ id|safe }}" value="" type="date">
+{% endmacro %}
+
+{% macro make_datepicker_js(id) %}
+<script>
+$('#{{ id|safe }}').datepicker({
+    format: "yyyy/mm/dd",
+    todayBtn: true,
+    orientation: "top auto"
+    });
+</script>
+{% endmacro %}
+
 {% block content %}
 <div class="container-narrow">
   <h1>Create a New Case</h1>
@@ -19,12 +35,10 @@
             {{form.crd_number(class_="form-control")}}
         </div>
         <div class="form-group">
-            {{form.start_date.label}}
-            {{form.start_date(class_="form-control", id_="caseStartDatePicker")}}
+            {{ make_datepicker_tag(form.start_date.label, form.start_date.id)}}
         </div>
         <div class="form-group">
-            {{form.end_date.label}}
-            {{form.end_date(class_="form-control", id_="caseEndDatePicker")}}
+            {{ make_datepicker_tag(form.end_date.label, form.end_date.id)}}
         </div>
         <div class="form-group">
             {{form.case_type.label}}
@@ -37,5 +51,11 @@
         <p><input class="btn btn-default btn-submit" type="submit" value="Update Profile"></p>
     </form>
 </div>
+{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    {{ make_datepicker_js(form.start_date.id) }}
+    {{ make_datepicker_js(form.end_date.id) }}
 {% endblock %}
 
