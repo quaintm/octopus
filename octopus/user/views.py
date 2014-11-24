@@ -12,7 +12,7 @@ blueprint = Blueprint("user", __name__, url_prefix='/user',
                       static_folder="../static")
 
 nav.Bar('user', [
-    nav.Item('<h4><i class="fa fa-user"></i></h4>', '', items=[
+    nav.Item('<i class="fa fa-user"></i>', '', items=[
         nav.Item('All Users', 'user.members'),
         nav.Item('My Profile', 'user.profile',
                  items=[nav.Item('Edit My Profile', 'user.edit_profile')])

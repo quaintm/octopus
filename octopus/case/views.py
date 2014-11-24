@@ -12,7 +12,7 @@ blueprint = Blueprint("case", __name__, url_prefix='/case',
                       static_folder="../static")
 
 nav.Bar('case', [
-    nav.Item('<h4><i class="fa fa-briefcase"></i></h4>', '', items=[
+    nav.Item('<i class="fa fa-briefcase"></i>', '', items=[
         nav.Item('Dashboard', 'case.dashboard'),
         nav.Item('All Cases', 'case.query'),
         nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
