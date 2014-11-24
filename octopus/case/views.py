@@ -14,7 +14,6 @@ blueprint = Blueprint("case", __name__, url_prefix='/case',
 nav.Bar('case', [
     nav.Item('<i class="fa fa-briefcase"></i>', '', items=[
         nav.Item('Dashboard', 'case.dashboard'),
-        nav.Item('All Cases', 'case.query'),
         nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
         nav.Item('Create New Case', 'case.new')
     ])
@@ -75,14 +74,22 @@ def query():
             return render_template("case/query.html",
                                    cases=Case.query.order_by(Case.id.desc()))
 
-    return render_template("case/query.html",
-                           cases=Case.query.order_by(Case.id.desc()))
+    return redirect(url_for('cases.dashboard'))
 
 @blueprint.route('/view/<int:id>')
 @login_required
 def view(id):
+    cases = db.session.query(Case.id.label("ID"),
+                             Case.crd_number.label("CRD #"),
+                             Case.case_name.label("Name"),
+                             Case.case_type.label("Type"),
+                             Case.case_desc.label("Description"),
+                             Case.start_date.label("Start"),
+                             Case.end_date.label("End"),
+                             Case.primary.label("Primary")
+    ).filter_by(id=id).order_by(Case.id.desc())
 
-    return
+    return render_template('case/case.html', case=cases)
 
 @blueprint.route("/new", methods=["GET", "POST"])
 @login_required
