@@ -78,10 +78,10 @@ class Case(SurrogatePK, Model):
     region_id = ReferenceCol('regions', nullable=False)
     region = relationship('Region', backref='region')
 
-    primary_id = ReferenceCol('users', nullable=False)
+    primary_id = ReferenceCol('users', nullable=True)
     primary = relationship('User', foreign_keys=[primary_id])
 
-    secondary_id = ReferenceCol('users', nullable=False)
+    secondary_id = ReferenceCol('users', nullable=True)
     secondary = relationship('User', foreign_keys=[secondary_id])
 
     other_staff_id = db.relationship('User', secondary=case_assignments,
