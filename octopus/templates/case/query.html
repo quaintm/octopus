@@ -26,9 +26,9 @@
                 <td>{{ user.last_name|default('Undefined') }}</td>
                 <td>{{ user.email|default('Undefined') }}</td>
                 <td>
-                    <a href="{{ url_for('user.profile', id=user.id)}}"
+                    <a href="{{ url_for('user.view', id=user.id)}}"
                        type="button" class="btn btn-primary btn-sm">View</a>
-                    <a href="{{ url_for('user.edit_profile', id=user.id)}}"
+                    <a href="{{ url_for('user.edit', id=user.id)}}"
                        type="button" class="btn btn-warning btn-sm">Edit</a>
                 </td>
             </tr>

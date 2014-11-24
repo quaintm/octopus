@@ -16,14 +16,37 @@ nav.Bar('case', [
         nav.Item('Dashboard', 'case.dashboard'),
         nav.Item('All Cases', 'case.query'),
         nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
-        nav.Item('Create New Case', 'case.new_case')
+        nav.Item('Create New Case', 'case.new')
     ])
 ])
 
 @blueprint.route("/")
 @blueprint.route("/dashboard")
 def dashboard():
-    return render_template("case/dashboard.html")
+    cases = db.session.query(Case.id.label("ID"),
+                             Case.crd_number.label("CRD #"),
+                             Case.case_name.label("Name"),
+                             Case.case_type.label("Type"),
+                             Case.start_date.label("Start"),
+                             Case.end_date.label("End"),
+                             Case.primary.label("Primary")
+    ).order_by(Case.id.desc())
+    extra_cols = [
+        {'header': {'text': "View/Edit"},
+         'td-class': 'text-center',
+         'contents': [
+             {'func': lambda x: url_for('case.view', id=getattr(x, 'ID')),
+              'text': 'View',
+              'type': 'button',
+              'class': 'btn btn-primary btn-sm'},
+             {'func': lambda x: url_for('cases.edit', id=getattr(x, 'ID')),
+              'text': 'Edit',
+              'type': 'button',
+              'class': 'btn btn-warning btn-sm'}
+         ]
+        }
+    ]
+    return render_template("case/dashboard.html", cases=cases, extra_cols=extra_cols)
 
 @blueprint.route("/query")
 @login_required
@@ -55,9 +78,15 @@ def query():
     return render_template("case/query.html",
                            cases=Case.query.order_by(Case.id.desc()))
 
-@blueprint.route("/new_case", methods=["GET", "POST"])
+@blueprint.route('/view/<int:id>')
 @login_required
-def new_case():
+def view(id):
+
+    return
+
+@blueprint.route("/new", methods=["GET", "POST"])
+@login_required
+def new():
     # form = EditUserProfile(request.form)
     # if request.method == 'POST':
     #     if form.validate_on_submit():
@@ -67,13 +96,13 @@ def new_case():
     #         return redirect(redirect_url)
     #     else:
     #         flash_errors(form)
-    # return render_template("case/edit_case.html")
+    # return render_template("case/edit.html")
     return redirect(url_for("public.home"))
 
 
-@blueprint.route("/edit_case", methods=["GET", "POST"])
+@blueprint.route("/edit", methods=["GET", "POST"])
 @login_required
-def edit_case():
+def edit():
     # case_id = request.args.get("case_id")
     # if id is None:
     #     user = current_user
@@ -90,5 +119,5 @@ def edit_case():
     #         return redirect(redirect_url)
     #     else:
     #         flash_errors(form)
-    # return render_template("user/edit_profile.html", form=form, user=user)
+    # return render_template("user/edit.html", form=form, user=user)
     return redirect(url_for("public.home"))
