@@ -1,20 +1,7 @@
 
 {% extends "layout.html" %}
 
-{% macro make_datepicker_tag(label, id) %}
-    <label for="{{ id|safe }}">{{ label }} <i class="fa fa-calendar"></i></label>
-    <input class="form-control" id="{{ id|safe }}" name="{{ id|safe }}" value="" type="date">
-{% endmacro %}
-
-{% macro make_datepicker_js(id) %}
-<script>
-$('#{{ id|safe }}').datepicker({
-    format: "yyyy/mm/dd",
-    todayBtn: true,
-    orientation: "top auto"
-    });
-</script>
-{% endmacro %}
+{% from "macros/datepicker.html" import make_datepicker_js, make_datepicker_tag %}
 
 {% block content %}
 <div class="container-narrow">
