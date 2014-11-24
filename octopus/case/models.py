@@ -40,7 +40,7 @@ class Region(Model):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<Region({code})>'.format(name=self.id)
+        return '<Region({name})>'.format(name=self.id)
 
 
 class RiskTags(Model):
@@ -52,7 +52,7 @@ class RiskTags(Model):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<RiskTag({code})>'.format(name=self.code)
+        return '<RiskTag({name})>'.format(name=self.code)
 
 
 case_risk_tags = db.Table('case_risk_tags',
@@ -61,7 +61,9 @@ case_risk_tags = db.Table('case_risk_tags',
 
 case_assignments = db.Table('case_assignments',
                             db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                            db.Column('case_id', db.Integer, db.ForeignKey('cases.id')))
+                            db.Column('case_id', db.Integer, db.ForeignKey('cases.id')),
+                            db.Column('primary', db.Boolean, default=False),
+                            db.Column('secondary', db.Boolean, default=False))
 
 
 class Case(SurrogatePK, Model):
@@ -78,14 +80,8 @@ class Case(SurrogatePK, Model):
     region_id = ReferenceCol('regions', nullable=False)
     region = relationship('Region', backref='region')
 
-    primary_id = ReferenceCol('users', nullable=False)
-    primary = relationship('User', foreign_keys=[primary_id])
-
-    secondary_id = ReferenceCol('users', nullable=False)
-    secondary = relationship('User', foreign_keys=[secondary_id])
-
-    other_staff_id = db.relationship('User', secondary=case_assignments,
-                                     backref=db.backref('cases', lazy='dynamic'))
+    staff_id = db.relationship('User', secondary=case_assignments,
+                                backref=db.backref('cases', lazy='dynamic'))
 
     mars_risk_score = Column(db.Integer, unique=False, nullable=True)
     qau_risk_score = Column(db.Integer, unique=False, nullable=True)
@@ -93,22 +89,8 @@ class Case(SurrogatePK, Model):
     risk_tag_id = db.relationship('RiskTags', secondary=case_risk_tags,
                                   backref=db.backref('cases', lazy='dynamic'))
 
-    def __init__(self, username, email, password=None, **kwargs):
-        db.Model.__init__(self, username=username, email=email, **kwargs)
-        if password:
-            self.set_password(password)
-        else:
-            self.password = None
-
-    def set_password(self, password):
-        self.password = bcrypt.generate_password_hash(password)
-
-    def check_password(self, value):
-        return bcrypt.check_password_hash(self.password, value)
-
-    @property
-    def full_name(self):
-        return "{0} {1}".format(self.first_name, self.last_name)
+    def __init__(self, *args, **kwargs):
+        db.Model.__init__(self, *args, **kwargs)
 
     def __repr__(self):
-        return '<User({username!r})>'.format(username=self.username)
+        return '<Case({id!r})>'.format(id=self.id)

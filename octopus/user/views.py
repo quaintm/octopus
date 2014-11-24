@@ -13,17 +13,17 @@ blueprint = Blueprint("user", __name__, url_prefix='/user',
 
 nav.Bar('user', [
     nav.Item('<i class="fa fa-user"></i>', '', items=[
-        nav.Item('All Users', 'user.members'),
-        nav.Item('My Profile', 'user.profile',
-                 items=[nav.Item('Edit My Profile', 'user.edit_profile')])
+        nav.Item('Dashboard', 'user.dashboard'),
+        nav.Item('My Profile', 'user.view',
+                 items=[nav.Item('Edit My Profile', 'user.edit')])
     ])
 ])
 
 
 @blueprint.route("/")
-@blueprint.route("/members")
+@blueprint.route("/dashboard")
 @login_required
-def members():
+def dashboard():
     users = db.session.query(User.id.label("ID"),
                              User.username.label("Username"),
                              User.first_name.label("First Name"),
@@ -34,11 +34,11 @@ def members():
         {'header': {'text': "View/Edit"},
          'td-class': 'text-center',
          'contents': [
-             {'func': lambda x: url_for('user.profile', id=getattr(x, 'ID')),
+             {'func': lambda x: url_for('user.view', id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
               'class': 'btn btn-primary btn-sm'},
-             {'func': lambda x: url_for('user.edit_profile', id=getattr(x, 'ID')),
+             {'func': lambda x: url_for('user.edit', id=getattr(x, 'ID')),
               'text': 'Edit',
               'type': 'button',
               'class': 'btn btn-warning btn-sm'}
@@ -48,23 +48,27 @@ def members():
     return render_template("user/members.html", users=users, extra_cols=extra_cols)
 
 
-@blueprint.route("/profile")
-@blueprint.route("/profile/<int:id>")
+@blueprint.route('/query')
+def query():
+    return render_template('public/home.html')
+
+
+@blueprint.route("/view")
+@blueprint.route("/view/<int:id>")
 @login_required
-def profile(id=None):
+def view(id=None):
     if id is None:
         user = current_user
         id = current_user.id
     else:
         user = User.query.filter_by(id=id).first_or_404()
-
     return render_template("user/profile.html", user=user)
 
 
-@blueprint.route("/profile/<int:id>/edit", methods=["GET", "POST"])
-@blueprint.route("/profile/edit", methods=["GET", "POST"])
+@blueprint.route("/edit", methods=["GET", "POST"])
+@blueprint.route("/edit/<int:id>", methods=["GET", "POST"])
 @login_required
-def edit_profile(id=None):
+def edit(id=None):
     if id is None:
         user = current_user
         id = current_user.id
@@ -76,9 +80,9 @@ def edit_profile(id=None):
         if form.validate_on_submit():
             save_profile_edits(form)
             flash("User Profile Edits Saved")
-            redirect_url = request.args.get("next") or url_for("user.members")
+            redirect_url = request.args.get("next") or url_for("user.dashboard")
             return redirect(redirect_url)
         else:
             flash_errors(form)
-    return render_template("user/edit_profile.html", form=form, user=user)
+    return render_template("user/edit.html", form=form, user=user)
 
