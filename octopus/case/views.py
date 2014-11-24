@@ -63,7 +63,7 @@ def new_case():
     #     if form.validate_on_submit():
     #         save_profile_edits(form)
     #         flash("User Profile Edits Saved")
-    #         redirect_url = request.args.get("next") or url_for("user.members")
+    #         redirect_url = request.args.get("next") or url_for("user.dashboard")
     #         return redirect(redirect_url)
     #     else:
     #         flash_errors(form)
@@ -86,7 +86,7 @@ def edit_case():
     #     if form.validate_on_submit():
     #         save_profile_edits(form)
     #         flash("User Profile Edits Saved")
-    #         redirect_url = request.args.get("next") or url_for("user.members")
+    #         redirect_url = request.args.get("next") or url_for("user.dashboard")
     #         return redirect(redirect_url)
     #     else:
     #         flash_errors(form)

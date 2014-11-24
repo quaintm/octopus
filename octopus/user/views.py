@@ -13,7 +13,7 @@ blueprint = Blueprint("user", __name__, url_prefix='/user',
 
 nav.Bar('user', [
     nav.Item('<i class="fa fa-user"></i>', '', items=[
-        nav.Item('All Users', 'user.members'),
+        nav.Item('All Users', 'user.dashboard'),
         nav.Item('My Profile', 'user.profile',
                  items=[nav.Item('Edit My Profile', 'user.edit_profile')])
     ])
@@ -21,9 +21,9 @@ nav.Bar('user', [
 
 
 @blueprint.route("/")
-@blueprint.route("/members")
+@blueprint.route("/dashboard")
 @login_required
-def members():
+def dashboard():
     users = db.session.query(User.id.label("ID"),
                              User.username.label("Username"),
                              User.first_name.label("First Name"),
@@ -76,7 +76,7 @@ def edit_profile(id=None):
         if form.validate_on_submit():
             save_profile_edits(form)
             flash("User Profile Edits Saved")
-            redirect_url = request.args.get("next") or url_for("user.members")
+            redirect_url = request.args.get("next") or url_for("user.dashboard")
             return redirect(redirect_url)
         else:
             flash_errors(form)
