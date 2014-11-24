@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask.ext.login import login_required, current_user
+from octopus.case.forms import NewCaseForm
 
 from octopus.extensions import nav, db
 from octopus.case.models import Region, CaseType, Case
@@ -94,17 +95,21 @@ def view(id):
 @blueprint.route("/new", methods=["GET", "POST"])
 @login_required
 def new():
-    # form = EditUserProfile(request.form)
-    # if request.method == 'POST':
-    #     if form.validate_on_submit():
-    #         save_profile_edits(form)
-    #         flash("User Profile Edits Saved")
-    #         redirect_url = request.args.get("next") or url_for("user.dashboard")
-    #         return redirect(redirect_url)
-    #     else:
-    #         flash_errors(form)
-    # return render_template("case/edit.html")
-    return redirect(url_for("public.home"))
+    form = NewCaseForm(request.form)
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            case = Case.create(crd_number=form.crd_number.data,
+                                  case_name=form.case_name.data,
+                                  case_desc=form.case_desc.data,
+                                  start_date=form.start_date.data,
+                                  end_date=form.end_date.data,
+                                  case_type=form.case_type.data,
+                                  region=form.case_region.data)
+            flash("New Case Created")
+            return redirect(url_for('case.view', id=case.id))
+        else:
+            flash_errors(form)
+    return render_template("case/new.html", form=form)
 
 
 @blueprint.route("/edit", methods=["GET", "POST"])
@@ -126,5 +131,5 @@ def edit():
     #         return redirect(redirect_url)
     #     else:
     #         flash_errors(form)
-    # return render_template("user/edit.html", form=form, user=user)
+    # return render_template("user/new.html", form=form, user=user)
     return redirect(url_for("public.home"))

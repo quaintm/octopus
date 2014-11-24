@@ -1,0 +1,41 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-narrow">
+  <h1>Create a New Case</h1>
+    <br/>
+    <form id="newCase" class="form form-register" method="POST" action="" role="form">
+            {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{form.case_name.label}}
+            {{form.case_name(class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.case_desc.label}}
+            {{form.case_desc(class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.crd_number.label}}
+            {{form.crd_number(class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.start_date.label}}
+            {{form.start_date(class_="form-control", id_="caseStartDatePicker")}}
+        </div>
+        <div class="form-group">
+            {{form.end_date.label}}
+            {{form.end_date(class_="form-control", id_="caseEndDatePicker")}}
+        </div>
+        <div class="form-group">
+            {{form.case_type.label}}
+            {{form.case_type(class_="form-control")}}
+        </div>
+        <div class="form-group">
+            {{form.case_region.label}}
+            {{form.case_region(class_="form-control")}}
+        </div>
+        <p><input class="btn btn-default btn-submit" type="submit" value="Update Profile"></p>
+    </form>
+</div>
+{% endblock %}
+

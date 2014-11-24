@@ -40,7 +40,7 @@ class Region(Model):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<Region({code})>'.format(name=self.id)
+        return '<Region({name})>'.format(name=self.id)
 
 
 class RiskTags(Model):
@@ -52,7 +52,7 @@ class RiskTags(Model):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<RiskTag({code})>'.format(name=self.code)
+        return '<RiskTag({name})>'.format(name=self.code)
 
 
 case_risk_tags = db.Table('case_risk_tags',
