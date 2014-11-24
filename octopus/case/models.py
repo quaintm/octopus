@@ -93,22 +93,8 @@ class Case(SurrogatePK, Model):
     risk_tag_id = db.relationship('RiskTags', secondary=case_risk_tags,
                                   backref=db.backref('cases', lazy='dynamic'))
 
-    def __init__(self, username, email, password=None, **kwargs):
-        db.Model.__init__(self, username=username, email=email, **kwargs)
-        if password:
-            self.set_password(password)
-        else:
-            self.password = None
-
-    def set_password(self, password):
-        self.password = bcrypt.generate_password_hash(password)
-
-    def check_password(self, value):
-        return bcrypt.check_password_hash(self.password, value)
-
-    @property
-    def full_name(self):
-        return "{0} {1}".format(self.first_name, self.last_name)
+    def __init__(self, *args, **kwargs):
+        db.Model.__init__(self, *args, **kwargs)
 
     def __repr__(self):
-        return '<User({username!r})>'.format(username=self.username)
+        return '<Case({id!r})>'.format(id=self.id)

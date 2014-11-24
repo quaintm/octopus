@@ -8,10 +8,6 @@ from .models import Region, CaseType
 from octopus.extensions import db
 
 class NewCaseForm(Form):
-
-    _regions = []
-    _case_types = []
-
     crd_number = IntegerField('CRD Number',
                     validators=[DataRequired()])
     case_name = StringField('Case Name', validators=[DataRequired()])
@@ -19,16 +15,14 @@ class NewCaseForm(Form):
     start_date = DateField('Start Date',
                              validators=[DataRequired()])
     end_date = DateField('End Date', validators=[Optional()])
-    case_type = SelectField('Case Type', validators=[DataRequired()],
-                            choices=_case_types)
+    case_type = SelectField('Case Type', validators=[DataRequired()])
 
-    case_region = SelectField("Regional Office", validators=[DataRequired()],
-                              choices=_regions)
+    case_region = SelectField("Regional Office", validators=[DataRequired()])
 
     def __init__(self, *args, **kwargs):
         super(NewCaseForm, self).__init__(*args, **kwargs)
-        self._case_types = db.session.query(CaseType.id).all()
-        self._regions = db.session.query(Region.id).all()
+        self.case_type.choices = [(i.id, i.description) for i in CaseType.query]
+        self.case_region.choices = [(i.id, i.id) for i in Region.query]
 
 
     def validate(self):
