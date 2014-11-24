@@ -6,7 +6,7 @@
 {% macro make_datepicker_js(id) %}
     <script>
         $('#{{ id|safe }}').datepicker({
-            format: "yyyy/mm/dd",
+            format: "yyyy-mm-dd",
             todayBtn: true,
             orientation: "top auto"
         });

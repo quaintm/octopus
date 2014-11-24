@@ -1,11 +1,10 @@
-import json
-from flask import jsonify
 from flask_wtf import Form
-from wtforms import StringField, SelectField, HiddenField, TextField, TextAreaField
+from wtforms import StringField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField, IntegerField
+
 from .models import Region, CaseType
-from octopus.extensions import db
+
 
 class NewCaseForm(Form):
     crd_number = IntegerField('CRD Number',
