@@ -61,7 +61,9 @@ case_risk_tags = db.Table('case_risk_tags',
 
 case_assignments = db.Table('case_assignments',
                             db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                            db.Column('case_id', db.Integer, db.ForeignKey('cases.id')))
+                            db.Column('case_id', db.Integer, db.ForeignKey('cases.id')),
+                            db.Column('primary', db.Boolean, default=False),
+                            db.Column('secondary', db.Boolean, default=False))
 
 
 class Case(SurrogatePK, Model):
@@ -78,14 +80,8 @@ class Case(SurrogatePK, Model):
     region_id = ReferenceCol('regions', nullable=False)
     region = relationship('Region', backref='region')
 
-    primary_id = ReferenceCol('users', nullable=True)
-    primary = relationship('User', foreign_keys=[primary_id])
-
-    secondary_id = ReferenceCol('users', nullable=True)
-    secondary = relationship('User', foreign_keys=[secondary_id])
-
-    other_staff_id = db.relationship('User', secondary=case_assignments,
-                                     backref=db.backref('cases', lazy='dynamic'))
+    staff_id = db.relationship('User', secondary=case_assignments,
+                                backref=db.backref('cases', lazy='dynamic'))
 
     mars_risk_score = Column(db.Integer, unique=False, nullable=True)
     qau_risk_score = Column(db.Integer, unique=False, nullable=True)
