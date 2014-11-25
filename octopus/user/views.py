@@ -30,17 +30,13 @@ def dashboard():
                              User.email.label("Email")
                              ).order_by(User.id.desc())
     extra_cols = [
-        {'header': {'text': "View/Edit"},
+        {'header': {'text': "View"},
          'td-class': 'text-center',
          'contents': [
              {'func': lambda x: url_for('user.view', id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
-              'class': 'btn btn-primary btn-sm'},
-             {'func': lambda x: url_for('user.edit', id=getattr(x, 'ID')),
-              'text': 'Edit',
-              'type': 'button',
-              'class': 'btn btn-warning btn-sm'}
+              'class': 'btn btn-primary btn-sm'}
          ]
          }
     ]
