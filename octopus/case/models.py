@@ -52,7 +52,7 @@ class RiskTags(Model):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<RiskTag({name})>'.format(name=self.code)
+        return '<RiskTag({name})>'.format(name=self.tag)
 
 
 case_risk_tags = db.Table('case_risk_tags',

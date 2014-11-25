@@ -26,11 +26,10 @@ def dashboard():
     cases = db.session.query(Case.id.label("ID"),
                              Case.crd_number.label("CRD #"),
                              Case.case_name.label("Name"),
-                             Case.case_type.label("Type"),
+                             CaseType.id.label("Case Type"),
                              Case.start_date.label("Start"),
-                             Case.end_date.label("End"),
-                             Case.primary.label("Primary")
-    ).order_by(Case.id.desc())
+                             Case.end_date.label("End")
+    ).join(CaseType).order_by(Case.id.desc())
     extra_cols = [
         {'header': {'text': "View/Edit"},
          'td-class': 'text-center',
@@ -39,7 +38,7 @@ def dashboard():
               'text': 'View',
               'type': 'button',
               'class': 'btn btn-primary btn-sm'},
-             {'func': lambda x: url_for('cases.edit', id=getattr(x, 'ID')),
+             {'func': lambda x: url_for('case.edit', id=getattr(x, 'ID')),
               'text': 'Edit',
               'type': 'button',
               'class': 'btn btn-warning btn-sm'}
@@ -86,8 +85,7 @@ def view(id):
                              Case.case_type.label("Type"),
                              Case.case_desc.label("Description"),
                              Case.start_date.label("Start"),
-                             Case.end_date.label("End"),
-                             Case.primary.label("Primary")
+                             Case.end_date.label("End")
     ).filter_by(id=id).order_by(Case.id.desc())
 
     return render_template('case/case.html', case=cases)
@@ -98,13 +96,15 @@ def new():
     form = NewCaseForm(request.form)
     if request.method == 'POST':
         if form.validate_on_submit():
+            case_type = CaseType.query.get(form.case_type.data)
+            region = Region.query.get(form.case_region.data)
             case = Case.create(crd_number=form.crd_number.data,
                                   case_name=form.case_name.data,
                                   case_desc=form.case_desc.data,
                                   start_date=form.start_date.data,
                                   end_date=form.end_date.data,
-                                  case_type=form.case_type.data,
-                                  region=form.case_region.data)
+                                  case_type=case_type,
+                                  region=region)
             flash("New Case Created")
             return redirect(url_for('case.view', id=case.id))
         else:
