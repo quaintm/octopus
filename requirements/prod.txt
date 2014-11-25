@@ -14,6 +14,9 @@ SQLAlchemy==0.9.8
 # Migrations
 Flask-Migrate==1.2.0
 
+# Navbar
+Flask-Navigation==0.2.0
+
 # Forms
 Flask-WTF==0.10.2
 WTForms==2.0.1

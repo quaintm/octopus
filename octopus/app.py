@@ -11,8 +11,8 @@ from octopus.extensions import (
     login_manager,
     migrate,
     debug_toolbar,
-)
-from octopus import public, user
+    nav)
+from octopus import public, user, case
 
 
 def create_app(config_object=ProdConfig):
@@ -36,6 +36,7 @@ def register_extensions(app):
     db.init_app(app)
     login_manager.init_app(app)
     debug_toolbar.init_app(app)
+    nav.init_app(app)
     migrate.init_app(app, db)
     return None
 
@@ -43,6 +44,7 @@ def register_extensions(app):
 def register_blueprints(app):
     app.register_blueprint(public.views.blueprint)
     app.register_blueprint(user.views.blueprint)
+    app.register_blueprint(case.views.blueprint)
     return None
 
 

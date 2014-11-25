@@ -4,7 +4,7 @@ from flask import (Blueprint, request, render_template, flash, url_for,
                     redirect, session)
 from flask.ext.login import login_user, login_required, logout_user
 
-from octopus.extensions import login_manager
+from octopus.extensions import login_manager, nav
 from octopus.user.models import User
 from octopus.public.forms import LoginForm
 from octopus.user.forms import RegisterForm
@@ -12,6 +12,10 @@ from octopus.utils import flash_errors
 from octopus.database import db
 
 blueprint = Blueprint('public', __name__, static_folder="../static")
+
+nav.Bar('public', [
+    nav.Item('<i class="fa fa-home"></i>', 'public.home')
+])
 
 @login_manager.user_loader
 def load_user(id):
@@ -26,7 +30,7 @@ def home():
         if form.validate_on_submit():
             login_user(form.user)
             flash("You are logged in.", 'success')
-            redirect_url = request.args.get("next") or url_for("user.members")
+            redirect_url = request.args.get("next") or url_for("user.dashboard")
             return redirect(redirect_url)
         else:
             flash_errors(form)

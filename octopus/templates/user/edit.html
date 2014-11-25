@@ -1,0 +1,41 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-narrow">
+  <h1>Edit {{ user.username }}'s Profile </h1>
+    <br/>
+    <form id="editUserProfile" class="form form-register" method="POST" action="" role="form">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{form.username.label}}
+                {{form.username(placeholder=user.username, class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.email.label}}
+                {{form.email(placeholder=form.email.placeholder, class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.first_name.label}}
+                {{form.first_name(placeholder=form.first_name.placeholder, class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.last_name.label}}
+                {{form.last_name(placeholder=form.last_name.placeholder, class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.old_password_confirm.label}}
+                {{form.old_password_confirm(placeholder="Old Password", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.new_password.label}}
+                {{form.new_password(placeholder="New Password", class_="form-control")}}
+            </div>
+            <div class="form-group">
+                {{form.new_confirm.label}}
+                {{form.new_confirm(placeholder="New Password (again)", class_="form-control")}}
+            </div>
+            <p><input class="btn btn-default btn-submit" type="submit" value="Update Profile"></p>
+    </form>
+</div>
+{% endblock %}
+
