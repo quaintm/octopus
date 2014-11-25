@@ -52,7 +52,7 @@ class RiskTags(Model):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<RiskTag({name})>'.format(name=self.code)
+        return '<RiskTag({name})>'.format(name=self.tag)
 
 
 case_risk_tags = db.Table('case_risk_tags',
@@ -75,10 +75,10 @@ class Case(SurrogatePK, Model):
     end_date = Column(db.Date(), unique=False, nullable=True)
 
     case_type_id = ReferenceCol('case_types', nullable=False)
-    case_type = relationship('CaseType', backref='case_type')
+    case_type = relationship('CaseType', backref='case_types')
 
     region_id = ReferenceCol('regions', nullable=False)
-    region = relationship('Region', backref='region')
+    region = relationship('Region', backref='regions')
 
     staff_id = db.relationship('User', secondary=case_assignments,
                                 backref=db.backref('cases', lazy='dynamic'))
