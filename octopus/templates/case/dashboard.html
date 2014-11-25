@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% from "macros/datatable.html" import render_table, render_js %}
-{% set table_id = "cases-table" %}
+{% set table_id = "my-cases-table" %}
 
 
 {% block content %}
@@ -9,9 +9,9 @@
         <div class="row">
             <div class="col-lg-12">
                 {% if extra_cols %}
-                    {{ render_table(table_id, "List of all cases", cases, extra_cols=extra_cols) }}
+                    {{ render_table(table_id, "Applicable Cases", cases, extra_cols=extra_cols) }}
                 {% else %}
-                    {{ render_table(table_id, "List of all Members", cases) }}
+                    {{ render_table(table_id, "Applicable Cases", cases) }}
                 {% endif %}
             </div>
             <!-- /.col-lg-12 -->
@@ -24,6 +24,6 @@
 {% block js %}
     {{ super() }}
     <script>
-{#        {{ render_js(table_id) }}#}
+        {{ render_js(table_id) }}
     </script>
 {% endblock %}
