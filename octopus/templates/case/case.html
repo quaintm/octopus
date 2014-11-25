@@ -6,7 +6,7 @@
 <div class="panel panel-default">
 <div class="panel-heading">
         <div class="row">
-            <div class="col-lg-11">{{ case.case_name|default("Case Not Found") }}</div>
+            <div class="col-lg-11">{{ case[0]['Name']|default("Case Not Found") }}</div>
             <div class="col-lg-1">
                 <a href="{{ url_for('case.edit', id=case.id)}}" type="button" class="btn btn-default right">Edit</a>
             </div>
@@ -20,7 +20,7 @@
         {% for col in case.column_descriptions %}
         <li class="list-group-item">
             <h4>{{ col.name }}</h4>
-            <p class="text-justify">{{ case[col.name]|default('Undefined') }}</p>
+            <p class="text-justify">{{ case[0][col.name] }}</p>
         </li>
         {% endfor %}
     </ul>

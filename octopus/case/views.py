@@ -79,16 +79,16 @@ def query():
 @blueprint.route('/view/<int:id>')
 @login_required
 def view(id):
-    cases = db.session.query(Case.id.label("ID"),
+    case = db.session.query(Case.id.label("ID"),
                              Case.crd_number.label("CRD #"),
                              Case.case_name.label("Name"),
-                             Case.case_type.label("Type"),
+                             CaseType.id.label("Case Type"),
+                             Region.id.label("Region"),
                              Case.case_desc.label("Description"),
                              Case.start_date.label("Start"),
                              Case.end_date.label("End")
-    ).filter_by(id=id).order_by(Case.id.desc())
-
-    return render_template('case/case.html', case=cases)
+    ).filter(Case.id == id).join(Region, CaseType)
+    return render_template('case/case.html', case=case)
 
 @blueprint.route("/new", methods=["GET", "POST"])
 @login_required
