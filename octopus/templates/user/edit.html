@@ -1,10 +1,11 @@
 
 {% extends "layout.html" %}
+{% from "macros/modal_form.html" import render_modal %}
+{% set modal_title = "Edit " + user.username + "'s Profile" %}
+
 {% block content %}
-<div class="container-narrow">
-  <h1>Edit {{ user.username }}'s Profile </h1>
-    <br/>
-    <form id="editUserProfile" class="form form-register" method="POST" action="" role="form">
+{% call render_modal("Edit", "myModalLabel", modal_title) %}
+    <form id="editUserProfile" class="form" method="POST" action="" role="form">
             {{ form.hidden_tag() }}
             <div class="form-group">
                 {{form.username.label}}
@@ -36,6 +37,6 @@
             </div>
             <p><input class="btn btn-default btn-submit" type="submit" value="Update Profile"></p>
     </form>
-</div>
-{% endblock %}
+{% endcall %}
 
+{% endblock %}
