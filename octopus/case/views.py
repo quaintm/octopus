@@ -33,7 +33,7 @@ def dashboard():
                              Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
     extra_cols = [
-        {'header': {'text': "View"},
+        {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
              {'func': lambda x: url_for('case.view', id=getattr(x, 'ID')),

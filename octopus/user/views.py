@@ -30,7 +30,7 @@ def dashboard():
                              User.email.label("Email")
                              ).order_by(User.id.desc())
     extra_cols = [
-        {'header': {'text': "View"},
+        {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
              {'func': lambda x: url_for('user.view', id=getattr(x, 'ID')),
