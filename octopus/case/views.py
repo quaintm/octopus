@@ -33,17 +33,13 @@ def dashboard():
                              Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
     extra_cols = [
-        {'header': {'text': "View/Edit"},
+        {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
              {'func': lambda x: url_for('case.view', id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
-              'class': 'btn btn-primary btn-sm'},
-             {'func': lambda x: url_for('case.edit', id=getattr(x, 'ID')),
-              'text': 'Edit',
-              'type': 'button',
-              'class': 'btn btn-warning btn-sm'}
+              'class': 'btn btn-primary btn-sm'}
          ]
         }
     ]
@@ -60,17 +56,13 @@ def query():
                              Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
     extra_cols = [
-        {'header': {'text': "View/Edit"},
+        {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
              {'func': lambda x: url_for('case.view', id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
-              'class': 'btn btn-primary btn-sm'},
-             {'func': lambda x: url_for('case.edit', id=getattr(x, 'ID')),
-              'text': 'Edit',
-              'type': 'button',
-              'class': 'btn btn-warning btn-sm'}
+              'class': 'btn btn-primary btn-sm'}
          ]
         }
     ]
