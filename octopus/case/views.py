@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, render_template, request, redirect, flash, url_for
+from flask import Blueprint, render_template, request, redirect, flash, url_for, abort
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
-from octopus.case.forms import NewCaseForm
+from octopus.case import queries
+from octopus.case.forms import CoreCaseForm
 from octopus.case.utils import create_query
 
 from octopus.extensions import nav, db
@@ -22,6 +23,7 @@ nav.Bar('case', [
     ])
 ])
 
+
 @blueprint.route("/")
 @blueprint.route("/dashboard")
 def dashboard():
@@ -36,7 +38,7 @@ def dashboard():
         {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
-             {'func': lambda x: url_for('case.view', id=getattr(x, 'ID')),
+             {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
               'class': 'btn btn-primary btn-sm'}
@@ -45,26 +47,26 @@ def dashboard():
     ]
     return render_template("case/dashboard.html", cases=cases, extra_cols=extra_cols)
 
+
 @blueprint.route("/query")
 @login_required
 def query():
     q = db.session.query(Case.id.label("ID"),
-                             Case.crd_number.label("CRD #"),
-                             Case.case_name.label("Name"),
-                             CaseType.id.label("Case Type"),
-                             Case.start_date.label("Start"),
-                             Case.end_date.label("End")
+                         Case.crd_number.label("CRD #"),
+                         Case.case_name.label("Name"),
+                         CaseType.id.label("Case Type"),
+                         Case.start_date.label("Start"),
+                         Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
     extra_cols = [
         {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
-             {'func': lambda x: url_for('case.view', id=getattr(x, 'ID')),
+             {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
               'class': 'btn btn-primary btn-sm'}
-         ]
-        }
+         ]}
     ]
     valid, q = create_query(request.args, q)
 
@@ -75,60 +77,30 @@ def query():
         return redirect(url_for("case/dashboard.html"))
 
 
-@blueprint.route('/view/<int:id>')
+@blueprint.route('/view/<int:case_id>')
 @login_required
-def view(id):
-    case = db.session.query(Case.id.label("ID"),
-                             Case.crd_number.label("CRD #"),
-                             Case.case_name.label("Name"),
-                             CaseType.id.label("Case Type"),
-                             Region.id.label("Region"),
-                             Case.case_desc.label("Description"),
-                             Case.start_date.label("Start"),
-                             Case.end_date.label("End")
-    ).filter(Case.id == id).join(Region, CaseType)
+def view(case_id):
+    case = queries.single_case_view(case_id)
+    if not case:
+        abort(404)
     return render_template('case/case.html', case=case)
+
 
 @blueprint.route("/new", methods=["GET", "POST"])
 @login_required
 def new():
-    form = NewCaseForm(request.form)
+    form = CoreCaseForm(request.form)
     if request.method == 'POST':
         if form.validate_on_submit():
-            case_type = CaseType.query.get(form.case_type.data)
-            region = Region.query.get(form.case_region.data)
-            case = Case.create(crd_number=form.crd_number.data,
-                                  case_name=form.case_name.data,
-                                  case_desc=form.case_desc.data,
-                                  start_date=form.start_date.data,
-                                  end_date=form.end_date.data,
-                                  case_type=case_type,
-                                  region=region)
+            case = form.commit_new_case()
             flash("New Case Created")
-            return redirect(url_for('case.view', id=case.id))
+            return redirect(url_for('case.view', case_id=case.id))
         else:
             flash_errors(form)
     return render_template("case/new.html", form=form)
 
 
-@blueprint.route("/edit", methods=["GET", "POST"])
+@blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])
 @login_required
-def edit():
-    # case_id = request.args.get("case_id")
-    # if id is None:
-    #     user = current_user
-    #     id = current_user.id
-    # else:
-    #     user = User.query.filter_by(id=id).first_or_404()
-    #
-    # form = EditUserProfile(request.form)
-    # if request.method == 'POST':
-    #     if form.validate_on_submit():
-    #         save_profile_edits(form)
-    #         flash("User Profile Edits Saved")
-    #         redirect_url = request.args.get("next") or url_for("user.dashboard")
-    #         return redirect(redirect_url)
-    #     else:
-    #         flash_errors(form)
-    # return render_template("user/new.html", form=form, user=user)
-    return redirect(url_for("public.home"))
+def edit(case_id):
+    return render_template('case/edit.html', case_id=case_id)
