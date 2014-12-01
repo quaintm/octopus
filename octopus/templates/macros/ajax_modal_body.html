@@ -1,0 +1,34 @@
+{% from "macros/datepicker.html" import make_datepicker_js, make_datepicker_tag %}
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">{{ modal_title }}</h4>
+
+</div>
+<div class="modal-body">
+    <div class="te">
+    <form id="{{ form_id }}" method="POST" role="form" action="" class="form">
+{% for field in form._fields.items() %}
+    {% if field.type == 'CSRFTokenField' %}
+        {{ form.hidden_tag() }}
+    {% elif field.type == 'DateField' %}
+        <div class="form-group-lg">
+        {{ make_datepicker_tag(field.label, field.id)}}
+        {{ make_datepicker_js(form.id) }}
+        </div>
+    {% else %}
+        <div class="form-group-lg">
+            {{ field.label }}
+            {{ field(class_='form-control') }}
+        </div>
+    {% endif %}
+{% endfor %}
+
+    </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" >Save changes</button>
+</div>
+
