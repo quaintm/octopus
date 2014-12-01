@@ -103,4 +103,9 @@ def new():
 @blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])
 @login_required
 def edit(case_id):
+
+
+
     return render_template('case/edit.html', case_id=case_id)
+
+
