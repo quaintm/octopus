@@ -1,7 +1,7 @@
 from flask import request, flash
 from wtforms.ext.appengine.db import model_form
 from octopus.case.models import Case
-from octopus.case.forms import CoreCaseForm
+from octopus.case.forms import EditCoreCaseForm
 
 
 def create_single_field_form():
@@ -14,7 +14,7 @@ def create_single_field_form():
 
     if model_name is 'case':
         model = Case
-        base_form = CoreCaseForm
+        base_form = EditCoreCaseForm
     else:
         flash('Model name not found', category='error')
         return None

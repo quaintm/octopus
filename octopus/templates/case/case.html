@@ -2,7 +2,7 @@
 {% from "macros/ajax_modal_link.html" import render_modal_link %}
 
 {% block content %}
-{{ render_modal_link('case.edit', 'my edit link', case_id=case.id, edit_form='core_details', hi='bang') }}
+<a href="{{ url_for('case.edit', case_id=case.id, edit_form='core') }}">Edit Core</a>
 <div class="container">
 <h2 class="text-center">{{ case.case_name|default('Case Not Found') }}</h2>
 <div class="panel panel-default">
