@@ -7,6 +7,7 @@ css = Bundle(
     "libs/dataTables/dataTables.tableTools.css",
     "libs/font-awesome4/css/font-awesome.css",
     "libs/bootstrap-datepicker/css/datepicker3.css",
+    "libs/bootstrap-tagsinput/dist/bootstrap-tagsinput.css",
     "css/style.css",
     filters="cssmin",
     output="public/css/common.css"
@@ -20,6 +21,8 @@ js = Bundle(
     "libs/dataTables/dataTables.bootstrap.js",
     "libs/dataTables/dataTables.tableTools.js",
     "libs/bootstrap-datepicker/js/bootstrap-datepicker.js",
+    "libs/Bootstrap-3-Typeahead/bootstrap3-typeahead.js",
+    "libs/bootstrap-tagsinput/dist/bootstrap-tagsinput.js",
     filters='jsmin',
     output="public/js/common.js"
 )
