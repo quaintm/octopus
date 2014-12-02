@@ -55,7 +55,7 @@ To open the interactive shell, run ::
 
     python manage.py shell
 
-By default, you will have access to ``app``, ``db``, and the ``User`` model.
+In this, you will have access to all current Case and User models
 
 
 Running Tests

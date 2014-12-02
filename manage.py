@@ -7,7 +7,8 @@ from flask.ext.script import Manager, Shell, Server
 from flask.ext.migrate import MigrateCommand
 
 from octopus.app import create_app
-from octopus.user.models import User
+from octopus.user.models import User, Role
+from octopus.case.models import Case, CaseType, Region, RiskTags, case_assignments, case_risk_tags
 from octopus.settings import DevConfig, ProdConfig
 from octopus.database import db
 
@@ -23,7 +24,9 @@ def _make_context():
     """Return context dict for a shell session so you can access
     app, db, and the User model by default.
     """
-    return {'app': app, 'db': db, 'User': User}
+    return {'app': app, 'db': db, 'User': User, 'Role': Role,
+            'Case': Case, 'CaseType': CaseType, 'Region': Region, 'RiskTags': RiskTags,
+            'case_assignments': case_assignments, 'case_risk_tags': case_risk_tags}
 
 @manager.command
 def test():

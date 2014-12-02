@@ -65,8 +65,10 @@ class EditCoreCaseForm(Form):
         self.case_desc.placeholder = self.current_case.case_desc if self.current_case.case_desc else None
         self.start_date.placeholder = self.current_case.start_date if self.current_case.start_date else None
         self.end_date.placeholder = self.current_case.end_date if self.current_case.end_date else None
-        self.case_type.placeholder = self.current_case.case_type if self.current_case.case_type else None
-        self.case_region.placeholder = self.current_case.region if self.current_case.region else None
+        if self.current_case.case_type.id:
+            self.case_type.data = (self.current_case.case_type.id, self.current_case.case_type.description)
+        if self.current_case.region.id:
+            self.case_region.placeholder = (self.current_case.region.id, self.current_case.region.id)
 
     def validate(self):
         initial_validation = super(EditCoreCaseForm, self).validate()
@@ -88,7 +90,7 @@ class EditCoreCaseForm(Form):
         if self.case_type.data:
             case_type = CaseType.query.get(self.case_type.data)
             self.current_case.case_type = case_type
-        if self.region.data:
+        if self.case_region.data:
             region = Region.query.get(self.case_region.data)
             self.current_case.region = region
 
