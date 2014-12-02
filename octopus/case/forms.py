@@ -57,18 +57,28 @@ class EditCoreCaseForm(Form):
         super(EditCoreCaseForm, self).__init__(*args, **kwargs)
         self.case_id = case_id
         self.current_case = Case.get_by_id(self.case_id)
-        self.case_type.choices = [(i.id, i.description) for i in CaseType.query]
-        self.case_region.choices = [(i.id, i.id) for i in Region.query]
+
+        # This step is needed for bypassing a defaulting of the SelectField bug
+        # we set the default by making the first element of the list the default value
+        case_types = [(i.id, i.description) for i in CaseType.query]
+        if self.current_case.case_type.id:
+            for c, (i, d) in enumerate(case_types):
+                if i == self.current_case.case_type.id:
+                    case_types.insert(0, case_types.pop(c))
+                    break
+        self.case_type.choices = case_types
+        regions = [(i.id, i.id) for i in Region.query]
+        if self.current_case.region.id:
+            for c, (i, d) in enumerate(regions):
+                if i == self.current_case.region.id:
+                    regions.insert(0, regions.pop(c))
+        self.case_region.choices = regions
 
         self.crd_number.placeholder = self.current_case.crd_number if self.current_case.crd_number else None
         self.case_name.placeholder = self.current_case.case_name if self.current_case.case_name else None
         self.case_desc.placeholder = self.current_case.case_desc if self.current_case.case_desc else None
         self.start_date.placeholder = self.current_case.start_date if self.current_case.start_date else None
         self.end_date.placeholder = self.current_case.end_date if self.current_case.end_date else None
-        if self.current_case.case_type.id:
-            self.case_type.data = (self.current_case.case_type.id, self.current_case.case_type.description)
-        if self.current_case.region.id:
-            self.case_region.placeholder = (self.current_case.region.id, self.current_case.region.id)
 
     def validate(self):
         initial_validation = super(EditCoreCaseForm, self).validate()

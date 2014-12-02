@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, redirect, flash, url_for,
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 from octopus.case import queries
-from octopus.case.forms import EditCoreCaseForm
+from octopus.case.forms import EditCoreCaseForm, NewCaseForm
 from octopus.case.utils import create_query
 
 from octopus.extensions import nav, db
@@ -89,7 +89,7 @@ def view(case_id):
 @blueprint.route("/new", methods=["GET", "POST"])
 @login_required
 def new():
-    form = EditCoreCaseForm(request.form)
+    form = NewCaseForm(request.form)
     if request.method == 'POST':
         if form.validate_on_submit():
             case = form.commit_new_case()
@@ -106,7 +106,7 @@ def edit(case_id):
     edit_form = request.args.get('edit_form')
 
     if edit_form == 'core':
-        form = EditCoreCaseForm(case_id)
+        form = EditCoreCaseForm(case_id, request.form)
         ret = render_template('case/new.html', form=form, case_id=case_id)
     else:
         abort(404)
