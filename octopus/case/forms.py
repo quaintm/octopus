@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, SelectField, TextAreaField
+from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField
 from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField, IntegerField
 
@@ -105,3 +105,18 @@ class EditCoreCaseForm(Form):
             self.current_case.region = region
 
         self.current_case.save()
+
+
+class CaseTagsForm(Form):
+
+    case_tags = SelectMultipleField(label='Case Tags', choices=[('1', 'foo'), ('2', 'bar')])
+
+    def __init__(self, case_id, *args, **kwargs):
+        super(CaseTagsForm, self).__init__(*args, **kwargs)
+
+    def commit_updates(self):
+        print self.case_tags.data
+
+    def validate(self):
+        return True
+

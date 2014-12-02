@@ -1,0 +1,41 @@
+
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+  <h1>Edit Case Tags</h1>
+    <br/>
+    <form id="caseTags" class="form" method="POST" action="" role="form">
+            {{ form.hidden_tag() }}
+        <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    {{form.case_tags.label}}
+                    <select name="{{ form.case_tags.id }}" id="{{ form.case_tags.id }}" multiple="" data-role="tagsinput">
+                        {% for label, value in form.case_tags.choices %}
+                            <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        <p><input class="btn btn-default btn-submit" type="submit" value="Save Tags"></p>
+        </div>
+{#        <select multiple data-role="tagsinput">#}
+{#          <option value="Amsterdam">Amsterdam</option>#}
+{#          <option value="Washington">Washington</option>#}
+{#          <option value="Sydney">Sydney</option>#}
+{#          <option value="Beijing">Beijing</option>#}
+{#          <option value="Cairo">Cairo</option>#}
+{#        </select>#}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{#{% block js %}#}
+{#    {{ super() }}#}
+{#    {{ make_datepicker_js(form.start_date.id) }}#}
+{#    {{ make_datepicker_js(form.end_date.id) }}#}
+{#{% endblock %}#}
+

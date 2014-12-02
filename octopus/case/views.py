@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, redirect, flash, url_for,
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 from octopus.case import queries
-from octopus.case.forms import EditCoreCaseForm, NewCaseForm
+from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm
 from octopus.case.utils import create_query
 
 from octopus.extensions import nav, db
@@ -108,6 +108,9 @@ def edit(case_id):
     if edit_form == 'core':
         form = EditCoreCaseForm(case_id, request.form)
         ret = render_template('case/new.html', form=form, case_id=case_id)
+    if edit_form == 'tags':
+        form = CaseTagsForm(case_id, request.form)
+        ret = render_template('case/case_tags.html', form=form, case_id=case_id)
     else:
         abort(404)
 
