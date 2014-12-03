@@ -13,8 +13,8 @@ blueprint = Blueprint("user", __name__, url_prefix='/user',
 
 nav.Bar('user', [
     nav.Item('<i class="fa fa-user"></i>', '', items=[
-        nav.Item('My Profile', 'user.view')
-        nav.Item('All Users', 'user.all-users'),
+        nav.Item('My Profile', 'user.view'),
+        nav.Item('All Users', 'user.all-users')
 
     ])
 ])
