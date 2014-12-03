@@ -108,7 +108,7 @@ def edit(case_id):
     if edit_form == 'core':
         form = EditCoreCaseForm(case_id, request.form)
         ret = render_template('case/new.html', form=form, case_id=case_id)
-    if edit_form == 'tags':
+    elif edit_form == 'tags':
         form = CaseTagsForm(case_id, request.form)
         ret = render_template('case/case_tags.html', form=form, case_id=case_id)
     else:

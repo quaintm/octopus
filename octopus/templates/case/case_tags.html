@@ -9,25 +9,20 @@
             {{ form.hidden_tag() }}
         <div class="container">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="form-group">
                     {{form.case_tags.label}}
+                    </br>
                     <select name="{{ form.case_tags.id }}" id="{{ form.case_tags.id }}" multiple="" data-role="tagsinput">
                         {% for label, value in form.case_tags.choices %}
                             <option value="{{ value }}">{{ label }}</option>
                         {% endfor %}
                     </select>
+                    </br>
+                    <input class="btn btn-default btn-submit left" type="submit" value="Save Tags">
                 </div>
             </div>
-        <p><input class="btn btn-default btn-submit" type="submit" value="Save Tags"></p>
         </div>
-{#        <select multiple data-role="tagsinput">#}
-{#          <option value="Amsterdam">Amsterdam</option>#}
-{#          <option value="Washington">Washington</option>#}
-{#          <option value="Sydney">Sydney</option>#}
-{#          <option value="Beijing">Beijing</option>#}
-{#          <option value="Cairo">Cairo</option>#}
-{#        </select>#}
         </div>
     </form>
 </div>
