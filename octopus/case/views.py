@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, render_template, request, redirect, flash, url_for, abort
+from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 from octopus.case import queries
-from octopus.case.forms import EditCoreCaseForm, NewCaseForm
+from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm
 from octopus.case.utils import create_query
 
 from octopus.extensions import nav, db
-from octopus.case.models import Region, CaseType, Case, case_assignments
+from octopus.case.models import Region, CaseType, Case, case_assignments, RiskTags
 from octopus.user.forms import EditUserProfile, save_profile_edits
 from octopus.utils import flash_errors
 
@@ -99,6 +99,20 @@ def new():
             flash_errors(form)
     return render_template("case/new.html", form=form)
 
+@blueprint.route("/tags/<int:case_id>")
+@blueprint.route("/tags")
+@login_required
+def get_tags(case_id=None):
+    tag_type = request.args.get('tag_type')
+
+    if tag_type == 'risk_tags':
+        if case_id:
+            return jsonify(json_list=Case.get_by_id(case_id).risk_tags_id.all())
+        else:
+            return json.dumps([i.tag for i in RiskTags.query])
+    else:
+        return json.dumps(['nada'])
+
 
 @blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])
 @login_required
@@ -108,6 +122,9 @@ def edit(case_id):
     if edit_form == 'core':
         form = EditCoreCaseForm(case_id, request.form)
         ret = render_template('case/new.html', form=form, case_id=case_id)
+    elif edit_form == 'tags':
+        form = CaseTagsForm(case_id, request.form)
+        ret = render_template('case/case_tags.html', form=form, case_id=case_id)
     else:
         abort(404)
 
