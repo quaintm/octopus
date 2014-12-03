@@ -13,16 +13,17 @@ blueprint = Blueprint("user", __name__, url_prefix='/user',
 
 nav.Bar('user', [
     nav.Item('<i class="fa fa-user"></i>', '', items=[
-        nav.Item('Dashboard', 'user.dashboard'),
         nav.Item('My Profile', 'user.view')
+        nav.Item('All Users', 'user.all-users'),
+
     ])
 ])
 
 
 @blueprint.route("/")
-@blueprint.route("/dashboard")
+@blueprint.route("/all-users")
 @login_required
-def dashboard():
+def all-users():
     users = db.session.query(User.id.label("ID"),
                              User.username.label("Username"),
                              User.first_name.label("First Name"),
