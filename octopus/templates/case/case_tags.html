@@ -11,18 +11,18 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="form-group">
-{#                    {{form.case_tags.label}}#}
+                    {{form.case_tags.label}}
                     </br>
-                    <input type="text" value="Amsterdam,Washington" data-role="tagsinput" />
-
-
-{#                    <select name="{{ form.case_tags.id }}" id="{{ form.case_tags.id }}" multiple="" data-role="tagsinput" data-provide="typeahead">#}
-{#                        {% for label, value in form.case_tags.choices %}#}
-{#                            <option value="{{ value }}">{{ label }}</option>#}
-{#                        {% endfor %}#}
-{#                    </select>#}
+{#                    <input id="caseRiskTagsForm" type="text" data-role="tagsinput"#}
+{#                           value="foo,bar"#}
+{#                     />#}
+                    <select name="{{ form.case_tags.id }}" id="caseRiskTagsForm" multiple="" data-role="tagsinput">
+                        {% for label, value in form.case_tags.choices %}
+                            <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
                     </br>
-{#                    <input class="btn btn-default btn-submit left" type="submit" value="Save Tags">#}
+                    <input class="btn btn-default btn-submit left" type="submit" value="Save Tags">
                 </div>
             </div>
         </div>
@@ -32,27 +32,26 @@
 {% endblock %}
 
 {% block js %}
-
     <script>
-        var citynames = new Bloodhound({
+        var caseRiskTags = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             prefetch: {
-                url: '{{ url_for('static', filename='citynames.json') }}',
+                url: '{{ url_for('case.get_tags', tag_type='risk_tags') }}',
                 filter: function(list) {
-                    return $.map(list, function(cityname) {
-                        return { name: cityname }; });
+                    return $.map(list, function(caseRiskTags) {
+                        return { name: caseRiskTags }; });
                 }
             }
         });
-        citynames.initialize();
+        caseRiskTags.initialize();
 
-        $('input').tagsinput({
+        $('#caseRiskTagsForm').tagsinput({
             typeaheadjs: {
-                name: 'citynames',
+                name: 'caseRiskTags',
                 displayKey: 'name',
                 valueKey: 'name',
-                source: citynames.ttAdapter()
+                source: caseRiskTags.ttAdapter()
             }
         });
     </script>

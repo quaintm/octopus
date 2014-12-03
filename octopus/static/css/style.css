@@ -131,6 +131,8 @@ footer .footer-nav {
 
 /* end submenu dropdown portion */
 
+/* This is for the typeahead feature in tags-input */
+
 .bootstrap-tagsinput { width: 100%; }
 
 .accordion {
@@ -188,3 +190,14 @@ footer .footer-nav {
   outline: 0;
   background-color: #428bca;
 }
+
+input.tt-input {
+    width: 10em;
+}
+
+#scrollable-dropdown-menu .tt-dropdown-menu {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+/* End typeahead*/
