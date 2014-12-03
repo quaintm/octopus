@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify
+from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 from octopus.case import queries
@@ -106,13 +106,12 @@ def get_tags(case_id=None):
     tag_type = request.args.get('tag_type')
 
     if tag_type == 'risk_tags':
-
         if case_id:
             return jsonify(json_list=Case.get_by_id(case_id).risk_tags_id.all())
         else:
-            return jsonify(json_list=RiskTags.tag.all())
-
-    return jsonify(json_list=[])
+            return json.dumps([i.tag for i in RiskTags.query])
+    else:
+        return json.dumps(['nada'])
 
 
 @blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])

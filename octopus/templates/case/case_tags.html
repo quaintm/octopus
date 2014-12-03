@@ -11,15 +11,18 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="form-group">
-                    {{form.case_tags.label}}
+{#                    {{form.case_tags.label}}#}
                     </br>
-                    <select name="{{ form.case_tags.id }}" id="{{ form.case_tags.id }}" multiple="" data-role="tagsinput">
-                        {% for label, value in form.case_tags.choices %}
-                            <option value="{{ value }}">{{ label }}</option>
-                        {% endfor %}
-                    </select>
+                    <input type="text" value="Amsterdam,Washington" data-role="tagsinput" />
+
+
+{#                    <select name="{{ form.case_tags.id }}" id="{{ form.case_tags.id }}" multiple="" data-role="tagsinput" data-provide="typeahead">#}
+{#                        {% for label, value in form.case_tags.choices %}#}
+{#                            <option value="{{ value }}">{{ label }}</option>#}
+{#                        {% endfor %}#}
+{#                    </select>#}
                     </br>
-                    <input class="btn btn-default btn-submit left" type="submit" value="Save Tags">
+{#                    <input class="btn btn-default btn-submit left" type="submit" value="Save Tags">#}
                 </div>
             </div>
         </div>
@@ -28,9 +31,30 @@
 </div>
 {% endblock %}
 
-{#{% block js %}#}
-{#    {{ super() }}#}
-{#    {{ make_datepicker_js(form.start_date.id) }}#}
-{#    {{ make_datepicker_js(form.end_date.id) }}#}
-{#{% endblock %}#}
+{% block js %}
+
+    <script>
+        var citynames = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: {
+                url: '{{ url_for('static', filename='citynames.json') }}',
+                filter: function(list) {
+                    return $.map(list, function(cityname) {
+                        return { name: cityname }; });
+                }
+            }
+        });
+        citynames.initialize();
+
+        $('input').tagsinput({
+            typeaheadjs: {
+                name: 'citynames',
+                displayKey: 'name',
+                valueKey: 'name',
+                source: citynames.ttAdapter()
+            }
+        });
+    </script>
+{% endblock %}
 

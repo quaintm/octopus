@@ -16,13 +16,13 @@ css = Bundle(
 js = Bundle(
     "libs/jQuery/dist/jquery.js",
     "libs/bootstrap/dist/js/bootstrap.js",
-    "js/plugins.js",
     "libs/dataTables/jquery.dataTables.js",
     "libs/dataTables/dataTables.bootstrap.js",
     "libs/dataTables/dataTables.tableTools.js",
     "libs/bootstrap-datepicker/js/bootstrap-datepicker.js",
-    "libs/Bootstrap-3-Typeahead/bootstrap3-typeahead.js",
+    "libs/typeahead.js/dist/typeahead.bundle.js",
     "libs/bootstrap-tagsinput/dist/bootstrap-tagsinput.js",
+    "js/plugins.js",
     filters='jsmin',
     output="public/js/common.js"
 )
