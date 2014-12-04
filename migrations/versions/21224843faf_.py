@@ -1,13 +1,13 @@
 """empty message
 
-Revision ID: 4dc620f61ac9
+Revision ID: 21224843faf
 Revises: None
-Create Date: 2014-12-03 22:52:10.949995
+Create Date: 2014-12-03 23:35:15.602283
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '4dc620f61ac9'
+revision = '21224843faf'
 down_revision = None
 
 from alembic import op
@@ -65,6 +65,15 @@ def upgrade():
     )
     op.create_index(op.f('ix_tags_kind'), 'tags', ['kind'], unique=False)
     op.create_index(op.f('ix_tags_tag'), 'tags', ['tag'], unique=False)
+    op.create_table('roles',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=80), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name'),
+    sqlite_autoincrement=True
+    )
     op.create_table('cases',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('crd_number', sa.Integer(), nullable=False),
@@ -86,15 +95,6 @@ def upgrade():
     op.create_index(op.f('ix_cases_crd_number'), 'cases', ['crd_number'], unique=False)
     op.create_index(op.f('ix_cases_end_date'), 'cases', ['end_date'], unique=False)
     op.create_index(op.f('ix_cases_start_date'), 'cases', ['start_date'], unique=False)
-    op.create_table('roles',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=80), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('name'),
-    sqlite_autoincrement=True
-    )
     op.create_table('case_tag_map',
     sa.Column('tag_id', sa.Integer(), nullable=True),
     sa.Column('case_id', sa.Integer(), nullable=True),
@@ -124,12 +124,12 @@ def downgrade():
     op.drop_index(op.f('ix_case_tag_map_tag_id'), table_name='case_tag_map')
     op.drop_index(op.f('ix_case_tag_map_case_id'), table_name='case_tag_map')
     op.drop_table('case_tag_map')
-    op.drop_table('roles')
     op.drop_index(op.f('ix_cases_start_date'), table_name='cases')
     op.drop_index(op.f('ix_cases_end_date'), table_name='cases')
     op.drop_index(op.f('ix_cases_crd_number'), table_name='cases')
     op.drop_index(op.f('ix_cases_case_name'), table_name='cases')
     op.drop_table('cases')
+    op.drop_table('roles')
     op.drop_index(op.f('ix_tags_tag'), table_name='tags')
     op.drop_index(op.f('ix_tags_kind'), table_name='tags')
     op.drop_table('tags')
