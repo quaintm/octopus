@@ -1,47 +1,78 @@
 {% extends "layout.html" %}
-
+{% from "macros/modal_form.html" import render_modal %}
+{% set modal_title = "Edit " + user.username + "'s Profile" %}
 
 {% block content %}
 <div class="container">
-<div class="row">
-<div class="col-lg-11">
-    <h1>{{ user.username }}'s profile</h1>
-</div>
-<div class="col-lg-1">
-    <a href="{{ url_for('user.edit', id=user.id)}}" type="button" class="btn btn-default btn-lg">Edit</a>
-</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+    <div class="row">
+    <div class="col-lg-11">
+        <h4>{{ user.username }}'s profile</h4>
+    </div>
+    <div class="col-lg-1">
+    
+    {% if current_user.id == user.id or current_user.is_admin %}
+    
+        {% call render_modal("Edit", "myModalLabel", modal_title, btn_type="btn-warning") %}
+            <form id="editUserProfile" class="form" method="POST" action="{{ url_for('user.view', id=user.id) }}" role="form">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{form.username.label}}
+                    {{form.username(placeholder=user.username, class_="form-control")}}
+                </div>
+                <div class="form-group">
+                    {{form.email.label}}
+                    {{form.email(placeholder=form.email.placeholder, class_="form-control")}}
+                </div>
+                <div class="form-group">
+                    {{form.first_name.label}}
+                    {{form.first_name(placeholder=form.first_name.placeholder, class_="form-control")}}
+                </div>
+                <div class="form-group">
+                    {{form.last_name.label}}
+                    {{form.last_name(placeholder=form.last_name.placeholder, class_="form-control")}}
+                </div>
+                <div class="form-group">
+                    {{form.old_password_confirm.label}}
+                    {{form.old_password_confirm(placeholder="Old Password", class_="form-control")}}
+                </div>
+                <div class="form-group">
+                    {{form.new_password.label}}
+                    {{form.new_password(placeholder="New Password", class_="form-control")}}
+                </div>
+                <div class="form-group">
+                    {{form.new_confirm.label}}
+                    {{form.new_confirm(placeholder="New Password (again)", class_="form-control")}}
+                </div>
+                <p><input class="btn btn-default btn-right" type="submit" value="Update Profile"></p>
+            </form>
+        {% endcall %}
+    {% endif %}
+    </div>
+    </div>
 </div>
 
-<div class="row">
-<div class="col-lg-6">
+<div class="panel-body">
 
-</div>
-
-<div class="col-lg-6">
-    <table class="table table-striped">
-        <tbody>
-        <tr>
-            <td>Username</td>
-            <td>{{ user.username|default('Undefined') }}</td>
-        </tr>
-        <tr>
-            <td>First Name</td>
-            <td>{{ user.first_name|default('Undefined') }}</td>
-        </tr>
-        <tr>
-            <td>Last Name</td>
-            <td>{{ user.last_name|default('Undefined') }}</td>
-        </tr>
-        <tr>
-            <td>Email</td>
-            <td>{{ user.email|default('Undefined') }}</td>
-        </tr>
-            <tr>
-                <td>Status</td>
-                <td>{{ user.is_active()|default('Undefined') }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <h4>Username</h4>
+            <p class="text-justify">{{ user.username|default('Undefined') }}</p>
+        </li>
+        <li class="list-group-item">
+            <h4>First Name</h4>
+            <p class="text-justify">{{ user.first_name|default('Undefined') }}</p>
+        </li>
+        <li class="list-group-item">
+            <h4>Last Name</h4>
+            <p class="text-justify">{{ user.last_name|default('Undefined') }}</p>
+        </li>
+        <li class="list-group-item">
+            <h4>Email</h4>
+            <p class="text-justify">{{ user.email|default('Undefined') }}</p>
+        </li>
+    </ul>
 </div>
 
 </div>

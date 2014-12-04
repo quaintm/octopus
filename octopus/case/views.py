@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, render_template, request, redirect, flash, url_for
+from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
-from octopus.case.forms import NewCaseForm
+from octopus.case import queries
+from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm
 from octopus.case.utils import create_query
 
 from octopus.extensions import nav, db
-from octopus.case.models import Region, CaseType, Case, case_assignments
+from octopus.case.models import Region, CaseType, Case, case_staff_map, Tag
 from octopus.user.forms import EditUserProfile, save_profile_edits
 from octopus.utils import flash_errors
 
@@ -16,63 +17,56 @@ blueprint = Blueprint("case", __name__, url_prefix='/case',
 
 nav.Bar('case', [
     nav.Item('<i class="fa fa-briefcase"></i>', '', items=[
-        nav.Item('Dashboard', 'case.dashboard'),
         nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
+        nav.Item('All Cases', 'case.all_cases'),
         nav.Item('Create New Case', 'case.new')
     ])
 ])
 
-@blueprint.route("/")
-@blueprint.route("/dashboard")
-def dashboard():
+
+# @blueprint.route("/")
+@blueprint.route("/all_cases")
+def all_cases():
     cases = db.session.query(Case.id.label("ID"),
                              Case.crd_number.label("CRD #"),
                              Case.case_name.label("Name"),
-                             CaseType.id.label("Case Type"),
+                             CaseType.code.label("Case Type"),
                              Case.start_date.label("Start"),
                              Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
     extra_cols = [
-        {'header': {'text': "View/Edit"},
+        {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
-             {'func': lambda x: url_for('case.view', id=getattr(x, 'ID')),
+             {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
-              'class': 'btn btn-primary btn-sm'},
-             {'func': lambda x: url_for('case.edit', id=getattr(x, 'ID')),
-              'text': 'Edit',
-              'type': 'button',
-              'class': 'btn btn-warning btn-sm'}
+              'class': 'btn btn-primary btn-sm'}
          ]
         }
     ]
-    return render_template("case/dashboard.html", cases=cases, extra_cols=extra_cols)
+    return render_template("case/all_cases.html", cases=cases, extra_cols=extra_cols)
+
 
 @blueprint.route("/query")
 @login_required
 def query():
     q = db.session.query(Case.id.label("ID"),
-                             Case.crd_number.label("CRD #"),
-                             Case.case_name.label("Name"),
-                             CaseType.id.label("Case Type"),
-                             Case.start_date.label("Start"),
-                             Case.end_date.label("End")
+                         Case.crd_number.label("CRD #"),
+                         Case.case_name.label("Name"),
+                         CaseType.code.label("Case Type"),
+                         Case.start_date.label("Start"),
+                         Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
     extra_cols = [
-        {'header': {'text': "View/Edit"},
+        {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
-             {'func': lambda x: url_for('case.view', id=getattr(x, 'ID')),
+             {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
-              'class': 'btn btn-primary btn-sm'},
-             {'func': lambda x: url_for('case.edit', id=getattr(x, 'ID')),
-              'text': 'Edit',
-              'type': 'button',
-              'class': 'btn btn-warning btn-sm'}
-         ]
-        }
+              'class': 'btn btn-primary btn-sm'}
+         ]}
     ]
     valid, q = create_query(request.args, q)
 
@@ -80,22 +74,17 @@ def query():
         return render_template("case/query.html", cases=q, extra_cols=extra_cols)
     else:
         flash("Invalid Query")
-        return redirect(url_for("case/dashboard.html"))
+        return redirect(url_for('public.home'))
 
 
-@blueprint.route('/view/<int:id>')
+@blueprint.route('/view/<int:case_id>')
 @login_required
-def view(id):
-    case = db.session.query(Case.id.label("ID"),
-                             Case.crd_number.label("CRD #"),
-                             Case.case_name.label("Name"),
-                             CaseType.id.label("Case Type"),
-                             Region.id.label("Region"),
-                             Case.case_desc.label("Description"),
-                             Case.start_date.label("Start"),
-                             Case.end_date.label("End")
-    ).filter(Case.id == id).join(Region, CaseType)
+def view(case_id):
+    case = queries.single_case_view(case_id)
+    if not case:
+        abort(404)
     return render_template('case/case.html', case=case)
+
 
 @blueprint.route("/new", methods=["GET", "POST"])
 @login_required
@@ -103,40 +92,50 @@ def new():
     form = NewCaseForm(request.form)
     if request.method == 'POST':
         if form.validate_on_submit():
-            case_type = CaseType.query.get(form.case_type.data)
-            region = Region.query.get(form.case_region.data)
-            case = Case.create(crd_number=form.crd_number.data,
-                                  case_name=form.case_name.data,
-                                  case_desc=form.case_desc.data,
-                                  start_date=form.start_date.data,
-                                  end_date=form.end_date.data,
-                                  case_type=case_type,
-                                  region=region)
+            case = form.commit_new_case()
             flash("New Case Created")
-            return redirect(url_for('case.view', id=case.id))
+            return redirect(url_for('case.view', case_id=case.id))
         else:
             flash_errors(form)
     return render_template("case/new.html", form=form)
 
-
-@blueprint.route("/edit", methods=["GET", "POST"])
+@blueprint.route("/tags/<int:case_id>")
+@blueprint.route("/tags")
 @login_required
-def edit():
-    # case_id = request.args.get("case_id")
-    # if id is None:
-    #     user = current_user
-    #     id = current_user.id
-    # else:
-    #     user = User.query.filter_by(id=id).first_or_404()
-    #
-    # form = EditUserProfile(request.form)
-    # if request.method == 'POST':
-    #     if form.validate_on_submit():
-    #         save_profile_edits(form)
-    #         flash("User Profile Edits Saved")
-    #         redirect_url = request.args.get("next") or url_for("user.dashboard")
-    #         return redirect(redirect_url)
-    #     else:
-    #         flash_errors(form)
-    # return render_template("user/new.html", form=form, user=user)
-    return redirect(url_for("public.home"))
+def get_tags(case_id=None):
+    tag_type = request.args.get('tag_type')
+
+    if tag_type == 'risk_tags':
+        if case_id:
+            return jsonify(json_list=Case.get_by_id(case_id).tags.filter(Tag.kind=='risk').all())
+        else:
+            return json.dumps([i.tag for i in Tag.query])
+    else:
+        return json.dumps(['nada'])
+
+
+@blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])
+@login_required
+def edit(case_id):
+    edit_form = request.args.get('edit_form')
+
+    if edit_form == 'core':
+        form = EditCoreCaseForm(case_id, request.form)
+        ret = render_template('case/new.html', form=form, case_id=case_id)
+    elif edit_form == 'tags':
+        form = CaseTagsForm(case_id, request.form)
+        ret = render_template('case/case_tags.html', form=form, case_id=case_id)
+    else:
+        abort(404)
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            form.commit_updates()
+            flash('Entries Updated', category='success')
+            return redirect(url_for('case.view', case_id=case_id))
+        else:
+            flash_errors(form)
+
+    return ret
+
+

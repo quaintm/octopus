@@ -53,6 +53,12 @@
     {% endwith %}
 
     {% block content %}{% endblock %}
+
+{# this is a target div for the generic macros.ajax_modal_link function, don't remove! #}
+<div class="modal fade" id="ajaxModalDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-content"></div>
+</div>
+{# end modal #}
   </div>
 
 </div><!-- end container -->

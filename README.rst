@@ -40,7 +40,7 @@ Then run the following commands to bootstrap your environment.
     python manage.py db upgrade
     python manage.py server
 
-
+Be careful of the annoying 'sqlite_sequence' table bug. In every migration script, it will need to be deleted (its a reserved table that isn't handled correctly yet).
 
 Deployment
 ----------
@@ -55,7 +55,7 @@ To open the interactive shell, run ::
 
     python manage.py shell
 
-By default, you will have access to ``app``, ``db``, and the ``User`` model.
+In this, you will have access to all current Case and User models
 
 
 Running Tests

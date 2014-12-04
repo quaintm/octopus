@@ -1,0 +1,4 @@
+"id","username","email","password","created_at","first_name","last_name","active","is_admin"
+"1","foobar","foobar@gmail.com","$2a$13$7qZ.oJKz19bXbCFNfdZ6fOpBe9pcbo5sHPu6IeZ9aOym6s7iGlHOm","2014-12-04 04:04:18.046953",,,"1","0"
+"2","quaintancem","q@q.com","$2a$13$jZkbw9xIkrWvckdQjT9CJuplpbxywP4Psaa7V7r4ymSbXeCHTuXje","2014-12-04 04:04:54.490016",,,"1","0"
+"3","martinow","w@w.com","$2a$13$YSx2.hzoSgfZXH015PNEIeNDRqBgYrbdx/Fg5F.5VDqRxwosWyi9a","2014-12-04 04:05:11.680292",,,"1","0"
