@@ -21,8 +21,8 @@ class NewCaseForm(Form):
 
     def __init__(self, *args, **kwargs):
         super(NewCaseForm, self).__init__(*args, **kwargs)
-        self.case_type.choices = [(i.id, i.code) for i in CaseType.query]
-        self.case_region.choices = [(i.id, i.code) for i in Region.query]
+        self.case_type.choices = [(unicode(i.id), i.code) for i in CaseType.query]
+        self.case_region.choices = [(unicode(i.id), i.code) for i in Region.query]
 
     def validate(self):
         initial_validation = super(NewCaseForm, self).validate()
