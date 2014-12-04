@@ -8,7 +8,7 @@ from flask.ext.migrate import MigrateCommand
 
 from octopus.app import create_app
 from octopus.user.models import User, Role
-from octopus.case.models import Case, CaseType, Region, RiskTags, case_assignments, case_risk_tags
+from octopus.case.models import Case, CaseType, Region, Tag, case_staff_map, case_tag_map
 from octopus.settings import DevConfig, ProdConfig
 from octopus.database import db
 
@@ -25,8 +25,8 @@ def _make_context():
     app, db, and the User model by default.
     """
     return {'app': app, 'db': db, 'User': User, 'Role': Role,
-            'Case': Case, 'CaseType': CaseType, 'Region': Region, 'RiskTags': RiskTags,
-            'case_assignments': case_assignments, 'case_risk_tags': case_risk_tags}
+            'Case': Case, 'CaseType': CaseType, 'Region': Region, 'Tag': Tag,
+            'case_staff_map': case_staff_map, 'case_tag_map': case_tag_map}
 
 @manager.command
 def test():

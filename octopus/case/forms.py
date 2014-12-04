@@ -114,7 +114,7 @@ class CaseTagsForm(Form):
 
     def __init__(self, case_id, *args, **kwargs):
         super(CaseTagsForm, self).__init__(*args, **kwargs)
-        self.case_tags.choices = [(i.tag, i.tag) for i in Case.get_by_id(case_id).risk_tag_id]
+        self.case_tags.choices = [(i.id, i.tag) for i in Case.get_by_id(case_id).tags if i.type == 'risk']
 
     def commit_updates(self):
         print self.case_tags.data

@@ -43,27 +43,27 @@ class Region(SurrogatePK, Model):
         return '<Region(code={code})>'.format(code=self.code)
 
 
-class RiskTags(Model):
-    __tablename__ = 'risk_tags'
-    id = Column(db.String(4), unique=True, primary_key=True, nullable=False)
-    tag = Column(db.Text(), unique=True)
+class Tag(SurrogatePK, Model):
+    __tablename__ = 'tags'
+    kind = Column(db.String(4), nullable=False)
+    tag = Column(db.Text(), nullable=False)
 
     def __init__(self, **kwargs):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<RiskTag({name})>'.format(name=self.tag)
+        return '<Tag({id={id}, kind={kind}, tag={tag})>'.format(tag=self.tag, id=self.id, kind=self.kind)
 
 
-case_risk_tags = db.Table('case_risk_tags',
-                          db.Column('risk_tag_id', db.Integer, db.ForeignKey('risk_tags.id')),
-                          db.Column('case_id', db.Integer, db.ForeignKey('cases.id')))
+case_tag_map = db.Table('case_tag_map',
+                        db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+                        db.Column('case_id', db.Integer, db.ForeignKey('cases.id')))
 
-case_assignments = db.Table('case_assignments',
-                            db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                            db.Column('case_id', db.Integer, db.ForeignKey('cases.id')),
-                            db.Column('primary', db.Boolean, default=False),
-                            db.Column('secondary', db.Boolean, default=False))
+case_staff_map = db.Table('case_staff_map',
+                          db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                          db.Column('case_id', db.Integer, db.ForeignKey('cases.id')),
+                          db.Column('primary', db.Boolean, default=False),
+                          db.Column('secondary', db.Boolean, default=False))
 
 
 class Case(SurrogatePK, Model):
@@ -80,17 +80,17 @@ class Case(SurrogatePK, Model):
     region_id = ReferenceCol('regions', nullable=False)
     region = relationship('Region', backref='regions')
 
-    staff_id = db.relationship('User', secondary=case_assignments,
-                                backref=db.backref('cases', lazy='dynamic'))
+    staff = db.relationship('User', secondary=case_staff_map,
+                            backref=db.backref('cases', lazy='dynamic'))
 
     mars_risk_score = Column(db.Integer, unique=False, nullable=True)
     qau_risk_score = Column(db.Integer, unique=False, nullable=True)
     examiner_risk_score = Column(db.Integer, unique=False, nullable=True)
-    risk_tag_id = db.relationship('RiskTags', secondary=case_risk_tags,
-                                  backref=db.backref('cases', lazy='dynamic'))
+    tags = db.relationship('Tags', secondary=case_tag_map,
+                           backref=db.backref('cases', lazy='dynamic'))
 
     def __init__(self, *args, **kwargs):
         db.Model.__init__(self, *args, **kwargs)
 
     def __repr__(self):
-        return '<Case({id!r})>'.format(id=self.id)
+        return '<Case(id={id}, case_name={case_name}, )>'.format(id=self.id, case_name=self.case_name)
