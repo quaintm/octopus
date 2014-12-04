@@ -1,0 +1,3 @@
+[submodule "octopus/static/libs/bootstrap-tagsinput"]
+	path = octopus/static/libs/bootstrap-tagsinput
+	url = https://github.com/TimSchlechter/bootstrap-tagsinput.git
