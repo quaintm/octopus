@@ -1,3 +1,6 @@
 [submodule "octopus/static/libs/bootstrap-tagsinput"]
 	path = octopus/static/libs/bootstrap-tagsinput
 	url = https://github.com/TimSchlechter/bootstrap-tagsinput.git
+[submodule "octopus/static/libs/typeahead.js"]
+	path = octopus/static/libs/typeahead.js
+	url = https://github.com/twitter/typeahead.js.git
