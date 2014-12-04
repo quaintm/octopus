@@ -21,8 +21,8 @@ class NewCaseForm(Form):
 
     def __init__(self, *args, **kwargs):
         super(NewCaseForm, self).__init__(*args, **kwargs)
-        self.case_type.choices = [(i.id, i.description) for i in CaseType.query]
-        self.case_region.choices = [(i.id, i.id) for i in Region.query]
+        self.case_type.choices = [(i.id, i.code) for i in CaseType.query]
+        self.case_region.choices = [(i.id, i.code) for i in Region.query]
 
     def validate(self):
         initial_validation = super(NewCaseForm, self).validate()
@@ -61,14 +61,14 @@ class EditCoreCaseForm(Form):
 
         # This step is needed for bypassing a defaulting of the SelectField bug
         # we set the default by making the first element of the list the default value
-        case_types = [(i.id, i.description) for i in CaseType.query]
+        case_types = [(i.id, i.code) for i in CaseType.query]
         if self.current_case.case_type.id:
             for c, (i, d) in enumerate(case_types):
                 if i == self.current_case.case_type.id:
                     case_types.insert(0, case_types.pop(c))
                     break
         self.case_type.choices = case_types
-        regions = [(i.id, i.id) for i in Region.query]
+        regions = [(i.id, i.code) for i in Region.query]
         if self.current_case.region.id:
             for c, (i, d) in enumerate(regions):
                 if i == self.current_case.region.id:

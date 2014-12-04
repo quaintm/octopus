@@ -26,9 +26,9 @@ class CaseType(SurrogatePK, Model):
         return '<CaseType (code={code}, description={desc})>'.format(code=self.code, desc=self.description)
 
 
-class Region(Model):
+class Region(SurrogatePK, Model):
     __tablename__ = 'regions'
-    id = Column(db.String(4), unique=True, primary_key=True, nullable=False)
+    code = Column(db.String(4), unique=True, primary_key=True, nullable=False)
     name = Column(db.String(80), unique=True, nullable=False)
     address = Column(db.String(120), unique=False, nullable=False)
     city = Column(db.String(80), unique=False, nullable=False)
@@ -40,7 +40,7 @@ class Region(Model):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<Region(id={id})>'.format(id=self.id)
+        return '<Region(code={code})>'.format(code=self.code)
 
 
 class RiskTags(Model):

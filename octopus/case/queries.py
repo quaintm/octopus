@@ -9,7 +9,7 @@ def single_case_view(case_id):
                              Case.crd_number,
                              Case.case_name,
                              CaseType.id.label('case_type_id'),
-                             Region.id.label('region_id'),
+                             Region.code.label('region_id'),
                              Case.case_desc,
                              Case.start_date,
                              Case.end_date).filter(Case.id == case_id).join(Region, CaseType).first()
