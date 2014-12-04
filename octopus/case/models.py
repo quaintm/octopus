@@ -17,7 +17,7 @@ from octopus.database import (
 class CaseType(SurrogatePK, Model):
     __tablename__ = 'case_types'
     code = Column(db.String(15), unique=True, nullable=False, index=True)
-    description = Column(db.String(80), unique=True, nullable=False, index=True)
+    description = Column(db.String(80), nullable=False, index=True)
 
     def __init__(self, name, **kwargs):
         db.Model.__init__(self, name=name, **kwargs)
