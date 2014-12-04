@@ -30,7 +30,7 @@ def dashboard():
     cases = db.session.query(Case.id.label("ID"),
                              Case.crd_number.label("CRD #"),
                              Case.case_name.label("Name"),
-                             CaseType.id.label("Case Type"),
+                             CaseType.code.label("Case Type"),
                              Case.start_date.label("Start"),
                              Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
@@ -54,7 +54,7 @@ def query():
     q = db.session.query(Case.id.label("ID"),
                          Case.crd_number.label("CRD #"),
                          Case.case_name.label("Name"),
-                         CaseType.id.label("Case Type"),
+                         CaseType.code.label("Case Type"),
                          Case.start_date.label("Start"),
                          Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())

@@ -14,16 +14,16 @@ from octopus.database import (
 )
 
 
-class CaseType(Model):
+class CaseType(SurrogatePK, Model):
     __tablename__ = 'case_types'
-    id = Column(db.String(15), unique=True, primary_key=True, nullable=False)
+    code = Column(db.String(15), unique=True, nullable=False)
     description = Column(db.String(80), unique=True, nullable=False)
 
     def __init__(self, name, **kwargs):
         db.Model.__init__(self, name=name, **kwargs)
 
     def __repr__(self):
-        return '<CaseType (id={id}, description={desc})>'.format(id=self.id, desc=self.description)
+        return '<CaseType (code={code}, description={desc})>'.format(code=self.code, desc=self.description)
 
 
 class Region(Model):
