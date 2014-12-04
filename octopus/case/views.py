@@ -7,7 +7,7 @@ from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm
 from octopus.case.utils import create_query
 
 from octopus.extensions import nav, db
-from octopus.case.models import Region, CaseType, Case, case_assignments, RiskTags
+from octopus.case.models import Region, CaseType, Case, case_staff_map, Tag
 from octopus.user.forms import EditUserProfile, save_profile_edits
 from octopus.utils import flash_errors
 
@@ -30,7 +30,7 @@ def dashboard():
     cases = db.session.query(Case.id.label("ID"),
                              Case.crd_number.label("CRD #"),
                              Case.case_name.label("Name"),
-                             CaseType.id.label("Case Type"),
+                             CaseType.code.label("Case Type"),
                              Case.start_date.label("Start"),
                              Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
@@ -54,7 +54,7 @@ def query():
     q = db.session.query(Case.id.label("ID"),
                          Case.crd_number.label("CRD #"),
                          Case.case_name.label("Name"),
-                         CaseType.id.label("Case Type"),
+                         CaseType.code.label("Case Type"),
                          Case.start_date.label("Start"),
                          Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
@@ -107,9 +107,9 @@ def get_tags(case_id=None):
 
     if tag_type == 'risk_tags':
         if case_id:
-            return jsonify(json_list=Case.get_by_id(case_id).risk_tags_id.all())
+            return jsonify(json_list=Case.get_by_id(case_id).tags.filter(Tag.kind=='risk').all())
         else:
-            return json.dumps([i.tag for i in RiskTags.query])
+            return json.dumps([i.tag for i in Tag.query])
     else:
         return json.dumps(['nada'])
 
