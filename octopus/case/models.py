@@ -10,7 +10,7 @@ from octopus.database import (
     Model,
     ReferenceCol,
     relationship,
-    SurrogatePK,
+    SurrogatePK
 )
 
 
