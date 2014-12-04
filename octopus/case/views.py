@@ -17,16 +17,16 @@ blueprint = Blueprint("case", __name__, url_prefix='/case',
 
 nav.Bar('case', [
     nav.Item('<i class="fa fa-briefcase"></i>', '', items=[
-        nav.Item('Dashboard', 'case.dashboard'),
         nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
+        nav.Item('All Cases', 'case.all_cases'),
         nav.Item('Create New Case', 'case.new')
     ])
 ])
 
 
-@blueprint.route("/")
-@blueprint.route("/dashboard")
-def dashboard():
+# @blueprint.route("/")
+@blueprint.route("/all_cases")
+def all_cases():
     cases = db.session.query(Case.id.label("ID"),
                              Case.crd_number.label("CRD #"),
                              Case.case_name.label("Name"),
@@ -45,7 +45,7 @@ def dashboard():
          ]
         }
     ]
-    return render_template("case/dashboard.html", cases=cases, extra_cols=extra_cols)
+    return render_template("case/all_cases.html", cases=cases, extra_cols=extra_cols)
 
 
 @blueprint.route("/query")
@@ -74,7 +74,7 @@ def query():
         return render_template("case/query.html", cases=q, extra_cols=extra_cols)
     else:
         flash("Invalid Query")
-        return redirect(url_for("case/dashboard.html"))
+        return redirect(url_for('public.home'))
 
 
 @blueprint.route('/view/<int:case_id>')

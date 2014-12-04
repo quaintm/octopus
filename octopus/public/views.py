@@ -30,7 +30,7 @@ def home():
         if form.validate_on_submit():
             login_user(form.user)
             flash("You are logged in.", 'success')
-            redirect_url = request.args.get("next") or url_for("user.dashboard")
+            redirect_url = request.args.get("next") or url_for("user.all_users")
             return redirect(redirect_url)
         else:
             flash_errors(form)
