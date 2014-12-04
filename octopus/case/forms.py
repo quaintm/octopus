@@ -1,7 +1,9 @@
 from flask_wtf import Form
-from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField
+from flask.ext.login import current_user
+from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField, IntegerField
+
 
 from octopus.case.models import Region, CaseType, Case
 from octopus.extensions import db
@@ -17,7 +19,11 @@ class NewCaseForm(Form):
     end_date = DateField('End Date', validators=[Optional()])
     case_type = SelectField('Case Type', validators=[DataRequired()])
 
-    case_region = SelectField("Regional Office", validators=[DataRequired()])
+    case_region = SelectField('Regional Office', validators=[DataRequired()])
+
+    self_to_case = BooleanField('Add me to this case', default=True)
+
+
 
     def __init__(self, *args, **kwargs):
         super(NewCaseForm, self).__init__(*args, **kwargs)
@@ -33,6 +39,7 @@ class NewCaseForm(Form):
     def commit_new_case(self):
         case_type = CaseType.query.get(self.case_type.data)
         region = Region.query.get(self.case_region.data)
+
         case = Case.create(crd_number=self.crd_number.data,
                            case_name=self.case_name.data,
                            case_desc=self.case_desc.data,
@@ -40,7 +47,14 @@ class NewCaseForm(Form):
                            end_date=self.end_date.data,
                            case_type=case_type,
                            region=region)
+        
+        if self.self_to_case:
+            case.staff.append(current_user)
+            case.save()
+
         return case
+
+
 
 class EditCoreCaseForm(Form):
     crd_number = IntegerField('CRD Number',
