@@ -50,10 +50,10 @@ class NewCaseForm(Form):
         
         if self.self_to_case:
             case.staff.append(current_user)
+            case.save()
 
         return case
 
-          
 
 
 class EditCoreCaseForm(Form):
