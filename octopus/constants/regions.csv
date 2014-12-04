@@ -1,4 +1,4 @@
-"id","name","address","city","state","zip","phone"
+"code","name","address","city","state","zip","phone"
 "HQ","SEC Headquarters","100 F Street, NE","Washington","DC","20549","(202) 942-8088"
 "ARO","Atlanta Regional Office","950 East Paces Ferry, N.E., Suite 900","Atlanta","GA","30326-1382","(404) 842-7600"
 "BRO","Boston Regional Office","33 Arch Street, 23rd Floor","Boston","MA","02110-1424","(617) 573-8900"

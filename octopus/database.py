@@ -50,7 +50,7 @@ class SurrogatePK(object):
     """A mixin that adds a surrogate integer 'primary key' column named
     ``id`` to any declarative-mapped class.
     """
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True, 'sqlite_autoincrement': True}
 
     id = db.Column(db.Integer, primary_key=True)
 
