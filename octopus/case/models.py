@@ -86,7 +86,7 @@ class Case(SurrogatePK, Model):
     mars_risk_score = Column(db.Integer, unique=False, nullable=True)
     qau_risk_score = Column(db.Integer, unique=False, nullable=True)
     examiner_risk_score = Column(db.Integer, unique=False, nullable=True)
-    tags = db.relationship('Tags', secondary=case_tag_map,
+    tags = db.relationship('Tag', secondary=case_tag_map,
                            backref=db.backref('cases', lazy='dynamic'))
 
     def __init__(self, *args, **kwargs):
