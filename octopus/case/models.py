@@ -55,7 +55,7 @@ class Tag(SurrogatePK, Model):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<Tag({id={id}, kind={kind}, tag={tag})>'.format(tag=self.tag, id=self.id, kind=self.kind)
+        return '<Tag(id={id}, kind={kind}, tag={tag})>'.format(tag=self.tag, id=self.id, kind=self.kind)
 
 
 case_tag_map = db.Table('case_tag_map',
