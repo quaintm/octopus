@@ -2,8 +2,10 @@
 import datetime as dt
 
 from flask.ext.login import UserMixin
+from sqlalchemy.ext.associationproxy import association_proxy
 
 from octopus.extensions import bcrypt
+
 from octopus.database import (
     Column,
     db,
@@ -38,6 +40,9 @@ class User(UserMixin, SurrogatePK, Model):
     active = Column(db.Boolean(), default=False)
     is_admin = Column(db.Boolean(), default=False)
 
+    # ref to staff table
+    cases = association_proxy('case_staff_map','cases')
+
     def __init__(self, username, email, password=None, **kwargs):
         db.Model.__init__(self, username=username, email=email, **kwargs)
         if password:
@@ -57,3 +62,4 @@ class User(UserMixin, SurrogatePK, Model):
 
     def __repr__(self):
         return '<User({username!r})>'.format(username=self.username)
+
