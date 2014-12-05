@@ -6,6 +6,7 @@ from wtforms.fields.html5 import DateField, IntegerField
 
 
 from octopus.case.models import Region, CaseType, Case
+from octopus.user.models import User
 from octopus.extensions import db
 
 
@@ -20,6 +21,7 @@ class NewCaseForm(Form):
     case_type = SelectField('Case Type', validators=[DataRequired()])
 
     case_region = SelectField('Regional Office', validators=[DataRequired()])
+    case_lead = SelectField('Case Lead', validators=[DataRequired()])
 
     self_to_case = BooleanField('Add me to this case', default=True)
 
@@ -29,6 +31,7 @@ class NewCaseForm(Form):
         super(NewCaseForm, self).__init__(*args, **kwargs)
         self.case_type.choices = [(unicode(i.id), i.code) for i in CaseType.query]
         self.case_region.choices = [(unicode(i.id), i.code) for i in Region.query]
+        self.case_lead.choices = [(unicode(i.id), i.full_name) for i in User.query]
 
     def validate(self):
         initial_validation = super(NewCaseForm, self).validate()
@@ -46,8 +49,11 @@ class NewCaseForm(Form):
                            start_date=self.start_date.data,
                            end_date=self.end_date.data,
                            case_type=case_type,
-                           region=region)
+                           region=region,
+                           )
         
+        case.staff.append(self.case_lead)
+
         if self.self_to_case:
             case.staff.append(current_user)
             case.save()
