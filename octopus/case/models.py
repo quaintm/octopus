@@ -2,8 +2,11 @@
 import datetime as dt
 
 from flask.ext.login import UserMixin
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import backref
 
 from octopus.extensions import bcrypt
+from octopus.user.models import User
 from octopus.database import (
     Column,
     db,
@@ -59,11 +62,18 @@ case_tag_map = db.Table('case_tag_map',
                         db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), index=True),
                         db.Column('case_id', db.Integer, db.ForeignKey('cases.id'), index=True))
 
-case_staff_map = db.Table('case_staff_map',
-                          db.Column('user_id', db.Integer, db.ForeignKey('users.id'), index=True),
-                          db.Column('case_id', db.Integer, db.ForeignKey('cases.id'), index=True),
-                          db.Column('primary', db.Boolean, default=False),
-                          db.Column('secondary', db.Boolean, default=False))
+
+class case_staff_map(SurrogatePK, Model):
+    __tablename__ = 'case_staff_map'
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True)
+    case_id = db.Column(db.Integer, db.ForeignKey('cases.id'), index=True)
+    primary = db.Column(db.Boolean, default=False)
+    secondary = db.Column(db.Boolean, default=False)
+
+    case = db.relationship('Case', backref='case_staff_map')
+    user = db.relationship('User', backref=backref('case_staff_map',
+                                                   cascade='all, delete-orphan')
+                           )
 
 
 class Case(SurrogatePK, Model):
@@ -80,9 +90,6 @@ class Case(SurrogatePK, Model):
     region_id = ReferenceCol('regions', nullable=False)
     region = relationship('Region', backref='regions')
 
-    staff = db.relationship('User', secondary=case_staff_map,
-                            backref=db.backref('cases', lazy='dynamic'))
-
     mars_risk_score = Column(db.Integer, unique=False, nullable=True)
     qau_risk_score = Column(db.Integer, unique=False, nullable=True)
     examiner_risk_score = Column(db.Integer, unique=False, nullable=True)
@@ -94,3 +101,4 @@ class Case(SurrogatePK, Model):
 
     def __repr__(self):
         return '<Case(id={id}, case_name={case_name}, )>'.format(id=self.id, case_name=self.case_name)
+
