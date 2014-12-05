@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField, IntegerField
 
 
-from octopus.case.models import Region, CaseType, Case
+from octopus.case.models import Region, CaseType, Case, case_staff_map
 from octopus.user.models import User
 from octopus.extensions import db
 
@@ -42,6 +42,7 @@ class NewCaseForm(Form):
     def commit_new_case(self):
         case_type = CaseType.query.get(self.case_type.data)
         region = Region.query.get(self.case_region.data)
+        case_lead = User.query.get(self.case_lead.data)
 
         case = Case.create(crd_number=self.crd_number.data,
                            case_name=self.case_name.data,
@@ -52,12 +53,11 @@ class NewCaseForm(Form):
                            region=region,
                            )
         
-        case.staff.append(self.case_lead)
-
-        if self.self_to_case:
-            case.staff.append(current_user)
-            case.save()
-
+        # add case lead to staff table
+        lead = case_staff_map.create(user_id=case_lead.id,
+                                     case_id=case.id,
+                                     primary=True)
+        lead.save()
         return case
 
 
