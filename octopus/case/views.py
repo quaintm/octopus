@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json
+import datetime
+from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json, Response
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 from octopus.case import queries
@@ -107,12 +108,16 @@ def get_tags(case_id=None):
 
     if tag_type == 'risk_tags':
         if case_id:
-            return jsonify(json_list=Case.get_by_id(case_id).tags.filter(Tag.kind=='risk').all())
+            response = jsonify(data=[i.tag for i in Case.get_by_id(case_id).tags if i.kind == 'risk'])
         else:
-            return json.dumps([i.tag for i in Tag.query])
+            response = jsonify(tags=None)
     else:
-        return json.dumps(['nada'])
+        response = json.dumps(['nada'])
 
+    response.headers.add('Last-Modified', datetime.datetime.now())
+    response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0')
+    response.headers.add('Pragma', 'no-cache')
+    return response
 
 @blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])
 @login_required
@@ -123,8 +128,10 @@ def edit(case_id):
         form = EditCoreCaseForm(case_id, request.form)
         ret = render_template('case/new.html', form=form, case_id=case_id)
     elif edit_form == 'tags':
-        form = CaseTagsForm(case_id, request.form)
-        ret = render_template('case/case_tags.html', form=form, case_id=case_id)
+        form = CaseTagsForm(case_id, 'risk', request.form)
+        tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'risk')])
+        print tags
+        ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
     else:
         abort(404)
 

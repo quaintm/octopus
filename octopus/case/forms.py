@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField, IntegerField
 
 
-from octopus.case.models import Region, CaseType, Case
+from octopus.case.models import Region, CaseType, Case, Tag
 from octopus.extensions import db
 
 
@@ -126,13 +126,32 @@ class CaseTagsForm(Form):
 
     case_tags = SelectMultipleField(label='Case Tags', validators=[Optional()])
 
-    def __init__(self, case_id, *args, **kwargs):
+    def __init__(self, case_id, kind, *args, **kwargs):
         super(CaseTagsForm, self).__init__(*args, **kwargs)
-        self.case_tags.choices = [(i.id, i.tag) for i in Case.get_by_id(case_id).tags if i.type == 'risk']
+        self.case_id = case_id
+        self.tag_kind = kind
+        self.case_tags.choices = [(i.tag, i.tag) for i in Case.get_by_id(case_id).tags if i.kind == self.tag_kind]
+        self.tag_values = None
 
     def commit_updates(self):
-        print self.case_tags.data
+        case = Case.get_by_id(self.case_id)
+        print self.tag_values
+        if self.tag_kind == 'risk':
+            tags = []
+            if self.tag_values:
+                for t in self.tag_values:
+                    tag = Tag.query.filter(Tag.kind=='risk', Tag.tag==t).first()
+                    if tag:
+                        tags.append(tag)
+                    else:
+                        tags.append(Tag.create(kind='risk', tag=t))
+
+            case.tags = tags
+            case.save()
+
 
     def validate(self):
+        if self.case_tags.data:
+            self.tag_values = set(self.case_tags.data)
         return True
 
