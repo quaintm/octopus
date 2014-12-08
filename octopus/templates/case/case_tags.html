@@ -13,12 +13,9 @@
                 <div class="form-group">
                     {{form.case_tags.label}}
                     </br>
-{#                    <input id="caseRiskTagsForm" type="text" data-role="tagsinput"#}
-{#                           value="foo,bar"#}
-{#                     />#}
-                    <select name="{{ form.case_tags.id }}" id="caseRiskTagsForm" multiple="" data-role="tagsinput">
+                    <select multiple name="{{ form.case_tags.id }}" id="caseRiskTagsForm" data-role="tagsinput">
                         {% for label, value in form.case_tags.choices %}
-                            <option value="{{ value }}">{{ label }}</option>
+                            <option value="{{ value }}"></option>
                         {% endfor %}
                     </select>
                     </br>
@@ -36,13 +33,7 @@
         var caseRiskTags = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
-            prefetch: {
-                url: '{{ url_for('case.get_tags', tag_type='risk_tags') }}',
-                filter: function(list) {
-                    return $.map(list, function(caseRiskTags) {
-                        return { name: caseRiskTags }; });
-                }
-            }
+            local: {{ tags|safe }}
         });
         caseRiskTags.initialize();
 
@@ -52,7 +43,9 @@
                 displayKey: 'name',
                 valueKey: 'name',
                 source: caseRiskTags.ttAdapter()
-            }
+            },
+            trimValue: true,
+            confirmKeys: [44, 13]
         });
     </script>
 {% endblock %}

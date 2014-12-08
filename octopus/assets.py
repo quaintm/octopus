@@ -20,8 +20,8 @@ js = Bundle(
     "libs/dataTables/dataTables.bootstrap.js",
     "libs/dataTables/dataTables.tableTools.js",
     "libs/bootstrap-datepicker/js/bootstrap-datepicker.js",
-    "libs/typeahead.js/dist/typeahead.bundle.js",
     "libs/bootstrap-tagsinput/dist/bootstrap-tagsinput.js",
+    "libs/typeahead.js/dist/typeahead.bundle.js",
     "js/plugins.js",
     filters='jsmin',
     output="public/js/common.js"

@@ -22,6 +22,6 @@ def create_query(args, q):
                 flash('Invalid User Id Entered')
                 valid = False
         if valid:
-            q = q.join(case_staff_map, User).filter(case_staff_map.c.user_id == user.id)
+            q = q.join(case_staff_map, User).filter(case_staff_map.user_id == user.id)
 
     return valid, q
