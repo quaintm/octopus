@@ -998,7 +998,7 @@ support = Sizzle.support = {};
  * @returns {Boolean} True iff elem is a non-HTML XML node
  */
 isXML = Sizzle.isXML = function( elem ) {
-	// documentElement is verified for case where it doesn't yet exist
+	// documentElement is verified for cases where it doesn't yet exist
 	// (such as loading iframes in IE - #4833)
 	var documentElement = elem && (elem.ownerDocument || elem).documentElement;
 	return documentElement ? documentElement.nodeName !== "HTML" : false;
@@ -3412,7 +3412,7 @@ jQuery.ready.promise = function( obj ) {
 
 		readyList = jQuery.Deferred();
 
-		// Catch case where $(document).ready() is called after the browser event has already occurred.
+		// Catch cases where $(document).ready() is called after the browser event has already occurred.
 		// we once tried to use readyState "interactive" here, but it caused issues like the one
 		// discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15
 		if ( document.readyState === "complete" ) {
@@ -3597,7 +3597,7 @@ Data.prototype = {
 	},
 	access: function( owner, key, value ) {
 		var stored;
-		// In case where either:
+		// In cases where either:
 		//
 		//   1. No key was specified
 		//   2. A string key was specified, but no value provided
@@ -7306,9 +7306,9 @@ jQuery.fn.extend({
 				ret = elem.value;
 
 				return typeof ret === "string" ?
-					// handle most common string case
+					// handle most common string cases
 					ret.replace(rreturn, "") :
-					// handle case where value is null/undef or number
+					// handle cases where value is null/undef or number
 					ret == null ? "" : ret;
 			}
 

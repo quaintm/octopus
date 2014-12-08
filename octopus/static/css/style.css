@@ -148,15 +148,15 @@ footer .footer-nav {
   margin-bottom: 0;
 }
 
-.twitter-typeahead .tt-hint
-{
-    display: none;
-}
+/*.twitter-typeahead .tt-hint*/
+/*{*/
+    /*display: none;*/
+/*}*/
 
 .tt-dropdown-menu {
   position: absolute;
-  top: 100%;
-  left: 0;
+  top: 110%;
+  left: -1.5em ! important;
   z-index: 1000;
   display: none;
   float: left;
@@ -191,8 +191,10 @@ footer .footer-nav {
   background-color: #428bca;
 }
 
-input.tt-input {
-    width: 10em;
+.bootstrap-tagsinput span.label {
+    font-size: 100%;
+    padding: 0.2em 0.6em;
+    line-height: 2;
 }
 
 #scrollable-dropdown-menu .tt-dropdown-menu {
@@ -201,3 +203,4 @@ input.tt-input {
 }
 
 /* End typeahead*/
+
