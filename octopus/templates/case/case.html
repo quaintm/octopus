@@ -53,22 +53,38 @@
         <table class="table table-condensed table-striped table-bordered">
             <tbody class="">
             <tr>
+
+                <td>Case Lead</td>
+            </tr>
+            <tr>
+                
+                <td style="text-indent: 15px">
+                    {% if lead %}
+                    {{lead[0].first_name+" "+lead[0].last_name}}
+                    {% else %}
+                    None
+                    {% endif %}
+                </td>
+
+            </tr>
+            <tr>
                 <td>Case Staff</td>
             </tr>
-<!--             {% for i in staff %} -->
+            {% if staff %}
+            {% for i in staff %}
             <tr>
-                <td>{{staff}}</td>
+                <td style="text-indent: 15px">{{i.first_name+" "+i.last_name}}</td>
             </tr>
-<!--             {% endfor %} -->
-<!--             <tr>
-                <td>CRD #</td>
-                <td>{{ case.crd_number }}</td>
-            </tr> -->
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td style="text-indent: 15px">None</td>
+            </tr>
+            {% endif %}
 
             </tbody>
         </table>
     </div>
-
 
 
     <div class="col-lg-6">

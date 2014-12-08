@@ -16,8 +16,13 @@ def single_case_view(case_id):
   return query
 
 def single_case_staff(case_id):
-  query = db.session.query(User.full_name,
-                           case_staff_map.c.is_admin).\
+  lead = db.session.query(User).\
                     join('user_cases', 'case').\
-                    filter(User.case_staff_map.any(case_id=case_id)).all()
-  return query
+                    filter(User.user_cases.any(case_id=case_id)).\
+                    filter(case_staff_map.primary == 1).all()
+
+  staff = db.session.query(User).\
+                    join('user_cases', 'case').\
+                    filter(User.user_cases.any(case_id=case_id)).\
+                    filter(case_staff_map.primary == 0).all()
+  return lead, staff
