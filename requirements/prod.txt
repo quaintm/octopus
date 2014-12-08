@@ -13,6 +13,7 @@ SQLAlchemy==0.9.8
 
 # Migrations
 Flask-Migrate==1.3.0
+alembic==7.1
 
 # Navbar
 Flask-Navigation==0.2.0
