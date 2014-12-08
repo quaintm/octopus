@@ -47,49 +47,9 @@
         </table>
     </div>
 
-    <div class="col-lg-3">
-        <table class="table table-condensed table-bordered">
-            <thead class="">
-            <th>Case Lead</th>
-            </thead>
-            <tbody>
-            <tr>
-                
-                <td>
-                    {% if lead %}
-                    {{lead[0].first_name+" "+lead[0].last_name}}
-                    {% else %}
-                    None
-                    {% endif %}
-                </td>
-
-            </tr>
-            </tbody>
-        </table>
-
-        <table class="table table-condensed table-bordered">
-            <thead class="">
-            <tr>
-                <td>Case Staff</td>
-            </tr>
-            {% if staff %}
-            {% for i in staff %}
-            <tr>
-                <td style="text-indent: 15px">{{i.first_name+" "+i.last_name}}</td>
-            </tr>
-            {% endfor %}
-            {% else %}
-            <tr>
-                <td style="text-indent: 15px">None</td>
-            </tr>
-            {% endif %}
-
-            </tbody>
-        </table>
-    </div>
 
 
-    <div class="col-lg-6">
+    <div class="col-lg-9">
         <ul class="list-group">
             <li class="list-group-item">
                 <h4>Description</h4>
@@ -103,7 +63,45 @@
 </div>
 {# End Core Case Details Panel #}
 
+<div class="panel panel-default">
+<div class="panel-heading clearfix">
+    <span>QAU Staff Assigned</span>
+    <a class="pull-right" href="{{ url_for('case.edit', case_id=case.id, edit_form='qau_staff') }}">Edit</a>
+</div>
+<div class="panel-body">
+<div class="row">
+    <div class="col-lg-6">
+        <h4>Case Lead</h4>
+        <div class="well">
+            <ul class="list-inline list-inline-labels">
+                <li>
+            {% if lead %}
+                {{ lead[0].first_name + " " + lead[0].last_name }}
+            {% else %}
+                None
+            {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <h4>Other Staff</h4>
+        <div class="well">
+            <ul class="list-inline list-inline-labels">
+            {% if staff %}
+                {% for i in staff %}
+                <li>{{ i.first_name + " " + i.last_name }}</li>
+                {% endfor %}
+            {% else %}
+                <li>None</li>
+            {% endif %}
+            </ul>
+        </div>
 
+    </div>
+</div>
+</div>
+</div>
 
 {# Start Tags Panel #}
 <div class="panel panel-default">
