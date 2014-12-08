@@ -82,10 +82,10 @@ def query():
 @login_required
 def view(case_id):
     case = queries.single_case_view(case_id)
-    staff = queries.single_case_staff(case_id)
+    lead, staff = queries.single_case_staff(case_id)
     if not case:
         abort(404)
-    return render_template('case/case.html', case=case, staff=staff)
+    return render_template('case/case.html', case=case, lead=lead, staff=staff)
 
 
 @blueprint.route("/new", methods=["GET", "POST"])
