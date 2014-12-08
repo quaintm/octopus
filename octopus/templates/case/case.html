@@ -53,13 +53,19 @@
         <table class="table table-condensed table-striped table-bordered">
             <tbody class="">
             <tr>
+                <td>Case Lead</td>
+            </tr>
+            <tr>
+                <td style="text-indent: 15px">{{lead[0].first_name+" "+lead[0].last_name}}</td>
+            </tr>
+            <tr>
                 <td>Case Staff</td>
             </tr>
-<!--             {% for i in staff %} -->
+            {% for i in staff %}
             <tr>
-                <td>{{staff}}</td>
+                <td style="text-indent: 15px">{{i.first_name+" "+i.last_name}}</td>
             </tr>
-<!--             {% endfor %} -->
+            {% endfor %}
 <!--             <tr>
                 <td>CRD #</td>
                 <td>{{ case.crd_number }}</td>
