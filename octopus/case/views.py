@@ -102,24 +102,6 @@ def new():
             flash_errors(form)
     return render_template("case/new.html", form=form)
 
-@blueprint.route("/tags/<int:case_id>")
-@blueprint.route("/tags")
-@login_required
-def get_tags(case_id=None):
-    tag_type = request.args.get('tag_type')
-
-    if tag_type == 'risk_tags':
-        if case_id:
-            response = jsonify(data=[i.tag for i in Case.get_by_id(case_id).tags if i.kind == 'risk'])
-        else:
-            response = jsonify(tags=None)
-    else:
-        response = json.dumps(['nada'])
-
-    response.headers.add('Last-Modified', datetime.datetime.now())
-    response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0')
-    response.headers.add('Pragma', 'no-cache')
-    return response
 
 @blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])
 @login_required
@@ -129,7 +111,7 @@ def edit(case_id):
     if edit_form == 'core':
         form = EditCoreCaseForm(case_id, request.form)
         ret = render_template('case/new.html', form=form, case_id=case_id)
-    elif edit_form == 'tags':
+    elif edit_form == 'risk_tags':
         form = CaseTagsForm(case_id, 'risk', request.form)
         tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'risk')])
         print tags
