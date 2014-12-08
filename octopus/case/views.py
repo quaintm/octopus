@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
+from functools import update_wrapper, wraps
+
 from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json, Response
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
@@ -7,10 +9,11 @@ from octopus.case import queries
 from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm
 from octopus.case.utils import create_query
 
+from octopus.user.models import User
 from octopus.extensions import nav, db
 from octopus.case.models import Region, CaseType, Case, case_staff_map, Tag
 from octopus.user.forms import EditUserProfile, save_profile_edits
-from octopus.utils import flash_errors
+from octopus.utils import flash_errors, user_on_case
 
 
 blueprint = Blueprint("case", __name__, url_prefix='/case',
@@ -24,8 +27,11 @@ nav.Bar('case', [
     ])
 ])
 
+# 403 error required to handle auth for case viewing
+@blueprint.errorhandler(403)
+def page_not_found(e):
+    return render_template('403.html'), 403
 
-# @blueprint.route("/")
 @blueprint.route("/all_cases")
 def all_cases():
     cases = db.session.query(Case.id.label("ID"),
@@ -80,7 +86,8 @@ def query():
 
 @blueprint.route('/view/<int:case_id>')
 @login_required
-def view(case_id):
+@user_on_case
+def view(case_id=0):
     case = queries.single_case_view(case_id)
     lead, staff = queries.single_case_staff(case_id)
     risk_tags = [i for i in Case.get_by_id(case_id).tags if i.kind == 'risk']
@@ -105,6 +112,7 @@ def new():
 
 @blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])
 @login_required
+@user_on_case
 def edit(case_id):
     edit_form = request.args.get('edit_form')
 
