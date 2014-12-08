@@ -35,14 +35,14 @@
     "jasmine": "~2.0.1",
     "rainbow": "~1.1.9"
   },
-  "_release": "0.4.2.1",
+  "_release": "b25b1823cc",
   "_resolution": {
-    "type": "tag",
-    "tag": "0.4.2.1",
-    "commit": "da61125add5b9f855a24cc2c1aa2479850f23f72"
+    "type": "branch",
+    "branch": "fix-typeahead-tab-issue",
+    "commit": "b25b1823cc6c0ad0c3520e165872c32670ef2ed9"
   },
   "_source": "https://github.com/buckie/bootstrap-tagsinput.git",
-  "_target": "0.4.2.1",
+  "_target": "fix-typeahead-tab-issue",
   "_originalSource": "https://github.com/buckie/bootstrap-tagsinput.git",
   "_direct": true
 }
