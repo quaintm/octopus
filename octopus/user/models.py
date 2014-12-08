@@ -40,8 +40,10 @@ class User(UserMixin, SurrogatePK, Model):
     active = Column(db.Boolean(), default=False)
     is_admin = Column(db.Boolean(), default=False)
 
-    # ref to staff table
-    cases = association_proxy('case_staff_map','cases')
+        # ref to staff table
+    user_cases = relationship('case_staff_map',cascade="all, delete-orphan",
+                            backref='users')
+    cases = association_proxy('user_cases','cases')
 
     def __init__(self, username, email, password=None, **kwargs):
         db.Model.__init__(self, username=username, email=email, **kwargs)

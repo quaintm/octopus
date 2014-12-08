@@ -63,17 +63,17 @@ case_tag_map = db.Table('case_tag_map',
                         db.Column('case_id', db.Integer, db.ForeignKey('cases.id'), index=True))
 
 
-class case_staff_map(SurrogatePK, Model):
+class case_staff_map(Model):
     __tablename__ = 'case_staff_map'
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True)
     case_id = db.Column(db.Integer, db.ForeignKey('cases.id'), index=True)
     primary = db.Column(db.Boolean, default=False)
     secondary = db.Column(db.Boolean, default=False)
 
-    case = db.relationship('Case', backref='case_staff_map')
-    user = db.relationship('User', backref=backref('case_staff_map',
-                                                   cascade='all, delete-orphan')
-                           )
+    case = db.relationship('Case', lazy='joined')
+    # user = db.relationship('User', backref=backref('case_staff_map',
+    #                                                cascade='all, delete-orphan')
+                           #)
 
 
 class Case(SurrogatePK, Model):
@@ -95,6 +95,7 @@ class Case(SurrogatePK, Model):
     examiner_risk_score = Column(db.Integer, unique=False, nullable=True)
     tags = db.relationship('Tag', secondary=case_tag_map,
                            backref=db.backref('cases', lazy='dynamic'))
+
 
     def __init__(self, *args, **kwargs):
         db.Model.__init__(self, *args, **kwargs)
