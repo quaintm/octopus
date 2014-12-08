@@ -138,7 +138,6 @@ class CaseTagsForm(Form):
 
     def commit_updates(self):
         case = Case.get_by_id(self.case_id)
-        print self.tag_values
         if self.tag_kind == 'risk':
             tags = []
             if self.tag_values:
