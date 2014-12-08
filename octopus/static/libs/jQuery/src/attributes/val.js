@@ -22,9 +22,9 @@ jQuery.fn.extend({
 				ret = elem.value;
 
 				return typeof ret === "string" ?
-					// handle most common string case
+					// handle most common string cases
 					ret.replace(rreturn, "") :
-					// handle case where value is null/undef or number
+					// handle cases where value is null/undef or number
 					ret == null ? "" : ret;
 			}
 

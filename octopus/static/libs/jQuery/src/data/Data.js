@@ -95,7 +95,7 @@ Data.prototype = {
 	},
 	access: function( owner, key, value ) {
 		var stored;
-		// In case where either:
+		// In cases where either:
 		//
 		//   1. No key was specified
 		//   2. A string key was specified, but no value provided
