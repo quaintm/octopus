@@ -48,15 +48,14 @@
     </div>
 
     <div class="col-lg-3">
-        <table class="table table-condensed table-striped table-bordered">
-            <tbody class="">
-            <tr>
-
-                <td>Case Lead</td>
-            </tr>
+        <table class="table table-condensed table-bordered">
+            <thead class="">
+            <th>Case Lead</th>
+            </thead>
+            <tbody>
             <tr>
                 
-                <td style="text-indent: 15px">
+                <td>
                     {% if lead %}
                     {{lead[0].first_name+" "+lead[0].last_name}}
                     {% else %}
@@ -65,6 +64,11 @@
                 </td>
 
             </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-condensed table-bordered">
+            <thead class="">
             <tr>
                 <td>Case Staff</td>
             </tr>
