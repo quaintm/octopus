@@ -179,6 +179,11 @@ class CaseStaffForm(Form):
         self.contractors.choices = [(i.id, i.username) for i in User.query if i.is_contractor]
         self.qau_staff.choices = [(i.id, i.username) for i in User.query if i.is_permanent]
 
+        # TODO: set defaults in choice fields. Need help with the association tables for this one
+        # self.contractors.data = [unicode(i.id) for i in <query look up the id's of assigned staff> if i.is_contractor]
+        # self.qau_staff.data = [unicode(i.id) for i in <query look up the id's of assigned staff> if i.is_permanent]
+        # self.process()
+
     def validate(self):
         initial_validation = super(CaseStaffForm, self).validate()
         if not initial_validation:
