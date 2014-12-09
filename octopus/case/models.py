@@ -63,7 +63,7 @@ case_tag_map = db.Table('case_tag_map',
                         db.Column('case_id', db.Integer, db.ForeignKey('cases.id'), index=True))
 
 
-class case_staff_map(SurrogatePK, Model):
+class CaseStaffMap(SurrogatePK, Model):
     __tablename__ = 'case_staff_map'
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True)
     case_id = db.Column(db.Integer, db.ForeignKey('cases.id'), index=True)
@@ -71,7 +71,7 @@ class case_staff_map(SurrogatePK, Model):
     secondary = db.Column(db.Boolean, default=False)
 
     case = db.relationship('Case', lazy='joined')
-    # user = db.relationship('User', backref=backref('case_staff_map',
+    # user = db.relationship('User', backref=backref('CaseStaffMap',
     #                                                cascade='all, delete-orphan')
                            #)
 

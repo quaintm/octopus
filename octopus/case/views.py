@@ -4,11 +4,11 @@ from flask import Blueprint, render_template, request, redirect, flash, url_for,
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 from octopus.case import queries
-from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm
+from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm
 from octopus.case.utils import create_query
 
 from octopus.extensions import nav, db
-from octopus.case.models import Region, CaseType, Case, case_staff_map, Tag
+from octopus.case.models import Region, CaseType, Case, CaseStaffMap, Tag
 from octopus.user.forms import EditUserProfile, save_profile_edits
 from octopus.utils import flash_errors
 
@@ -114,8 +114,10 @@ def edit(case_id):
     elif edit_form == 'risk_tags':
         form = CaseTagsForm(case_id, 'risk', request.form)
         tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'risk')])
-        print tags
         ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
+    elif edit_form == 'case_staff':
+        form = CaseStaffForm(case_id)
+        ret = render_template('case/case_staff.html', form=form, case_id=case_id)
     else:
         abort(404)
 
