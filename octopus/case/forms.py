@@ -23,7 +23,6 @@ class NewCaseForm(Form):
     self_to_case = BooleanField('Add me to this case', default=True)
 
 
-
     def __init__(self, *args, **kwargs):
         super(NewCaseForm, self).__init__(*args, **kwargs)
         self.case_type.choices = [(unicode(i.id), i.code) for i in CaseType.query]
@@ -48,15 +47,14 @@ class NewCaseForm(Form):
                            end_date=self.end_date.data,
                            case_type=case_type,
                            region=region,
-                           )
-        
+        )
+
         # add case lead to staff table
         lead = case_staff_map.create(user_id=case_lead.id,
                                      case_id=case.id,
                                      primary=True)
         lead.save()
         return case
-
 
 
 class EditCoreCaseForm(Form):
@@ -126,31 +124,43 @@ class EditCoreCaseForm(Form):
 
 
 class CaseTagsForm(Form):
-
     case_tags = SelectMultipleField(label='Case Tags', validators=[Optional()])
 
     def __init__(self, case_id, kind, *args, **kwargs):
+        """
+
+        :param case_id: int
+        :param kind: must be one of 'risk', 'non_qau_staff'
+        """
         super(CaseTagsForm, self).__init__(*args, **kwargs)
         self.case_id = case_id
+        if kind not in {'risk', 'non_qau_staff'}:
+            raise ValueError('tag "kind" must be one of: "risk", "non_qau_staff"')
         self.tag_kind = kind
         self.case_tags.choices = [(i.tag, i.tag) for i in Case.get_by_id(case_id).tags if i.kind == self.tag_kind]
         self.tag_values = None
 
     def commit_updates(self):
+        """
+        type: IO ()
+        commit updates to database
+        :raise ValueError:
+        :returns None
+        """
         case = Case.get_by_id(self.case_id)
-        if self.tag_kind == 'risk':
-            tags = []
-            if self.tag_values:
-                for t in self.tag_values:
-                    tag = Tag.query.filter(Tag.kind=='risk', Tag.tag==t).first()
-                    if tag:
-                        tags.append(tag)
-                    else:
-                        tags.append(Tag.create(kind='risk', tag=t))
 
-            case.tags = tags
-            case.save()
+        tags = []
+        if self.tag_values:
+            for t in self.tag_values:
+                tag = Tag.query.filter(Tag.kind == self.tag_kind, Tag.tag == t).first()
+                if tag:
+                    tags.append(tag)
+                else:
+                    tags.append(Tag.create(kind=self.tag_kind, tag=t))
 
+        case.tags = tags + [i for i in Tag.query.filter(Tag.kind != self.tag_kind)]
+        case.save()
+        return None
 
     def validate(self):
         if self.case_tags.data:
