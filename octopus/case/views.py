@@ -8,7 +8,7 @@ from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, Case
 from octopus.case.utils import create_query
 
 from octopus.extensions import nav, db
-from octopus.case.models import Region, CaseType, Case, case_staff_map, Tag
+from octopus.case.models import Region, CaseType, Case, CaseStaffMap, Tag
 from octopus.user.forms import EditUserProfile, save_profile_edits
 from octopus.utils import flash_errors
 

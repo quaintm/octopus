@@ -5,7 +5,7 @@ from wtforms.fields.html5 import DateField, IntegerField
 from wtforms.widgets import CheckboxInput
 
 from octopus.user.models import User
-from octopus.case.models import Region, CaseType, Case, Tag, case_staff_map
+from octopus.case.models import Region, CaseType, Case, Tag, CaseStaffMap
 
 
 class NewCaseForm(Form):
@@ -51,7 +51,7 @@ class NewCaseForm(Form):
         )
 
         # add case lead to staff table
-        lead = case_staff_map.create(user_id=case_lead.id,
+        lead = CaseStaffMap.create(user_id=case_lead.id,
                                      case_id=case.id,
                                      primary=True)
         lead.save()
@@ -186,6 +186,8 @@ class CaseStaffForm(Form):
         return True
 
     def commit_updates(self):
+
+
         print self.qau_staff.data
         print self.contractors.data
         return True
