@@ -209,7 +209,7 @@ class CaseFileForm(Form):
     name = StringField(label='File Name', validators=[DataRequired(), Length(min=5, max=60)])
     path = StringField(label='File Path', validators=[DataRequired()])
 
-    def __init__(self, case_id, file_id=None, *args, **kwargs):
+    def __init__(self, case_id, file_id, *args, **kwargs):
         super(CaseFileForm, self).__init__(*args, **kwargs)
         self.case_id = case_id
         if file_id:
