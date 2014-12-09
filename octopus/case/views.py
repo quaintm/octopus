@@ -84,9 +84,16 @@ def query():
          ]}
     ]
     valid, q = create_query(request.args, q)
+    # get list of cases user has permission to view
+    if current_user.is_admin:
+        case_perm = ['admin']
+    else:
+        cp = db.session.query(Case.id). \
+            filter(Case.users.contains(current_user)).all()
+        case_perm = [item for sublist in [i._asdict().values() for i in cp] for item in sublist]
 
     if valid:
-        return render_template("case/query.html", cases=q, extra_cols=extra_cols)
+        return render_template("case/query.html", cases=q, extra_cols=extra_cols, case_perm=case_perm)
     else:
         flash("Invalid Query")
         return redirect(url_for('public.home'))
