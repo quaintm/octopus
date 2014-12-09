@@ -2,7 +2,8 @@
 import datetime
 from functools import update_wrapper, wraps
 
-from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json, Response
+from flask import Blueprint, render_template, request, redirect, flash, \
+  url_for, abort, jsonify, json, Response
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 from octopus.case import queries
@@ -41,6 +42,7 @@ def all_cases():
                              Case.start_date.label("Start"),
                              Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
+
     extra_cols = [
         {'header': {'text': ""},
          'td-class': 'text-center',
@@ -52,7 +54,16 @@ def all_cases():
          ]
         }
     ]
-    return render_template("case/all_cases.html", cases=cases, extra_cols=extra_cols)
+    # get list of cases user has permission to view
+    if current_user.is_admin:
+        case_perm = ['admin']
+    else:    
+        cp = db.session.query(Case.id).\
+                        filter(Case.users.contains(current_user)).all()
+        case_perm = [item for sublist in [i._asdict().values() for i in cp] for item in sublist]
+
+    return render_template("case/all_cases.html", cases=cases, 
+                           extra_cols=extra_cols, case_perm=case_perm)
 
 
 @blueprint.route("/query")
@@ -93,7 +104,8 @@ def view(case_id=0):
     risk_tags = [i for i in Case.get_by_id(case_id).tags if i.kind == 'risk']
     if not case:
         abort(404)
-    return render_template('case/case.html', case=case, lead=lead, staff=staff, risk_tags=risk_tags)
+    return render_template('case/case.html', case=case, 
+                           lead=lead, staff=staff, risk_tags=risk_tags)
 
 
 @blueprint.route("/new", methods=["GET", "POST"])
@@ -121,9 +133,11 @@ def edit(case_id):
         ret = render_template('case/new.html', form=form, case_id=case_id)
     elif edit_form == 'risk_tags':
         form = CaseTagsForm(case_id, 'risk', request.form)
-        tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'risk')])
+        tags = json.dumps([{"name": unicode(i.tag)} 
+            for i in Tag.query.filter(Tag.kind == 'risk')])
         print tags
-        ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
+        ret = render_template('case/case_tags.html', 
+                               form=form, case_id=case_id, tags=tags)
     else:
         abort(404)
 
