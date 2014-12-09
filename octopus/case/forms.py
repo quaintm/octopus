@@ -1,11 +1,12 @@
+from flask import request
+
 from flask_wtf import Form
 from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Optional, Length
 from wtforms.fields.html5 import DateField, IntegerField
-from wtforms.widgets import CheckboxInput
 
 from octopus.user.models import User
-from octopus.case.models import Region, CaseType, Case, Tag, CaseStaffMap
+from octopus.case.models import Region, CaseType, Case, Tag, CaseStaffMap, CaseFile
 from octopus.extensions import db
 
 
@@ -53,8 +54,8 @@ class NewCaseForm(Form):
 
         # add case lead to staff table
         lead = CaseStaffMap.create(user_id=case_lead.id,
-                                     case_id=case.id,
-                                     primary=True)
+                                   case_id=case.id,
+                                   primary=True)
         lead.save()
         return case
 
@@ -181,10 +182,10 @@ class CaseStaffForm(Form):
         self.contractors.choices = [(i.id, i.username) for i in User.query if i.is_contractor]
         self.qau_staff.choices = [(i.id, i.username) for i in User.query if i.is_permanent]
 
-        staff = db.session.query(User).\
-                    join('user_cases', 'case').\
-                    filter(User.user_cases.any(case_id=case_id)).\
-                    filter(CaseStaffMap.primary == 0).all()
+        staff = db.session.query(User). \
+            join('user_cases', 'case'). \
+            filter(User.user_cases.any(case_id=case_id)). \
+            filter(CaseStaffMap.primary == 0).all()
 
         self.contractors.default = [str(i.id) for i in staff if i.is_contractor]
         self.qau_staff.default = [str(i.id) for i in staff if i.is_permanent]
@@ -212,5 +213,38 @@ class CaseStaffForm(Form):
         return True
 
 
+class CaseFileForm(Form):
+    kind = StringField(label='File Type', validators=[DataRequired(), Length(min=5, max=30)])
+    name = StringField(label='File Name', validators=[DataRequired(), Length(min=5, max=60)])
+    path = StringField(label='File Path', validators=[DataRequired()])
+
+    def __init__(self, case_id, file_id, *args, **kwargs):
+        super(CaseFileForm, self).__init__(*args, **kwargs)
+        self.case_id = case_id
+        if file_id:
+            self.file = CaseFile.get_by_id(file_id)
+        else:
+            self.file = None
+
+        if request.method != 'POST' and self.file:
+            # This means its a new form
+            self.kind.data = self.file.kind
+            self.name.data = self.file.name
+            self.path.data = self.file.path
+
+    def validate(self):
+        initial_validation = super(CaseFileForm, self).validate()
+        if not initial_validation:
+            return False
+        return True
+
+    def commit_updates(self):
+        if self.file:
+            self.file.update(kind=self.kind.data, name=self.name.data, path=self.path.data, case_id=self.case_id)
+        else:
+            self.file = CaseFile.create(kind=self.kind.data, name=self.name.data, path=self.path.data,
+                                        case_id=self.case_id)
+        self.file.save()
+        return None
 
 
