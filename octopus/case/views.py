@@ -81,12 +81,12 @@ def query():
 @blueprint.route('/view/<int:case_id>')
 @login_required
 def view(case_id):
-    case = queries.single_case_view(case_id)
+    # case = queries.single_case_view(case_id)
     lead, staff = queries.single_case_staff(case_id)
-    risk_tags = [i for i in Case.get_by_id(case_id).tags if i.kind == 'risk']
+    case = Case.get_by_id(case_id)
     if not case:
         abort(404)
-    return render_template('case/case.html', case=case, lead=lead, staff=staff, risk_tags=risk_tags)
+    return render_template('case/case.html', case=case, lead=lead, staff=staff)
 
 
 @blueprint.route("/new", methods=["GET", "POST"])
@@ -118,6 +118,10 @@ def edit(case_id):
     elif edit_form == 'case_staff':
         form = CaseStaffForm(case_id)
         ret = render_template('case/case_staff.html', form=form, case_id=case_id)
+    elif edit_form == 'non_qau_staff':
+        form = CaseTagsForm(case_id, 'non_qau_staff', request.form)
+        tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'non_qau_staff')])
+        ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
     else:
         abort(404)
 
