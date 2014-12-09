@@ -70,10 +70,11 @@ class case_staff_map(SurrogatePK, Model):
     primary = db.Column(db.Boolean, default=False)
     secondary = db.Column(db.Boolean, default=False)
 
-    case = db.relationship('Case', lazy='joined')
-    # user = db.relationship('User', backref=backref('case_staff_map',
-    #                                                cascade='all, delete-orphan')
-                           #)
+    case = db.relationship('Case', 
+                            backref=backref("user_cases", 
+                                cascade="all, delete-orphan")
+                            )
+    user = db.relationship('User')
 
 
 class Case(SurrogatePK, Model):
@@ -89,6 +90,8 @@ class Case(SurrogatePK, Model):
 
     region_id = ReferenceCol('regions', nullable=False)
     region = relationship('Region', backref='regions')
+
+    users = association_proxy('user_cases', 'user')
 
     mars_risk_score = Column(db.Integer, unique=False, nullable=True)
     qau_risk_score = Column(db.Integer, unique=False, nullable=True)
