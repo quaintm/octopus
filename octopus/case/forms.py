@@ -6,6 +6,7 @@ from wtforms.widgets import CheckboxInput
 
 from octopus.user.models import User
 from octopus.case.models import Region, CaseType, Case, Tag, CaseStaffMap
+from octopus.extensions import db
 
 
 class NewCaseForm(Form):
@@ -176,13 +177,18 @@ class CaseStaffForm(Form):
     def __init__(self, case_id, *args, **kwargs):
         super(CaseStaffForm, self).__init__(*args, **kwargs)
         self.case_id = case_id
+
         self.contractors.choices = [(i.id, i.username) for i in User.query if i.is_contractor]
         self.qau_staff.choices = [(i.id, i.username) for i in User.query if i.is_permanent]
 
-        # TODO: set defaults in choice fields. Need help with the association tables for this one
-        # self.contractors.data = [unicode(i.id) for i in <query look up the id's of assigned staff> if i.is_contractor]
-        # self.qau_staff.data = [unicode(i.id) for i in <query look up the id's of assigned staff> if i.is_permanent]
-        # self.process()
+        staff = db.session.query(User).\
+                    join('user_cases', 'case').\
+                    filter(User.user_cases.any(case_id=case_id)).\
+                    filter(CaseStaffMap.primary == 0).all()
+
+        self.contractors.default = [str(i.id) for i in staff if i.is_contractor]
+        self.qau_staff.default = [str(i.id) for i in staff if i.is_permanent]
+        self.process()
 
     def validate(self):
         initial_validation = super(CaseStaffForm, self).validate()
