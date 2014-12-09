@@ -1,10 +1,11 @@
 from flask_wtf import Form
-from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField
+from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField, IntegerField
+from wtforms.widgets import CheckboxInput
 
-from octopus.case.models import Region, CaseType, Case
-from octopus.extensions import db
+from octopus.user.models import User
+from octopus.case.models import Region, CaseType, Case, Tag, CaseStaffMap
 
 
 class NewCaseForm(Form):
@@ -17,12 +18,17 @@ class NewCaseForm(Form):
     end_date = DateField('End Date', validators=[Optional()])
     case_type = SelectField('Case Type', validators=[DataRequired()])
 
-    case_region = SelectField("Regional Office", validators=[DataRequired()])
+    case_region = SelectField('Regional Office', validators=[DataRequired()])
+    case_lead = SelectField('Case Lead', validators=[DataRequired()])
+
+    self_to_case = BooleanField('Add me to this case', default=True)
+
 
     def __init__(self, *args, **kwargs):
         super(NewCaseForm, self).__init__(*args, **kwargs)
         self.case_type.choices = [(unicode(i.id), i.code) for i in CaseType.query]
         self.case_region.choices = [(unicode(i.id), i.code) for i in Region.query]
+        self.case_lead.choices = [(unicode(i.id), i.full_name) for i in User.query]
 
     def validate(self):
         initial_validation = super(NewCaseForm, self).validate()
@@ -33,14 +39,24 @@ class NewCaseForm(Form):
     def commit_new_case(self):
         case_type = CaseType.query.get(self.case_type.data)
         region = Region.query.get(self.case_region.data)
+        case_lead = User.query.get(self.case_lead.data)
+
         case = Case.create(crd_number=self.crd_number.data,
                            case_name=self.case_name.data,
                            case_desc=self.case_desc.data,
                            start_date=self.start_date.data,
                            end_date=self.end_date.data,
                            case_type=case_type,
-                           region=region)
+                           region=region,
+        )
+
+        # add case lead to staff table
+        lead = CaseStaffMap.create(user_id=case_lead.id,
+                                     case_id=case.id,
+                                     primary=True)
+        lead.save()
         return case
+
 
 class EditCoreCaseForm(Form):
     crd_number = IntegerField('CRD Number',
@@ -109,16 +125,77 @@ class EditCoreCaseForm(Form):
 
 
 class CaseTagsForm(Form):
-
     case_tags = SelectMultipleField(label='Case Tags', validators=[Optional()])
 
-    def __init__(self, case_id, *args, **kwargs):
+    def __init__(self, case_id, kind, *args, **kwargs):
+        """
+
+        :param case_id: int
+        :param kind: must be one of 'risk', 'non_qau_staff'
+        """
         super(CaseTagsForm, self).__init__(*args, **kwargs)
-        self.case_tags.choices = [(i.id, i.tag) for i in Case.get_by_id(case_id).tags if i.type == 'risk']
+        self.case_id = case_id
+        if kind not in {'risk', 'non_qau_staff'}:
+            raise ValueError('tag "kind" must be one of: "risk", "non_qau_staff"')
+        self.tag_kind = kind
+        self.case_tags.choices = [(i.tag, i.tag) for i in Case.get_by_id(case_id).tags if i.kind == self.tag_kind]
+        self.tag_values = None
 
     def commit_updates(self):
-        print self.case_tags.data
+        """
+        type: IO ()
+        commit updates to database
+        :raise ValueError:
+        :returns None
+        """
+        case = Case.get_by_id(self.case_id)
+
+        tags = []
+        if self.tag_values:
+            for t in self.tag_values:
+                tag = Tag.query.filter(Tag.kind == self.tag_kind, Tag.tag == t).first()
+                if tag:
+                    tags.append(tag)
+                else:
+                    tags.append(Tag.create(kind=self.tag_kind, tag=t))
+
+        case.tags = tags + [i for i in Tag.query.filter(Tag.kind != self.tag_kind)]
+        case.save()
+        return None
 
     def validate(self):
+        if self.case_tags.data:
+            self.tag_values = set(self.case_tags.data)
         return True
+
+
+class CaseStaffForm(Form):
+    contractors = SelectMultipleField(label='QAU Contractor Resources', validators=[Optional()], coerce=int)
+    qau_staff = SelectMultipleField(label='QAU Full Time Resources', validators=[Optional()], coerce=int)
+
+    def __init__(self, case_id, *args, **kwargs):
+        super(CaseStaffForm, self).__init__(*args, **kwargs)
+        self.case_id = case_id
+        self.contractors.choices = [(i.id, i.username) for i in User.query if i.is_contractor]
+        self.qau_staff.choices = [(i.id, i.username) for i in User.query if i.is_permanent]
+
+        # TODO: set defaults in choice fields. Need help with the association tables for this one
+        # self.contractors.data = [unicode(i.id) for i in <query look up the id's of assigned staff> if i.is_contractor]
+        # self.qau_staff.data = [unicode(i.id) for i in <query look up the id's of assigned staff> if i.is_permanent]
+        # self.process()
+
+    def validate(self):
+        initial_validation = super(CaseStaffForm, self).validate()
+        if not initial_validation:
+            return False
+        return True
+
+    def commit_updates(self):
+        # TODO: Monica needs to figure out what to put here to get staff mapping to work
+        print self.qau_staff.data
+        print self.contractors.data
+        return True
+
+
+
 

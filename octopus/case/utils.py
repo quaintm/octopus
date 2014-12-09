@@ -1,7 +1,7 @@
 from flask import flash
 from flask.ext.login import current_user
 from sqlalchemy.event import contains
-from octopus.case.models import Case, case_staff_map
+from octopus.case.models import Case, CaseStaffMap
 from octopus.user.models import User
 
 __author__ = 'MartinoW'
@@ -22,6 +22,6 @@ def create_query(args, q):
                 flash('Invalid User Id Entered')
                 valid = False
         if valid:
-            q = q.join(case_staff_map, User).filter(case_staff_map.c.user_id == user.id)
+            q = q.join(CaseStaffMap, User).filter(CaseStaffMap.user_id == user.id)
 
     return valid, q

@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json
+import datetime
+from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json, Response
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 from octopus.case import queries
-from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm
+from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm
 from octopus.case.utils import create_query
 
+from octopus.user.models import User
 from octopus.extensions import nav, db
-from octopus.case.models import Region, CaseType, Case, case_staff_map, Tag
+from octopus.case.models import Region, CaseType, Case, CaseStaffMap, Tag
 from octopus.user.forms import EditUserProfile, save_profile_edits
-from octopus.utils import flash_errors
+from octopus.utils import flash_errors, user_on_case
 
 
 blueprint = Blueprint("case", __name__, url_prefix='/case',
@@ -23,6 +25,10 @@ nav.Bar('case', [
     ])
 ])
 
+# 403 error required to handle auth for case viewing
+@blueprint.errorhandler(403)
+def page_not_found(e):
+    return render_template('403.html'), 403
 
 # @blueprint.route("/")
 @blueprint.route("/all_cases")
@@ -34,6 +40,7 @@ def all_cases():
                              Case.start_date.label("Start"),
                              Case.end_date.label("End")
     ).join(CaseType).order_by(Case.id.desc())
+
     extra_cols = [
         {'header': {'text': ""},
          'td-class': 'text-center',
@@ -45,8 +52,16 @@ def all_cases():
          ]
         }
     ]
-    return render_template("case/all_cases.html", cases=cases, extra_cols=extra_cols)
+    # get list of cases user has permission to view
+    if current_user.is_admin:
+        case_perm = ['admin']
+    else:    
+        cp = db.session.query(Case.id).\
+                        filter(Case.users.contains(current_user)).all()
+        case_perm = [item for sublist in [i._asdict().values() for i in cp] for item in sublist]
 
+    return render_template("case/all_cases.html", cases=cases, 
+                           extra_cols=extra_cols, case_perm=case_perm)
 
 @blueprint.route("/query")
 @login_required
@@ -79,11 +94,13 @@ def query():
 
 @blueprint.route('/view/<int:case_id>')
 @login_required
-def view(case_id):
-    case = queries.single_case_view(case_id)
+@user_on_case
+def view(case_id=0):
+    lead, staff = queries.single_case_staff(case_id)
+    case = Case.get_by_id(case_id)
     if not case:
         abort(404)
-    return render_template('case/case.html', case=case)
+    return render_template('case/case.html', case=case, lead=lead, staff=staff)
 
 
 @blueprint.route("/new", methods=["GET", "POST"])
@@ -99,32 +116,27 @@ def new():
             flash_errors(form)
     return render_template("case/new.html", form=form)
 
-@blueprint.route("/tags/<int:case_id>")
-@blueprint.route("/tags")
-@login_required
-def get_tags(case_id=None):
-    tag_type = request.args.get('tag_type')
-
-    if tag_type == 'risk_tags':
-        if case_id:
-            return jsonify(json_list=Case.get_by_id(case_id).tags.filter(Tag.kind=='risk').all())
-        else:
-            return json.dumps([i.tag for i in Tag.query])
-    else:
-        return json.dumps(['nada'])
-
 
 @blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])
 @login_required
+@user_on_case
 def edit(case_id):
     edit_form = request.args.get('edit_form')
 
     if edit_form == 'core':
         form = EditCoreCaseForm(case_id, request.form)
         ret = render_template('case/new.html', form=form, case_id=case_id)
-    elif edit_form == 'tags':
-        form = CaseTagsForm(case_id, request.form)
-        ret = render_template('case/case_tags.html', form=form, case_id=case_id)
+    elif edit_form == 'risk_tags':
+        form = CaseTagsForm(case_id, 'risk', request.form)
+        tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'risk')])
+        ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
+    elif edit_form == 'case_staff':
+        form = CaseStaffForm(case_id)
+        ret = render_template('case/case_staff.html', form=form, case_id=case_id)
+    elif edit_form == 'non_qau_staff':
+        form = CaseTagsForm(case_id, 'non_qau_staff', request.form)
+        tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'non_qau_staff')])
+        ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
     else:
         abort(404)
 
