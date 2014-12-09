@@ -78,8 +78,8 @@ class CaseStaffMap(SurrogatePK, Model):
 
 class CaseFile(SurrogatePK, Model):
     __tablename__ = 'case_files'
-    kind = db.Column(db.String(10), unique=False)
-    name = db.Column(db.String(50), unique=False)
+    kind = db.Column(db.Text(), unique=False)
+    name = db.Column(db.Text(), unique=False)
     path = db.Column(db.Text(), unique=False)
     attributes = db.Column(db.Text(), unique=False, nullable=True)
     case_id = ReferenceCol('cases', nullable=False)
