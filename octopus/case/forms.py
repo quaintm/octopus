@@ -1,3 +1,4 @@
+from flask import request
 from flask_wtf import Form
 from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional
@@ -181,35 +182,59 @@ class CaseStaffForm(Form):
         self.contractors.choices = [(i.id, i.username) for i in User.query if i.is_contractor]
         self.qau_staff.choices = [(i.id, i.username) for i in User.query if i.is_permanent]
 
-        staff = db.session.query(User).\
-                    join('user_cases', 'case').\
-                    filter(User.user_cases.any(case_id=case_id)).\
-                    filter(CaseStaffMap.primary == 0).all()
+        if request.method != 'POST':
 
-        self.contractors.default = [str(i.id) for i in staff if i.is_contractor]
-        self.qau_staff.default = [str(i.id) for i in staff if i.is_permanent]
-        self.process()
+            staff = db.session.query(User).\
+                        join('user_cases', 'case').\
+                        filter(User.user_cases.any(case_id=case_id)).\
+                        filter(CaseStaffMap.primary == 0).all()
+
+
+            self.contractors.default = [str(i.id) for i in staff if i.is_contractor]
+            self.qau_staff.default = [str(i.id) for i in staff if i.is_permanent]
+            self.process()
+
+        # self.staff = staff
+        # if self.contractors.data:
+        #     self.staff = self.contractors.data
+        # if self.qau_staff.data:
+        #     self.staff = self.staff + self.qau_staff.data
+
 
     def validate(self):
-        initial_validation = super(CaseStaffForm, self).validate()
-        if not initial_validation:
-            return False
+        # initial_validation = super(CaseStaffForm, self).validate()
+        # if not initial_validation:
+        #     return False
         return True
 
     def commit_updates(self):
 
         case = Case.get_by_id(self.case_id)
 
+        staff = db.session.query(User).\
+                    join('user_cases', 'case').\
+                    filter(User.user_cases.any(case_id=self.case_id)).\
+                    filter(CaseStaffMap.primary == 0).all()
+
+        existing_users = [i.id for i in staff]
         new_users = self.contractors.data + self.qau_staff.data
 
-        case.users = new_users
+        rems = existing_users
+        adds = []
+        for i in new_users:
+            if i not in existing_users:
+                adds.append(i)
+            else:
+                rems.remove(i)
+
         case.save()
 
+        print staff
         print new_users
-        print self.qau_staff.data
-        print self.contractors.data
+        print "adds = " + str(adds)
+        print "rems = " + str(rems)
 
-        return True
+        return None
 
 
 
