@@ -2,15 +2,18 @@
 import datetime as dt
 
 from flask.ext.login import UserMixin
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import backref
 
 from octopus.extensions import bcrypt
+from octopus.user.models import User
 from octopus.database import (
     Column,
     db,
     Model,
     ReferenceCol,
     relationship,
-    SurrogatePK,
+    SurrogatePK
 )
 
 
@@ -52,18 +55,26 @@ class Tag(SurrogatePK, Model):
         db.Model.__init__(self, **kwargs)
 
     def __repr__(self):
-        return '<Tag({id={id}, kind={kind}, tag={tag})>'.format(tag=self.tag, id=self.id, kind=self.kind)
+        return '<Tag(id={id}, kind={kind}, tag={tag})>'.format(tag=self.tag, id=self.id, kind=self.kind)
 
 
 case_tag_map = db.Table('case_tag_map',
                         db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), index=True),
                         db.Column('case_id', db.Integer, db.ForeignKey('cases.id'), index=True))
 
-case_staff_map = db.Table('case_staff_map',
-                          db.Column('user_id', db.Integer, db.ForeignKey('users.id'), index=True),
-                          db.Column('case_id', db.Integer, db.ForeignKey('cases.id'), index=True),
-                          db.Column('primary', db.Boolean, default=False),
-                          db.Column('secondary', db.Boolean, default=False))
+
+class CaseStaffMap(SurrogatePK, Model):
+    __tablename__ = 'case_staff_map'
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True)
+    case_id = db.Column(db.Integer, db.ForeignKey('cases.id'), index=True)
+    primary = db.Column(db.Boolean, default=False)
+    secondary = db.Column(db.Boolean, default=False)
+
+    case = db.relationship('Case', 
+                            backref=backref("user_cases", 
+                                cascade="all, delete-orphan")
+                            )
+    user = db.relationship('User')
 
 
 class Case(SurrogatePK, Model):
@@ -80,8 +91,7 @@ class Case(SurrogatePK, Model):
     region_id = ReferenceCol('regions', nullable=False)
     region = relationship('Region', backref='regions')
 
-    staff = db.relationship('User', secondary=case_staff_map,
-                            backref=db.backref('cases', lazy='dynamic'))
+    users = association_proxy('user_cases', 'user')
 
     mars_risk_score = Column(db.Integer, unique=False, nullable=True)
     qau_risk_score = Column(db.Integer, unique=False, nullable=True)
@@ -92,5 +102,17 @@ class Case(SurrogatePK, Model):
     def __init__(self, *args, **kwargs):
         db.Model.__init__(self, *args, **kwargs)
 
+    def get_tags(self, kind=None):
+        """
+        Get a case's tags, class must be initialized first
+        :param kind: risk | non_qau_staff | None
+        :return: list of unicode tags according to the specified kind
+        """
+        if kind:
+            return [i.tag for i in self.tags if i.kind == kind]
+        else:
+            return [i.tag for i in self.tags]
+
     def __repr__(self):
         return '<Case(id={id}, case_name={case_name}, )>'.format(id=self.id, case_name=self.case_name)
+

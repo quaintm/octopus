@@ -2,8 +2,10 @@
 import datetime as dt
 
 from flask.ext.login import UserMixin
+from sqlalchemy.ext.associationproxy import association_proxy
 
 from octopus.extensions import bcrypt
+
 from octopus.database import (
     Column,
     db,
@@ -13,6 +15,7 @@ from octopus.database import (
     SurrogatePK,
 )
 
+# Constants used for user's contract type
 
 class Role(SurrogatePK, Model):
     __tablename__ = 'roles'
@@ -26,8 +29,8 @@ class Role(SurrogatePK, Model):
     def __repr__(self):
         return '<Role({name})>'.format(name=self.name)
 
-class User(UserMixin, SurrogatePK, Model):
 
+class User(UserMixin, SurrogatePK, Model):
     __tablename__ = 'users'
     username = Column(db.String(80), unique=True, nullable=False, index=True)
     email = Column(db.String(80), unique=True, nullable=False)
@@ -37,6 +40,12 @@ class User(UserMixin, SurrogatePK, Model):
     last_name = Column(db.String(30), nullable=True)
     active = Column(db.Boolean(), default=False)
     is_admin = Column(db.Boolean(), default=False)
+    contract = Column(db.String(20), default='None', nullable=True)
+
+    # ref to staff table
+    user_cases = relationship('CaseStaffMap', cascade="all, delete-orphan",
+                              backref='users')
+    cases = association_proxy('user_cases', 'cases')
 
     def __init__(self, username, email, password=None, **kwargs):
         db.Model.__init__(self, username=username, email=email, **kwargs)
@@ -52,8 +61,21 @@ class User(UserMixin, SurrogatePK, Model):
         return bcrypt.check_password_hash(self.password, value)
 
     @property
+    def is_permanent(self):
+        return True if self.contract == 'permanent' else False
+
+    @property
+    def is_contractor(self):
+        return True if self.contract == 'contractor' else False
+
+    @property
+    def is_manager(self):
+        return True if self.contract == 'manager' else False
+
+    @property
     def full_name(self):
         return "{0} {1}".format(self.first_name, self.last_name)
 
     def __repr__(self):
         return '<User({username!r})>'.format(username=self.username)
+
