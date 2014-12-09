@@ -197,9 +197,18 @@ class CaseStaffForm(Form):
         return True
 
     def commit_updates(self):
-        # TODO: Monica needs to figure out what to put here to get staff mapping to work
+
+        case = Case.get_by_id(self.case_id)
+
+        new_users = self.contractors.data + self.qau_staff.data
+
+        case.users = new_users
+        case.save()
+
+        print new_users
         print self.qau_staff.data
         print self.contractors.data
+
         return True
 
 
