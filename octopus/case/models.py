@@ -77,7 +77,6 @@ class CaseStaffMap(SurrogatePK, Model):
     user = db.relationship('User')
 
 
-
 class Case(SurrogatePK, Model):
     __tablename__ = 'cases'
     crd_number = Column(db.Integer(), unique=False, nullable=False, index=True)
@@ -100,9 +99,19 @@ class Case(SurrogatePK, Model):
     tags = db.relationship('Tag', secondary=case_tag_map,
                            backref=db.backref('cases', lazy='dynamic'))
 
-
     def __init__(self, *args, **kwargs):
         db.Model.__init__(self, *args, **kwargs)
+
+    def get_tags(self, kind=None):
+        """
+        Get a case's tags, class must be initialized first
+        :param kind: risk | non_qau_staff | None
+        :return: list of unicode tags according to the specified kind
+        """
+        if kind:
+            return [i.tag for i in self.tags if i.kind == kind]
+        else:
+            return [i.tag for i in self.tags]
 
     def __repr__(self):
         return '<Case(id={id}, case_name={case_name}, )>'.format(id=self.id, case_name=self.case_name)

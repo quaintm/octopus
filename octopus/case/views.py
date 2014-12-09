@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
-from functools import update_wrapper, wraps
-
-from flask import Blueprint, render_template, request, redirect, flash, \
-  url_for, abort, jsonify, json, Response
+from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json, Response
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 from octopus.case import queries
@@ -33,6 +30,7 @@ nav.Bar('case', [
 def page_not_found(e):
     return render_template('403.html'), 403
 
+# @blueprint.route("/")
 @blueprint.route("/all_cases")
 def all_cases():
     cases = db.session.query(Case.id.label("ID"),
@@ -64,7 +62,6 @@ def all_cases():
 
     return render_template("case/all_cases.html", cases=cases, 
                            extra_cols=extra_cols, case_perm=case_perm)
-
 
 @blueprint.route("/query")
 @login_required
@@ -99,13 +96,11 @@ def query():
 @login_required
 @user_on_case
 def view(case_id=0):
-    case = queries.single_case_view(case_id)
     lead, staff = queries.single_case_staff(case_id)
-    risk_tags = [i for i in Case.get_by_id(case_id).tags if i.kind == 'risk']
+    case = Case.get_by_id(case_id)
     if not case:
         abort(404)
-    return render_template('case/case.html', case=case, 
-                           lead=lead, staff=staff, risk_tags=risk_tags)
+    return render_template('case/case.html', case=case, lead=lead, staff=staff)
 
 
 @blueprint.route("/new", methods=["GET", "POST"])
@@ -138,6 +133,10 @@ def edit(case_id):
     elif edit_form == 'case_staff':
         form = CaseStaffForm(case_id)
         ret = render_template('case/case_staff.html', form=form, case_id=case_id)
+    elif edit_form == 'non_qau_staff':
+        form = CaseTagsForm(case_id, 'non_qau_staff', request.form)
+        tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'non_qau_staff')])
+        ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
     else:
         abort(404)
 
