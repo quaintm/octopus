@@ -2,6 +2,7 @@ from flask_wtf import Form
 from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField, IntegerField
+from wtforms.widgets import CheckboxInput
 
 from octopus.user.models import User
 from octopus.case.models import Region, CaseType, Case, Tag, case_staff_map
@@ -166,4 +167,29 @@ class CaseTagsForm(Form):
         if self.case_tags.data:
             self.tag_values = set(self.case_tags.data)
         return True
+
+
+class CaseStaffForm(Form):
+    contractors = SelectMultipleField(label='QAU Contractor Resources', validators=[Optional()], coerce=int)
+    qau_staff = SelectMultipleField(label='QAU Full Time Resources', validators=[Optional()], coerce=int)
+
+    def __init__(self, case_id, *args, **kwargs):
+        super(CaseStaffForm, self).__init__(*args, **kwargs)
+        self.case_id = case_id
+        self.contractors.choices = [(i.id, i.username) for i in User.query if i.is_contractor]
+        self.qau_staff.choices = [(i.id, i.username) for i in User.query if i.is_permanent]
+
+    def validate(self):
+        initial_validation = super(CaseStaffForm, self).validate()
+        if not initial_validation:
+            return False
+        return True
+
+    def commit_updates(self):
+        print self.qau_staff.data
+        print self.contractors.data
+        return True
+
+
+
 

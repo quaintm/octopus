@@ -4,74 +4,70 @@
 {% from "macros/datepicker.html" import make_datepicker_js, make_datepicker_tag %}
 
 {% block content %}
-<div class="container">
-  <h1>{{ 'Edit Core Details' if case_id else 'Create a New Case' }}</h1>
-    <br/>
-    <form id="newCase" class="form" method="POST" action="" role="form">
-            {{ form.hidden_tag() }}
-        <div class="container">
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="form-group">
-                    {{form.case_name.label}}
-                    {{form.case_name(class_="form-control", placeholder=form.case_name.placeholder)}}
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="form-group">
-                    {{ make_datepicker_tag(form.start_date.label, form.start_date.id)}}
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="form-group">
-                    {{ make_datepicker_tag(form.end_date.label, form.end_date.id)}}
-                </div>
+<h1>{{ 'Edit Core Details' if case_id else 'Create a New Case' }}</h1>
+<br/>
+<form id="newCase" class="form" method="POST" action="" role="form">
+        {{ form.hidden_tag() }}
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                {{form.case_name.label}}
+                {{form.case_name(class_="form-control", placeholder=form.case_name.placeholder)}}
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="form-group">
-                    {{form.case_desc.label}}
-                    {{form.case_desc(class_="form-control", 
-                      placeholder=form.case_desc.placeholder)}}
-                </div>
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{ make_datepicker_tag(form.start_date.label, form.start_date.id)}}
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="form-group">
-                    {{form.crd_number.label}}
-                    {{form.crd_number(class_="form-control", 
-                      placeholder=form.crd_number.placeholder)}}
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="form-group">
-                    {{form.case_type.label}}
-                    {{form.case_type(class_="form-control")}}
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="form-group">
-                    {{form.case_region.label}}
-                    {{form.case_region(class_="form-control")}}
-                </div>
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{ make_datepicker_tag(form.end_date.label, form.end_date.id)}}
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-3">
-                 <div class="form-group">
-                    {{form.case_lead.label}}
-                    {{form.case_lead(class_="form-control")}}
-                </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                {{form.case_desc.label}}
+                {{form.case_desc(class_="form-control",
+                  placeholder=form.case_desc.placeholder)}}
             </div>
         </div>
-            
-        <p><input class="btn btn-default btn-submit" type="submit" 
-            value="{{ 'Save Edits' if case_id else 'Create New Case'}}"></p>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{form.crd_number.label}}
+                {{form.crd_number(class_="form-control",
+                  placeholder=form.crd_number.placeholder)}}
+            </div>
         </div>
-    </form>
-</div>
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{form.case_type.label}}
+                {{form.case_type(class_="form-control")}}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                {{form.case_region.label}}
+                {{form.case_region(class_="form-control")}}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+             <div class="form-group">
+                {{form.case_lead.label}}
+                {{form.case_lead(class_="form-control")}}
+            </div>
+        </div>
+    </div>
+
+    <p><input class="btn btn-default btn-submit" type="submit"
+        value="{{ 'Save Edits' if case_id else 'Create New Case'}}"></p>
+</form>
 {% endblock %}
 
 {% block js %}
