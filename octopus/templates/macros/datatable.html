@@ -13,30 +13,46 @@
 {%- endmacro %}
 
 
-{% macro render_row(row, extra_cols=None) -%}
+{% macro render_row(row, extra_cols=None, case_perm=None) -%}
     <tr>
     {% for item in row %}
         <td>{{ item }}</td>
     {% endfor %}
 
     {% if extra_cols %}
-        {{ render_extra_row_items(row, extra_cols) }}
+        {{ render_extra_row_items(row, extra_cols, case_perm) }}
     {% endif %}
     </tr>
 
 {%- endmacro %}
 
-{% macro render_extra_row_items(row, extra_cols) %}
+{% macro render_extra_row_items(row, extra_cols, case_perm) %}
     {% for col in extra_cols %}
         <td class="{{ col['td-class'] }}">
-            {% for item in col['contents'] %}
-                {% if item['func'] %}
-                    {{ make_link(href=item['func'](row),
-                             text=item['text'],
-                             type=item['type'],
-                             class=item['class']) }}
-                {% endif %}
-            {% endfor %}
+            {% if case_perm != ['admin'] %}
+              {% if not row.ID in case_perm %}
+              {% else %}
+                {% for item in col['contents'] %}
+                    {% if item['func'] %}
+                        {{ make_link(href=item['func'](row),
+                                 text=item['text'],
+                                 type=item['type'],
+                                 class=item['class']) }}
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
+
+            {% else %}
+                {% for item in col['contents'] %}
+                    {% if item['func'] %}
+                        {{ make_link(href=item['func'](row),
+                                 text=item['text'],
+                                 type=item['type'],
+                                 class=item['class']) }}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
         </td>
     {% endfor %}
 {% endmacro %}
@@ -46,7 +62,7 @@
 {% endmacro %}
 
 
-{% macro render_table(id, heading, sql_query, extra_cols=None) -%}
+{% macro render_table(id, heading, sql_query, extra_cols=None, case_perm=None) -%}
     <div class="panel panel-default">
     <div class="panel-heading">
         {{ heading }}
@@ -60,7 +76,7 @@
     </thead>
     <tbody>
     {% for row in sql_query %}
-       {{ render_row(row, extra_cols=extra_cols) }}
+       {{ render_row(row, extra_cols=extra_cols, case_perm=case_perm) }}
     {% endfor %}
     </tbody>
     </table>
