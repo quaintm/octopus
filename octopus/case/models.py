@@ -70,11 +70,11 @@ class CaseStaffMap(SurrogatePK, Model):
     primary = db.Column(db.Boolean, default=False)
     secondary = db.Column(db.Boolean, default=False)
 
-    case = db.relationship('Case', 
-                            backref=backref("user_cases", 
-                                cascade="all, delete-orphan")
-                            )
+    case = db.relationship('Case',
+                           backref=backref("user_cases",
+                                           cascade="all, delete-orphan"))
     user = db.relationship('User')
+
 
 class CaseFile(SurrogatePK, Model):
     __tablename__ = 'case_files'
@@ -89,7 +89,6 @@ class CaseFile(SurrogatePK, Model):
 
     def __repr__(self):
         return '<CaseFile(id={id}, kind={kind}, name={name})>'.format(id=self.id, kind=self.kind, name=self.name)
-
 
 
 class Case(SurrogatePK, Model):
@@ -112,7 +111,7 @@ class Case(SurrogatePK, Model):
     qau_risk_score = Column(db.Integer, unique=False, nullable=True)
     examiner_risk_score = Column(db.Integer, unique=False, nullable=True)
     tags = relationship('Tag', secondary=case_tag_map,
-                           backref=db.backref('cases', lazy='dynamic'))
+                        backref=db.backref('cases', lazy='dynamic'))
     files = relationship('CaseFile', backref='case_files')
 
     def __init__(self, *args, **kwargs):
