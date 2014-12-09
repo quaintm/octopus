@@ -71,7 +71,7 @@ class CaseStaffMap(SurrogatePK, Model):
     secondary = db.Column(db.Boolean, default=False)
 
     case = db.relationship('Case', lazy='joined')
-    # user = db.relationship('User', backref=backref('case_staff_map',
+    # user = db.relationship('User', backref=backref('CaseStaffMap',
     #                                                cascade='all, delete-orphan')
                            #)
 

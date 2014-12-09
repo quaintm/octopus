@@ -43,7 +43,7 @@ class User(UserMixin, SurrogatePK, Model):
     contract = Column(db.String(20), default='None', nullable=True)
 
     # ref to staff table
-    user_cases = relationship('case_staff_map', cascade="all, delete-orphan",
+    user_cases = relationship('CaseStaffMap', cascade="all, delete-orphan",
                               backref='users')
     cases = association_proxy('user_cases', 'cases')
 
