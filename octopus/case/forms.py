@@ -229,6 +229,7 @@ class CaseStaffForm(Form):
             user = User.get_by_id(user_id)
             # at some point we will need to toggle primary or not, this is how you set that flag
             CaseStaffMap.create(user=user, case=case).save()
+
         return None
 
 
