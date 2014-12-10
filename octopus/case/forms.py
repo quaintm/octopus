@@ -79,14 +79,14 @@ class EditCoreCaseForm(Form):
 
         # This step is needed for bypassing a defaulting of the SelectField bug
         # we set the default by making the first element of the list the default value
-        case_types = [(i.id, i.code) for i in CaseType.query]
+        case_types = [(unicode(i.id), i.code) for i in CaseType.query]
         if self.current_case.case_type.id:
             for c, (i, d) in enumerate(case_types):
                 if i == self.current_case.case_type.id:
                     case_types.insert(0, case_types.pop(c))
                     break
         self.case_type.choices = case_types
-        regions = [(i.id, i.code) for i in Region.query]
+        regions = [(unicode(i.id), i.code) for i in Region.query]
         if self.current_case.region.id:
             for c, (i, d) in enumerate(regions):
                 if i == self.current_case.region.id:
