@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-lg-12">
                 {% if extra_cols %}
-                    {{ render_table(table_id, "Query Results", cases, extra_cols=extra_cols) }}
+                    {{ render_table(table_id, "Query Results", cases, extra_cols=extra_cols, case_perm=case_perm) }}
                 {% else %}
                     {{ render_table(table_id, "Query Results", cases) }}
                 {% endif %}

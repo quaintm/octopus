@@ -11,7 +11,8 @@ from octopus.extensions import (
     login_manager,
     migrate,
     debug_toolbar,
-    nav)
+    nav,
+    misaka)
 from octopus import public, user, case
 
 
@@ -38,6 +39,7 @@ def register_extensions(app):
     debug_toolbar.init_app(app)
     nav.init_app(app)
     migrate.init_app(app, db)
+    misaka.init_app(app)
     return None
 
 

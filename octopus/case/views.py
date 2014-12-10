@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, redirect, flash, url_for,
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 from octopus.case import queries
-from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm
+from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm, CaseFileForm
 from octopus.case.utils import create_query
 
 from octopus.user.models import User
@@ -29,6 +29,7 @@ nav.Bar('case', [
 @blueprint.errorhandler(403)
 def page_not_found(e):
     return render_template('403.html'), 403
+
 
 # @blueprint.route("/")
 @blueprint.route("/all_cases")
@@ -55,13 +56,14 @@ def all_cases():
     # get list of cases user has permission to view
     if current_user.is_admin:
         case_perm = ['admin']
-    else:    
-        cp = db.session.query(Case.id).\
-                        filter(Case.users.contains(current_user)).all()
+    else:
+        cp = db.session.query(Case.id). \
+            filter(Case.users.contains(current_user)).all()
         case_perm = [item for sublist in [i._asdict().values() for i in cp] for item in sublist]
 
-    return render_template("case/all_cases.html", cases=cases, 
+    return render_template("case/all_cases.html", cases=cases,
                            extra_cols=extra_cols, case_perm=case_perm)
+
 
 @blueprint.route("/query")
 @login_required
@@ -84,9 +86,16 @@ def query():
          ]}
     ]
     valid, q = create_query(request.args, q)
+    # get list of cases user has permission to view
+    if current_user.is_admin:
+        case_perm = ['admin']
+    else:
+        cp = db.session.query(Case.id). \
+            filter(Case.users.contains(current_user)).all()
+        case_perm = [item for sublist in [i._asdict().values() for i in cp] for item in sublist]
 
     if valid:
-        return render_template("case/query.html", cases=q, extra_cols=extra_cols)
+        return render_template("case/query.html", cases=q, extra_cols=extra_cols, case_perm=case_perm)
     else:
         flash("Invalid Query")
         return redirect(url_for('public.home'))
@@ -100,6 +109,7 @@ def view(case_id=0):
     case = Case.get_by_id(case_id)
     if not case:
         abort(404)
+
     return render_template('case/case.html', case=case, lead=lead, staff=staff)
 
 
@@ -137,6 +147,13 @@ def edit(case_id):
         form = CaseTagsForm(case_id, 'non_qau_staff', request.form)
         tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'non_qau_staff')])
         ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
+    elif edit_form == 'case_file':
+        file_id = request.args.get('file_id')
+        if not file_id:
+            file_id = None
+        form = CaseFileForm(case_id, file_id, request.form)
+        ret = render_template('case/case_file.html', form=form, file_id=file_id)
+
     else:
         abort(404)
 
