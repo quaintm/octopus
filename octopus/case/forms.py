@@ -227,12 +227,22 @@ class CaseStaffForm(Form):
             else:
                 rems.remove(i)
 
-        case.save()
 
-        print staff
-        print new_users
-        print "adds = " + str(adds)
-        print "rems = " + str(rems)
+# this version touches the association map, should be able to use 
+# case.users.append(i) /.remove(i) or user.user_cases.append(case)
+        for i in adds:
+            new_user = CaseStaffMap.create(user_id=i,
+                                     case_id=case.id,
+                                     primary=False)            
+            new_user.save()
+
+        for i in rems:
+            old_record = db.session.query(CaseStaffMap).filter(User.id==int(i)).\
+                            filter(Case.id==case.id)
+
+            db.session.delete(old_record)
+
+        case.save()
 
         return None
 
