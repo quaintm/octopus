@@ -1,8 +1,10 @@
 from flask import request
+
 from flask_wtf import Form
 from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField, IntegerField
+
 from wtforms.widgets import CheckboxInput
 
 from octopus.user.models import User
@@ -54,8 +56,8 @@ class NewCaseForm(Form):
 
         # add case lead to staff table
         lead = CaseStaffMap.create(user_id=case_lead.id,
-                                     case_id=case.id,
-                                     primary=True)
+                                   case_id=case.id,
+                                   primary=True)
         lead.save()
         return case
 
@@ -183,66 +185,60 @@ class CaseStaffForm(Form):
         self.qau_staff.choices = [(i.id, i.username) for i in User.query if i.is_permanent]
 
         if request.method != 'POST':
+            staff = db.session.query(User). \
+                join('user_cases', 'case'). \
+                filter(User.user_cases.any(case_id=case_id)). \
+                filter(CaseStaffMap.primary == 0).all()
 
-            staff = db.session.query(User).\
-                        join('user_cases', 'case').\
-                        filter(User.user_cases.any(case_id=case_id)).\
-                        filter(CaseStaffMap.primary == 0).all()
-
-
-            self.contractors.default = [str(i.id) for i in staff if i.is_contractor]
-            self.qau_staff.default = [str(i.id) for i in staff if i.is_permanent]
+            self.contractors.default = [unicode(i.id) for i in staff if i.is_contractor]
+            self.qau_staff.default = [unicode(i.id) for i in staff if i.is_permanent]
             self.process()
 
-        # self.staff = staff
-        # if self.contractors.data:
-        #     self.staff = self.contractors.data
-        # if self.qau_staff.data:
-        #     self.staff = self.staff + self.qau_staff.data
+            # self.staff = staff
+            # if self.contractors.data:
+            # self.staff = self.contractors.data
+            # if self.qau_staff.data:
+            #     self.staff = self.staff + self.qau_staff.data
 
 
     def validate(self):
         # initial_validation = super(CaseStaffForm, self).validate()
         # if not initial_validation:
-        #     return False
+        # return False
         return True
 
     def commit_updates(self):
 
         case = Case.get_by_id(self.case_id)
 
-        staff = db.session.query(User).\
-                    join('user_cases', 'case').\
-                    filter(User.user_cases.any(case_id=self.case_id)).\
-                    filter(CaseStaffMap.primary == 0).all()
+        staff = db.session.query(User). \
+            join('user_cases', 'case'). \
+            filter(User.user_cases.any(case_id=self.case_id)).all()
 
-        existing_users = [i.id for i in staff]
-        new_users = self.contractors.data + self.qau_staff.data
+        # set of previously assigned users
+        prev_assigned = set([i.id for i in staff])
+        # set of what the new assignment should be
+        all_assigned = set(self.contractors.data + self.qau_staff.data)
+        # set of to be removed entries
+        prev_assigned_remove = prev_assigned.difference(all_assigned)
+        # set of all the new users added to the case
+        new_assigned_add = all_assigned.difference(prev_assigned)
 
-        rems = existing_users
-        adds = []
-        for i in new_users:
-            if i not in existing_users:
-                adds.append(i)
-            else:
-                rems.remove(i)
-
-
-# this version touches the association map, should be able to use 
-# case.users.append(i) /.remove(i) or user.user_cases.append(case)
-        for i in adds:
-            new_user = CaseStaffMap.create(user_id=i,
-                                     case_id=case.id,
-                                     primary=False)            
-            new_user.save()
-
-        for i in rems:
-            old_record = db.session.query(CaseStaffMap).filter(User.id==int(i)).\
-                            filter(Case.id==case.id)
-
-            db.session.delete(old_record)
+        # start removing the old entries
+        for user_id in prev_assigned_remove:
+            user = User.get_by_id(user_id)
+            case.users.remove(user)
 
         case.save()
+
+        # add in the new changes
+        for user_id in new_assigned_add:
+            user = User.get_by_id(user_id)
+
+            # at some point we will need to toggle primary or not, this is how you set that flag
+            CaseStaffMap.create(user=user, case=case).save()
+
+        # db.session.flush()
 
         return None
 

@@ -70,11 +70,23 @@ class CaseStaffMap(SurrogatePK, Model):
     primary = db.Column(db.Boolean, default=False)
     secondary = db.Column(db.Boolean, default=False)
 
-    case = db.relationship('Case', 
-                            backref=backref("user_cases", 
-                                cascade="all, delete-orphan")
-                            )
+    case = db.relationship('Case',
+                           backref=backref("user_cases",
+                                           cascade="all, delete-orphan")
+    )
     user = db.relationship('User')
+
+    def __init__(self, user=None, case=None, primary=False, secondary=False, **kwargs):
+        db.Model.__init__(self, **kwargs)
+        self.user = user
+        self.case = case
+        self.primary = primary
+        self.secondary = secondary
+
+    def __repr__(self):
+        return '<CaseStaffMap(id={id}, user_id={user_id}, case_id={case_id}, primary={primary}, sec={secondary})>' \
+            .format(id=self.id, user_id=self.user_id, case_id=self.case_id,
+                    primary=self.primary, secondary=self.secondary)
 
 
 class Case(SurrogatePK, Model):
