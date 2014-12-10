@@ -37,7 +37,7 @@ def all_users():
              {'func': lambda x: url_for('user.view', id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
-              'class': 'btn btn-primary btn-sm'}
+              'class': 'btn btn-default btn-sm center-block'}
          ]
          }
     ]
