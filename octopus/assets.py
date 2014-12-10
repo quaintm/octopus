@@ -27,6 +27,8 @@ js = Bundle(
     output="public/js/common.js"
 )
 
+# Warning: for fonts, you need to copy over everything manually for now
+
 assets = Environment()
 
 assets.register("js_all", js)
