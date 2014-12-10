@@ -141,7 +141,7 @@ def edit(case_id):
         tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'risk')])
         ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
     elif edit_form == 'case_staff':
-        form = CaseStaffForm(case_id)
+        form = CaseStaffForm(case_id, request.form)
         ret = render_template('case/case_staff.html', form=form, case_id=case_id)
     elif edit_form == 'non_qau_staff':
         form = CaseTagsForm(case_id, 'non_qau_staff', request.form)

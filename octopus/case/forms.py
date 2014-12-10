@@ -1,9 +1,9 @@
-from flask import request
-
 from flask_wtf import Form
 from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional, Length
 from wtforms.fields.html5 import DateField, IntegerField
+
+from wtforms.widgets import CheckboxInput
 
 from octopus.user.models import User
 from octopus.case.models import Region, CaseType, Case, Tag, CaseStaffMap, CaseFile
@@ -182,14 +182,16 @@ class CaseStaffForm(Form):
         self.contractors.choices = [(i.id, i.username) for i in User.query if i.is_contractor]
         self.qau_staff.choices = [(i.id, i.username) for i in User.query if i.is_permanent]
 
-        staff = db.session.query(User). \
-            join('user_cases', 'case'). \
-            filter(User.user_cases.any(case_id=case_id)). \
-            filter(CaseStaffMap.primary == 0).all()
+        if request.method != 'POST':
+            staff = db.session.query(User). \
+                join('user_cases', 'case'). \
+                filter(User.user_cases.any(case_id=case_id)). \
+                filter(CaseStaffMap.primary == 0).all()
 
-        self.contractors.default = [str(i.id) for i in staff if i.is_contractor]
-        self.qau_staff.default = [str(i.id) for i in staff if i.is_permanent]
-        self.process()
+            self.contractors.default = [unicode(i.id) for i in staff if i.is_contractor]
+            self.qau_staff.default = [unicode(i.id) for i in staff if i.is_permanent]
+            self.process()
+
 
     def validate(self):
         initial_validation = super(CaseStaffForm, self).validate()
@@ -201,16 +203,32 @@ class CaseStaffForm(Form):
 
         case = Case.get_by_id(self.case_id)
 
-        new_users = self.contractors.data + self.qau_staff.data
+        staff = db.session.query(User). \
+            join('user_cases', 'case'). \
+            filter(User.user_cases.any(case_id=self.case_id)).all()
 
-        case.users = new_users
+        # set of previously assigned users
+        prev_assigned = set([i.id for i in staff])
+        # set of what the new assignment should be
+        all_assigned = set(self.contractors.data + self.qau_staff.data)
+        # set of to be removed entries
+        prev_assigned_remove = prev_assigned.difference(all_assigned)
+        # set of all the new users added to the case
+        new_assigned_add = all_assigned.difference(prev_assigned)
+
+        # start removing the old entries
+        for user_id in prev_assigned_remove:
+            user = User.get_by_id(user_id)
+            case.users.remove(user)
         case.save()
 
-        print new_users
-        print self.qau_staff.data
-        print self.contractors.data
+        # add in the new changes
+        for user_id in new_assigned_add:
+            user = User.get_by_id(user_id)
+            # at some point we will need to toggle primary or not, this is how you set that flag
+            CaseStaffMap.create(user=user, case=case).save()
 
-        return True
+        return None
 
 
 class CaseFileForm(Form):
