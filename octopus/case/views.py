@@ -82,7 +82,7 @@ def query():
              {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
-              'class': 'btn btn-primary btn-sm'}
+              'class': 'btn btn-default btn-sm center-block'}
          ]}
     ]
     valid, q = create_query(request.args, q)
