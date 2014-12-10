@@ -194,17 +194,11 @@ class CaseStaffForm(Form):
             self.qau_staff.default = [unicode(i.id) for i in staff if i.is_permanent]
             self.process()
 
-            # self.staff = staff
-            # if self.contractors.data:
-            # self.staff = self.contractors.data
-            # if self.qau_staff.data:
-            #     self.staff = self.staff + self.qau_staff.data
-
 
     def validate(self):
-        # initial_validation = super(CaseStaffForm, self).validate()
-        # if not initial_validation:
-        # return False
+        initial_validation = super(CaseStaffForm, self).validate()
+        if not initial_validation:
+            return False
         return True
 
     def commit_updates(self):
@@ -228,18 +222,13 @@ class CaseStaffForm(Form):
         for user_id in prev_assigned_remove:
             user = User.get_by_id(user_id)
             case.users.remove(user)
-
         case.save()
 
         # add in the new changes
         for user_id in new_assigned_add:
             user = User.get_by_id(user_id)
-
             # at some point we will need to toggle primary or not, this is how you set that flag
             CaseStaffMap.create(user=user, case=case).save()
-
-        # db.session.flush()
-
         return None
 
 
