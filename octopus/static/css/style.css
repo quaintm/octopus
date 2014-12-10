@@ -213,3 +213,18 @@ footer .footer-nav {
 .case-tag-info {
     font-size: 100%;
 }
+
+/* End tag list styling */
+
+/* Start collapsible panel styling */
+
+.panel-heading a.panel-collapse-switch:after {
+    font-family:'Glyphicons Halflings';
+    content:"\e114";
+    color: grey;
+    padding-left: 0.5em;
+}
+.panel-heading a.collapsed.panel-collapse-switch:after {
+    content:"\e080";
+    padding-left: 0.5em;
+}
