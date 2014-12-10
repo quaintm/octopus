@@ -49,7 +49,7 @@ def all_cases():
              {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
-              'class': 'btn btn-primary btn-sm'}
+              'class': 'btn btn-sm btn-default center-block'}
          ]
         }
     ]
