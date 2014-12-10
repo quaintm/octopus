@@ -23,3 +23,6 @@ debug_toolbar = DebugToolbarExtension()
 
 from flask.ext.navigation import Navigation
 nav = Navigation()
+
+from flask.ext.misaka import Misaka
+misaka = Misaka()
