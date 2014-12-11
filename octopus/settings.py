@@ -20,6 +20,10 @@ class ProdConfig(Config):
     DEBUG = False
     DB_NAME = 'production.sqlite'
     PROD_PORT = 9001
+    PROD_LOG_PATH = 'logs/prod_logs.log'
+    PROD_LOG_ROTATE_WHEN = 'midnight'
+    PROD_LOG_BACKUP_COUNT = 0
+    PROD_LOG_ENCODING = 'bz2'
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(DB_PATH)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
