@@ -57,4 +57,13 @@ def user_on_case(fn):
         return fn(*args, **kwargs)
     return update_wrapper(wrapped_function, fn)
 
+def admin_required(fn):
+    @wraps(fn)
+    def wrapped_function(*args, **kwargs):
+
+        if not current_user.is_admin:
+            abort(403)
+        return  fn(*args, **kwargs)
+    return update_wrapper(wrapped_function, fn)
+
 
