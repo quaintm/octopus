@@ -23,6 +23,7 @@ nav.Bar('case', [
 
 
 @blueprint.route("/all_cases")
+@login_required
 def all_cases():
     cases = db.session.query(Case.id.label("ID"),
                              Case.crd_number.label("CRD #"),

@@ -8,6 +8,7 @@
 </div>
 <!-- /.jumbotron -->
 
+{% if current_user.is_authenticated() %}
 <div class="body-content">
   <div class="row">
   <div class="col-lg-4">
@@ -23,10 +24,11 @@
     <div class="col-lg-4">
       <h2><i class="fa fa-signal"></i> Visualizations</h2>
       <p>Visualize the whole thing</p>
-      <p><a class="btn btn-default" href="#">Reports &raquo;</a></p>
+{#      <p><button type="button" class="btn btn-default" href="#" data-toggle="popover" data-content="Before we can do this part, we need data in the system.">Reports &raquo;</button></p>#}
    </div>
   </div>
 <!-- /.row -->
 </div>
+{% endif %}
 {% endblock %}
 
