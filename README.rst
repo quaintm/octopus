@@ -47,6 +47,10 @@ Deployment
 
 In your production environment, make sure the ``OCTOPUS_ENV`` environment variable is set to ``"prod"``.
 
+Twisted is the production server of choice, so `conda install gevent` is needed before releasing to production.
+
+To light up the production server, run `python run_prod.py`. The server will light up on localhost:9001
+
 
 Shell
 -----

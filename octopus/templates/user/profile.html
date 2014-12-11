@@ -14,7 +14,7 @@
     {% if current_user.id == user.id or current_user.is_admin %}
     
         {% call render_modal("Edit", "myModalLabel", modal_title, btn_type="btn-warning") %}
-            <form id="editUserProfile" class="form" method="POST" action="{{ url_for('user.view', id=user.id) }}" role="form">
+            <form id="editUserProfile" class="form" method="POST" action="{{ url_for('user.view', user_id=user.id) }}" role="form">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
                     {{form.username.label}}

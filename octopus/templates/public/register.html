@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container-narrow">
-  <h1>Register</h1>
+  <h1>Create User</h1>
     <br/>
     <form id="registerForm" class="form form-register" method="POST" action="" role="form">
             {{ form.hidden_tag() }}
@@ -16,15 +16,14 @@
             </div>
             <div class="form-group">
                 {{form.password.label}}
-                {{form.password(placeholder="Password", class_="form-control")}}
+                {{form.password(placeholder="Temporary Password", class_="form-control")}}
             </div>
             <div class="form-group">
                 {{form.confirm.label}}
-                {{form.confirm(placeholder="Password (again)", class_="form-control")}}
+                {{form.confirm(placeholder="Temporary Password (again)", class_="form-control")}}
             </div>
             <p><input class="btn btn-default btn-submit" type="submit" value="Register"></p>
     </form>
-    <p><em>Already registered?</em> Click <a href="/">here</a> to login.</p>
 </div>
 {% endblock %}
 

@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-import datetime
-from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json, Response
+from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, json
 from flask.ext.login import login_required, current_user
-from sqlalchemy import or_
+
 from octopus.case import queries
 from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm, CaseFileForm
 from octopus.case.utils import create_query
-
-from octopus.user.models import User
 from octopus.extensions import nav, db
-from octopus.case.models import Region, CaseType, Case, CaseStaffMap, Tag
-from octopus.user.forms import EditUserProfile, save_profile_edits
+from octopus.case.models import CaseType, Case, Tag
 from octopus.utils import flash_errors, user_on_case
 
 
@@ -25,13 +21,7 @@ nav.Bar('case', [
     ])
 ])
 
-# 403 error required to handle auth for case viewing
-@blueprint.errorhandler(403)
-def page_not_found(e):
-    return render_template('403.html'), 403
 
-
-# @blueprint.route("/")
 @blueprint.route("/all_cases")
 def all_cases():
     cases = db.session.query(Case.id.label("ID"),
@@ -49,7 +39,7 @@ def all_cases():
              {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
-              'class': 'btn btn-primary btn-sm'}
+              'class': 'btn btn-sm btn-default center-block'}
          ]
         }
     ]
@@ -82,7 +72,7 @@ def query():
              {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
-              'class': 'btn btn-primary btn-sm'}
+              'class': 'btn btn-default btn-sm center-block'}
          ]}
     ]
     valid, q = create_query(request.args, q)
@@ -141,7 +131,7 @@ def edit(case_id):
         tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'risk')])
         ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
     elif edit_form == 'case_staff':
-        form = CaseStaffForm(case_id)
+        form = CaseStaffForm(case_id, request.form)
         ret = render_template('case/case_staff.html', form=form, case_id=case_id)
     elif edit_form == 'non_qau_staff':
         form = CaseTagsForm(case_id, 'non_qau_staff', request.form)
