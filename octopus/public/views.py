@@ -8,7 +8,7 @@ from octopus.extensions import login_manager, nav
 from octopus.user.models import User
 from octopus.public.forms import LoginForm
 from octopus.user.forms import RegisterForm
-from octopus.utils import flash_errors
+from octopus.utils import flash_errors, admin_required
 from octopus.database import db
 
 blueprint = Blueprint('public', __name__, static_folder="../static")
@@ -20,6 +20,11 @@ nav.Bar('public', [
 @login_manager.user_loader
 def load_user(id):
     return User.get_by_id(int(id))
+
+# 403 error required to handle auth for case viewing
+@blueprint.errorhandler(403)
+def page_not_found(e):
+    return render_template('403.html'), 403
 
 
 @blueprint.route("/", methods=["GET", "POST"])
@@ -47,7 +52,9 @@ def logout():
     flash('You are logged out.', 'info')
     return redirect(url_for('public.home'))
 
+
 @blueprint.route("/register/", methods=['GET', 'POST'])
+@admin_required
 def register():
     form = RegisterForm(request.form, csrf_enabled=False)
     if form.validate_on_submit():
@@ -55,11 +62,12 @@ def register():
                         email=form.email.data,
                         password=form.password.data,
                         active=True)
-        flash("Thank you for registering. You can now log in.", 'success')
+        flash('New user created.')
         return redirect(url_for('public.home'))
     else:
         flash_errors(form)
     return render_template('public/register.html', form=form)
+
 
 @blueprint.route("/about/")
 def about():
