@@ -1,3 +1,4 @@
+from flask import request
 from flask_wtf import Form
 from wtforms import PasswordField, StringField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
@@ -9,13 +10,13 @@ from octopus.utils import RequiredIf
 
 class RegisterForm(Form):
     username = StringField('Username',
-                    validators=[DataRequired(), Length(min=3, max=25)])
+                           validators=[DataRequired(), Length(min=3, max=25)])
     email = StringField('Email',
-                    validators=[DataRequired(), Email(), Length(min=6, max=40)])
+                        validators=[DataRequired(), Email(), Length(min=6, max=40)])
     password = PasswordField('Password',
-                                validators=[DataRequired(), Length(min=6, max=40)])
+                             validators=[DataRequired(), Length(min=6, max=40)])
     confirm = PasswordField('Verify password',
-                [DataRequired(), EqualTo('password', message='Passwords must match')])
+                            [DataRequired(), EqualTo('password', message='Passwords must match')])
 
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)
@@ -35,6 +36,7 @@ class RegisterForm(Form):
             return False
         return True
 
+
 class EditUserProfile(Form):
     username = StringField('Username',
                            validators=[Optional(), Length(min=3, max=25)])
@@ -46,18 +48,25 @@ class EditUserProfile(Form):
                             validators=[Optional()])
 
     old_password_confirm = PasswordField('Old Password',
-                             validators=[Optional(), Length(min=6, max=40)])
+                                         validators=[Optional(), Length(min=6, max=40)])
     new_password = PasswordField('New Password',
-                             validators=[Optional(), Length(min=6, max=40)])
+                                 validators=[Optional(), Length(min=6, max=40)])
     new_confirm = PasswordField('Verify New Password',
-                            [Optional(), EqualTo('new_password', message='Passwords must match')])
+                                [Optional(), EqualTo('new_password', message='Passwords must match')])
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user_id, *args, **kwargs):
         super(EditUserProfile, self).__init__(*args, **kwargs)
-        self.username.placeholder = current_user.username if current_user.username else "Username"
-        self.email.placeholder = current_user.email if current_user.email else "Email Address"
-        self.first_name.placeholder = current_user.first_name if current_user.first_name else "First Name"
-        self.last_name.placeholder = current_user.last_name if current_user.last_name else "Last Name"
+        self.user = User.get_by_id(user_id)
+        self.username.placeholder = "Username"
+        self.email.placeholder = "Email Address"
+        self.first_name.placeholder = "First Name"
+        self.last_name.placeholder = "Last Name"
+
+        if not request.method == 'POST':
+            self.username.data = self.user.username
+            self.email.data = self.user.email
+            self.first_name.data = self.user.first_name
+            self.last_name.data = self.user.last_name
 
     def validate(self):
         initial_validation = super(EditUserProfile, self).validate()
@@ -69,7 +78,7 @@ class EditUserProfile(Form):
         if self.old_password_confirm.data:
             if self.new_password.data:
                 if self.new_confirm.data:
-                    if not current_user.check_password(self.old_password_confirm.data):
+                    if not self.user.check_password(self.old_password_confirm.data):
                         self.old_password_confirm.errors.append('Old password was incorrect')
                         valid = False
                     else:
@@ -82,31 +91,33 @@ class EditUserProfile(Form):
 
         if self.username.data:
             new_username = User.query.filter_by(username=self.username.data).first()
-            if new_username and not (current_user.username == self.username.data):
+            if new_username and not (self.user.username == self.username.data):
+                print self.user.username
+                print self.username.data
                 # Usernames should be unique
                 self.username.errors.append('This username is already taken')
                 valid = False
-        if not current_user.first_name and not self.first_name.data:
+        if not self.user.first_name and not self.first_name.data:
             self.first_name.errors.append('First Name is required')
             valid = False
-        if not current_user.last_name and not self.last_name.data:
+        if not self.user.last_name and not self.last_name.data:
             self.last_name.errors.append('Last Name is required')
             valid = False
 
         return valid
 
-def save_profile_edits(form):
-    if form.new_password.data:
-        current_user.set_password(form.new_password.data)
-    if form.first_name.data:
-        current_user.first_name = form.first_name.data
-    if form.last_name.data:
-        current_user.last_name = form.last_name.data
-    if form.username.data:
-        current_user.username = form.username.data
-    if form.email.data:
-        current_user.email = form.email.data
-    current_user.save()
+    def commit_updates(self):
+        if self.new_password.data:
+            self.user.set_password(self.new_password.data)
+        if self.first_name.data:
+            self.user.first_name = self.first_name.data
+        if self.last_name.data:
+            self.user.last_name = self.last_name.data
+        if self.username.data:
+            self.user.username = self.username.data
+        if self.email.data:
+            self.user.email = self.email.data
+        self.user.save()
 
 
 
