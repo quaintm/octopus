@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-import datetime
-from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, jsonify, json, Response
+from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, json
 from flask.ext.login import login_required, current_user
-from sqlalchemy import or_
+
 from octopus.case import queries
 from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm, CaseFileForm
 from octopus.case.utils import create_query
-
-from octopus.user.models import User
 from octopus.extensions import nav, db
-from octopus.case.models import Region, CaseType, Case, CaseStaffMap, Tag
-from octopus.user.forms import EditUserProfile, save_profile_edits
+from octopus.case.models import CaseType, Case, Tag
 from octopus.utils import flash_errors, user_on_case
 
 
