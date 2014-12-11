@@ -44,6 +44,7 @@ def all_users():
 
 
 @blueprint.route('/query')
+@login_required
 def query():
     return render_template('public/home.html')
 
