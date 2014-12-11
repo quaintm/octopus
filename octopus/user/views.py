@@ -20,7 +20,6 @@ nav.Bar('user', [
 ])
 
 
-# @blueprint.route("/")
 @blueprint.route("/all_users")
 @login_required
 def all_users():

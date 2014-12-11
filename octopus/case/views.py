@@ -25,13 +25,7 @@ nav.Bar('case', [
     ])
 ])
 
-# 403 error required to handle auth for case viewing
-@blueprint.errorhandler(403)
-def page_not_found(e):
-    return render_template('403.html'), 403
 
-
-# @blueprint.route("/")
 @blueprint.route("/all_cases")
 def all_cases():
     cases = db.session.query(Case.id.label("ID"),

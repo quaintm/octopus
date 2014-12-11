@@ -17,14 +17,10 @@ nav.Bar('public', [
     nav.Item('<i class="fa fa-home"></i>', 'public.home')
 ])
 
+
 @login_manager.user_loader
 def load_user(id):
     return User.get_by_id(int(id))
-
-# 403 error required to handle auth for case viewing
-@blueprint.errorhandler(403)
-def page_not_found(e):
-    return render_template('403.html'), 403
 
 
 @blueprint.route("/", methods=["GET", "POST"])
@@ -40,9 +36,6 @@ def home():
         else:
             flash_errors(form)
     return render_template("public/home.html", form=form)
-
-
-
 
 
 @blueprint.route('/logout/')
