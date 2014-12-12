@@ -105,7 +105,7 @@ class EditCoreCaseForm(Form):
         lead, _ = single_case_staff(self.case_id)
         if lead:
             for c, (i, d) in enumerate(case_staff):
-                if i == lead[0].id:
+                if i == unicode(lead[0].id):
                     case_staff.insert(0, case_staff.pop(c))
         self.case_lead.choices = case_staff
 
