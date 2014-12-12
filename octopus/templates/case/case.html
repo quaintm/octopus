@@ -113,7 +113,7 @@
                 <ul class="list-inline list-inline-labels">
                 {% if staff %}
                     {% for i in staff %}
-                    <li>{{ i.first_name + " " + i.last_name }}</li>
+                    <li>{{ i.full_name }}</li>
                     {% endfor %}
                 {% else %}
                     <li>None</li>

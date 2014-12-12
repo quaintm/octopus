@@ -1,3 +1,4 @@
+from flask import request
 from flask_wtf import Form
 from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional, Length
