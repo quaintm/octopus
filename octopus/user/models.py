@@ -74,7 +74,10 @@ class User(UserMixin, SurrogatePK, Model):
 
     @property
     def full_name(self):
-        return "{0} {1}".format(self.first_name, self.last_name)
+        if self.first_name and self.last_name:
+            return "{0} {1}".format(self.first_name, self.last_name)
+        else:
+            return self.username
 
     def __repr__(self):
         return '<User({username!r})>'.format(username=self.username)

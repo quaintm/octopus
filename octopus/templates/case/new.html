@@ -56,6 +56,15 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-lg-3">
+             <div class="form-group">
+                {{form.case_lead.label}}
+                {{form.case_lead(class_="form-control")}}
+            </div>
+        </div>
+    </div>
+
     <p><input class="btn btn-default btn-submit" type="submit"
         value="{{ 'Save Edits' if case_id else 'Create New Case'}}"></p>
 </form>
