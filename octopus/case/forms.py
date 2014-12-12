@@ -1,10 +1,12 @@
 from flask import request
+from flask.ext.login import current_user
 from flask_wtf import Form
 from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional, Length
 from wtforms.fields.html5 import DateField, IntegerField
 
 from wtforms.widgets import CheckboxInput
+from octopus.case.queries import single_case_staff
 
 from octopus.user.models import User
 from octopus.case.models import Region, CaseType, Case, Tag, CaseStaffMap, CaseFile
@@ -31,7 +33,11 @@ class NewCaseForm(Form):
         super(NewCaseForm, self).__init__(*args, **kwargs)
         self.case_type.choices = [(unicode(i.id), i.code) for i in CaseType.query]
         self.case_region.choices = [(unicode(i.id), i.code) for i in Region.query]
-        self.case_lead.choices = [(unicode(i.id), i.full_name) for i in User.query]
+        case_lead = [(unicode(i.id), i.full_name) for i in User.query]
+        for c, (i, d) in enumerate(case_lead):
+            if i == unicode(current_user.id):
+                case_lead.insert(0, case_lead.pop(c))
+        self.case_lead.choices = case_lead
 
     def validate(self):
         initial_validation = super(NewCaseForm, self).validate()
@@ -72,6 +78,7 @@ class EditCoreCaseForm(Form):
     case_type = SelectField('Case Type', validators=[Optional()])
 
     case_region = SelectField("Regional Office", validators=[Optional()])
+    case_lead = SelectField('Case Lead', validators=[DataRequired()])
 
     def __init__(self, case_id, *args, **kwargs):
         super(EditCoreCaseForm, self).__init__(*args, **kwargs)
@@ -93,6 +100,14 @@ class EditCoreCaseForm(Form):
                 if i == self.current_case.region.id:
                     regions.insert(0, regions.pop(c))
         self.case_region.choices = regions
+
+        case_staff = [(unicode(i.id), i.full_name) for i in User.query]
+        lead, _ = single_case_staff(self.case_id)
+        if lead:
+            for c, (i, d) in enumerate(case_staff):
+                if i == lead.id:
+                    case_staff.insert(0, case_staff.pop(c))
+        self.case_lead.choices = case_staff
 
         self.crd_number.placeholder = self.current_case.crd_number if self.current_case.crd_number else None
         self.case_name.placeholder = self.current_case.case_name if self.current_case.case_name else None
