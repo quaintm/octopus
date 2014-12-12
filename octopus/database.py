@@ -2,14 +2,17 @@
 """Database module, including the SQLAlchemy database object and DB-related
 utilities.
 """
+from flask.ext.login import current_user
 from sqlalchemy.orm import relationship
 
 from .extensions import db
 from .compat import basestring
+from flask import current_app
 
 # Alias common SQLAlchemy names
 Column = db.Column
 relationship = relationship
+
 
 class CRUDMixin(object):
     """Mixin that adds convenience methods for CRUD (create, read, update, delete)
@@ -30,6 +33,7 @@ class CRUDMixin(object):
 
     def save(self, commit=True):
         """Save the record."""
+        self._log_updates()
         db.session.add(self)
         if commit:
             db.session.commit()
@@ -37,12 +41,23 @@ class CRUDMixin(object):
 
     def delete(self, commit=True):
         """Remove the record from the database."""
+        self._log_updates(method='delete')
         db.session.delete(self)
         return commit and db.session.commit()
+
+    def _log_updates(self, method='save'):
+        try:
+            user = current_user.username
+            vals = {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
+            current_app.logger.info([('user', user), ('table', self.__class__.__name__), ('method', method), vals])
+        except Exception as e:
+            current_app.logger.error('DB Change Logging Issue Encountered: {}'.format(str(e)))
+
 
 class Model(CRUDMixin, db.Model):
     """Base model class that includes CRUD convenience methods."""
     __abstract__ = True
+
 
 # From Mike Bayer's "Building the app" talk
 # https://speakerdeck.com/zzzeek/building-the-app
@@ -57,8 +72,8 @@ class SurrogatePK(object):
     @classmethod
     def get_by_id(cls, id):
         if any(
-            (isinstance(id, basestring) and id.isdigit(),
-             isinstance(id, (int, float))),
+                (isinstance(id, basestring) and id.isdigit(),
+                 isinstance(id, (int, float))),
         ):
             return cls.query.get(int(id))
         return None

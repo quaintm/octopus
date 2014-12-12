@@ -23,9 +23,11 @@ js = Bundle(
     "libs/bootstrap-tagsinput/dist/bootstrap-tagsinput.js",
     "libs/typeahead.js/dist/typeahead.bundle.js",
     "js/plugins.js",
-    filters='jsmin',
+    # filters='jsmin',
     output="public/js/common.js"
 )
+
+# Warning: for fonts, you need to copy over everything manually for now to static/fonts
 
 assets = Environment()
 

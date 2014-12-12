@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask.ext.login import login_required, current_user
 
 from octopus.extensions import nav, db
-from octopus.user.forms import EditUserProfile, save_profile_edits
+from octopus.user.forms import EditUserProfile
 from octopus.user.models import User
 from octopus.utils import flash_errors
 
@@ -33,7 +33,7 @@ def all_users():
         {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
-             {'func': lambda x: url_for('user.view', id=getattr(x, 'ID')),
+             {'func': lambda x: url_for('user.view', user_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
               'class': 'btn btn-default btn-sm center-block'}
@@ -44,26 +44,27 @@ def all_users():
 
 
 @blueprint.route('/query')
+@login_required
 def query():
     return render_template('public/home.html')
 
 
 @blueprint.route("/view", methods=['GET', 'POST'])
-@blueprint.route("/view/<int:id>", methods=['GET', 'POST'])
+@blueprint.route("/view/<user_id>", methods=['GET', 'POST'])
 @login_required
-def view(id=None):
-    if id is None:
+def view(user_id=None):
+    if user_id is None:
         user = current_user
-        id = current_user.id
+        user_id = current_user.id
     else:
-        user = User.query.filter_by(id=id).first_or_404()
+        user = User.query.filter_by(id=user_id).first_or_404()
 
-    form = EditUserProfile(request.form)
+    form = EditUserProfile(user_id, request.form)
     if request.method == 'POST':
         if form.validate_on_submit():
-            save_profile_edits(form)
+            form.commit_updates()
             flash("User Profile Edits Saved", category='success')
-            return redirect(url_for('user.view', id=id))
+            return redirect(url_for('user.view', user_id=user_id))
         else:
             flash_errors(form)
     return render_template("user/profile.html", user=user, form=form)
