@@ -105,15 +105,15 @@ class EditCoreCaseForm(Form):
         lead, _ = single_case_staff(self.case_id)
         if lead:
             for c, (i, d) in enumerate(case_staff):
-                if i == lead.id:
+                if i == lead[0].id:
                     case_staff.insert(0, case_staff.pop(c))
         self.case_lead.choices = case_staff
 
-        self.crd_number.placeholder = self.current_case.crd_number if self.current_case.crd_number else None
-        self.case_name.placeholder = self.current_case.case_name if self.current_case.case_name else None
-        self.case_desc.placeholder = self.current_case.case_desc if self.current_case.case_desc else None
-        self.start_date.placeholder = self.current_case.start_date if self.current_case.start_date else None
-        self.end_date.placeholder = self.current_case.end_date if self.current_case.end_date else None
+        self.crd_number.data = self.current_case.crd_number
+        self.case_name.data = self.current_case.case_name
+        self.case_desc.data = self.current_case.case_desc
+        self.start_date.data = self.current_case.start_date
+        self.end_date.data = self.current_case.end_date
 
     def validate(self):
         initial_validation = super(EditCoreCaseForm, self).validate()
