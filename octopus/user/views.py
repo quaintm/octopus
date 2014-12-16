@@ -4,7 +4,7 @@ from flask.ext.login import login_required, current_user
 
 from octopus.extensions import nav, db
 from octopus.user.forms import EditUserProfile
-from octopus.user.models import User
+from octopus.models import User
 from octopus.utils import flash_errors
 
 

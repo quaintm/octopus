@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
+
 import datetime as dt
 
 from flask.ext.login import UserMixin
+
+from octopus.extensions import bcrypt
+# from octopus.task.models import task_user_map
+
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import backref
 
-from octopus.extensions import bcrypt
-from octopus.user.models import User
-from octopus.task.models import Task
 from octopus.database import (
     Column,
     db,
@@ -145,4 +147,101 @@ class Case(SurrogatePK, Model):
 
     def __repr__(self):
         return '<Case(id={id}, case_name={case_name}, )>'.format(id=self.id, case_name=self.case_name)
+
+
+task_user_map = db.Table('task_user_map',
+                         db.Column('user_id', db.Integer, db.ForeignKey('users.id'), index=True),
+                         db.Column('task_id', db.Integer, db.ForeignKey('tasks.id'), index=True))
+
+
+class Task(SurrogatePK, Model):
+    __tablename__ = 'tasks'
+    task_name = Column(db.Text(), unique=False, nullable=True, index=True)
+    task_desc = Column(db.Text(), unique=False, nullable=True)
+    start_date = Column(db.Date(), unique=False, nullable=False, index=True)
+    end_date = Column(db.Date(), unique=False, nullable=True, index=True)
+
+    task_creator = db.Column('task_creator', db.Integer, db.ForeignKey('user.id'))
+    parent_case = db.Column('parent_case', db.Integer, db.ForeignKey('case.id'))
+
+    assignees = relationship('User', secondary=task_user_map,
+                             backref=db.backref('tasks', lazy='dynamic'))
+
+    def __init__(self, *args, **kwargs):
+        db.Model.__init__(self, *args, **kwargs)
+
+    def __repr__(self):
+        return '<Task(id={id}, task_name={task_name}, )>'.format(id=self.id, task_name=self.task_name)
+
+
+# Constants used for user's contract type
+
+class Role(SurrogatePK, Model):
+    __tablename__ = 'roles'
+    name = Column(db.String(80), unique=True, nullable=False)
+    user_id = ReferenceCol('users', nullable=True)
+    user = relationship('User', backref='roles')
+
+    def __init__(self, name, **kwargs):
+        db.Model.__init__(self, name=name, **kwargs)
+
+    def __repr__(self):
+        return '<Role({name})>'.format(name=self.name)
+
+
+class User(UserMixin, SurrogatePK, Model):
+    __tablename__ = 'users'
+    username = Column(db.String(80), unique=True, nullable=False, index=True)
+    email = Column(db.String(80), unique=True, nullable=False)
+    password = Column(db.String(128), nullable=True)
+    created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+    first_name = Column(db.String(30), nullable=True)
+    last_name = Column(db.String(30), nullable=True)
+    active = Column(db.Boolean(), default=False)
+    is_admin = Column(db.Boolean(), default=False)
+    contract = Column(db.String(20), default='None', nullable=True)
+
+    # ref to staff table
+    user_cases = relationship('CaseStaffMap', cascade="all, delete-orphan",
+                              backref='users')
+    cases = association_proxy('user_cases', 'cases')
+
+
+    tasks = relationship('Task', secondary=task_user_map,
+                         backref=db.backref('users', lazy='dynamic'))
+
+    def __init__(self, username, email, password=None, **kwargs):
+        db.Model.__init__(self, username=username, email=email, **kwargs)
+        if password:
+            self.set_password(password)
+        else:
+            self.password = None
+
+    def set_password(self, password):
+        self.password = bcrypt.generate_password_hash(password)
+
+    def check_password(self, value):
+        return bcrypt.check_password_hash(self.password, value)
+
+    @property
+    def is_permanent(self):
+        return True if self.contract == 'permanent' else False
+
+    @property
+    def is_contractor(self):
+        return True if self.contract == 'contractor' else False
+
+    @property
+    def is_manager(self):
+        return True if self.contract == 'manager' else False
+
+    @property
+    def full_name(self):
+        if self.first_name and self.last_name:
+            return "{0} {1}".format(self.first_name, self.last_name)
+        else:
+            return self.username
+
+    def __repr__(self):
+        return '<User({username!r})>'.format(username=self.username)
 

@@ -1,8 +1,8 @@
 from flask import flash
 from flask.ext.login import current_user
-from sqlalchemy.event import contains
-from octopus.case.models import Case, CaseStaffMap
-from octopus.user.models import User
+
+from octopus.models import CaseStaffMap, User
+
 
 __author__ = 'MartinoW'
 

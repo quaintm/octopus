@@ -2,7 +2,7 @@ from flask_wtf import Form
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired
 
-from octopus.user.models import User
+from octopus.models import User
 
 class LoginForm(Form):
     username = StringField('Username', validators=[DataRequired()])

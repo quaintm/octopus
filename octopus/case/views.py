@@ -6,7 +6,7 @@ from octopus.case import queries
 from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm, CaseFileForm
 from octopus.case.utils import create_query
 from octopus.extensions import nav, db
-from octopus.case.models import CaseType, Case, Tag
+from octopus.models import CaseType, Case, Tag
 from octopus.utils import flash_errors, user_on_case
 
 

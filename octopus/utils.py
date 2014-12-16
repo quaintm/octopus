@@ -4,7 +4,7 @@ from flask import flash, abort
 from functools import update_wrapper, wraps
 from flask.ext.login import current_user
 from octopus.extensions import db
-from octopus.user.models import User
+from octopus.models import User
 from wtforms.validators import Optional, DataRequired
 
 

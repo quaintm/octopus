@@ -1,15 +1,13 @@
 from flask import request
 from flask.ext.login import current_user
 from flask_wtf import Form
-from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
+from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField
 from wtforms.validators import DataRequired, Optional, Length
 from wtforms.fields.html5 import DateField, IntegerField
 
-from wtforms.widgets import CheckboxInput
 # from octopus.case.queries import single_case_staff
 
-from octopus.user.models import User
-from octopus.case.models import Region, CaseType, Case, Tag, CaseStaffMap, CaseFile
+from octopus.models import Region, CaseType, Case, Tag, CaseStaffMap, CaseFile, User
 from octopus.extensions import db
 
 
