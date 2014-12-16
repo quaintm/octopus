@@ -67,7 +67,20 @@
 
 <!-- JavaScript at the bottom for fast page loading -->
 {% assets "js_all" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    <script type="text/javascript" src="{{ ASSET_URL }}">
+    </script>
+
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();   
+        $('.my-dropdown').dropdown();
+        $('.my-dropdown').tooltip();
+    });
+    </script>
+
+
+
 {% endassets %}
 {% block js %}{% endblock %}
 <!-- end scripts -->
