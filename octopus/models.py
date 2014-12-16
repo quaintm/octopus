@@ -165,7 +165,7 @@ class Task(SurrogatePK, Model):
     start_date = Column(db.Date(), unique=False, nullable=False, index=True)
     end_date = Column(db.Date(), unique=False, nullable=True, index=True)
 
-    task_creator = db.Column('task_creator', db.Integer, db.ForeignKey('user.id'))
+    task_creator = db.Column('task_creator', db.Integer, db.ForeignKey('users.id'))
     case_id = ReferenceCol('cases', nullable=False)
     # parent_case = db.Column('Case', db.Integer, db.ForeignKey('case.id'))
 
