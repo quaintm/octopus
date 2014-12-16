@@ -6,7 +6,7 @@ from octopus.case import queries
 from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm, CaseFileForm
 from octopus.case.utils import create_query
 from octopus.extensions import nav, db
-from octopus.models import CaseType, Case, Tag
+from octopus.models import CaseType, Case, Tag, Task
 from octopus.utils import flash_errors, user_on_case
 
 
@@ -16,28 +16,27 @@ blueprint = Blueprint("task", __name__, url_prefix='/task',
 nav.Bar('task', [
     nav.Item('<i class="fa fa-tasks fa-lg"></i>', '', 
         html_attrs=str("data-placement='bottom',\
-                    title='Cases'"
+                    title='Tasks'"
         ),
 
       items=[
-        nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
-        nav.Item('All Cases', 'case.all_cases'),
-        nav.Item('Create New Case', 'case.new')
+        nav.Item('My Tasks', 'task.query', args={'user_id': 'me'}),
+        nav.Item('All Tasks', 'task.all_tasks'),
+        nav.Item('Create New Task', 'task.new')
         ]
     )
 ])
 
 
-@blueprint.route("/all_cases")
+@blueprint.route("/all_tasks")
 @login_required
-def all_cases():
-    cases = db.session.query(Case.id.label("ID"),
-                             Case.crd_number.label("CRD #"),
-                             Case.case_name.label("Name"),
-                             CaseType.code.label("Case Type"),
-                             Case.start_date.label("Start"),
-                             Case.end_date.label("End")
-    ).join(CaseType).order_by(Case.id.desc())
+def all_tasks():
+    cases = db.session.query(Task.id.label("ID"),
+                             Task.task_name.label("Name"),
+                             Task.start_date.label("Start"),
+                             Task.end_date.label("End")
+
+    ).order_by(Task.id.desc())
 
     extra_cols = [
         {'header': {'text': ""},
@@ -127,7 +126,7 @@ def new():
 @blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])
 @login_required
 @user_on_case
-def edit(case_id):
+def edit(task_id):
     edit_form = request.args.get('edit_form')
 
     if edit_form == 'core':

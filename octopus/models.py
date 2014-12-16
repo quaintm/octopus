@@ -167,7 +167,7 @@ class Task(SurrogatePK, Model):
 
     task_creator = db.Column('task_creator', db.Integer, db.ForeignKey('user.id'))
     case_id = ReferenceCol('cases', nullable=False)
-    parent_case = db.Column('Case', db.Integer, db.ForeignKey('case.id'))
+    # parent_case = db.Column('Case', db.Integer, db.ForeignKey('case.id'))
 
     assignees = relationship('User', secondary=task_user_map,
                              backref=db.backref('user_tasks', lazy='dynamic'))
