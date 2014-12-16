@@ -22,6 +22,8 @@ js = Bundle(
     "libs/bootstrap-datepicker/js/bootstrap-datepicker.js",
     "libs/bootstrap-tagsinput/dist/bootstrap-tagsinput.js",
     "libs/typeahead.js/dist/typeahead.bundle.js",
+    "libs/pagedown/Markdown.Converter.js",
+    "libs/pagedown/Markdown.Sanitizer.js"
     "js/plugins.js",
     # filters='jsmin',
     output="public/js/common.js"
