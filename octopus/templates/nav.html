@@ -62,7 +62,9 @@
     <ul class="nav navbar-nav navbar-right">
       
     {% if current_user.is_admin %}
-      <li><a href="{{ url_for('public.register') }}">Create User</a></li>
+      <li>
+        <a href="{{ url_for('public.register') }}" data-toggle="tooltip" data-placement="bottom" title="Create User">
+          <i class="fa fa-magic"></i></a></li>
     {% endif %}
 
       <li>
