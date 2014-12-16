@@ -230,7 +230,13 @@ footer .footer-nav {
     padding-left: 0.5em;
 }
 
-
 .tooltip {
     z-index: 1;
 }
+/* flask-pagedown */
+
+.flask-pagedown-input {
+    width: 100%;
+}
+
+/* end pagedown*/

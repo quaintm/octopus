@@ -26,3 +26,7 @@ nav = Navigation()
 
 from flask.ext.misaka import Misaka
 misaka = Misaka()
+
+from flask.ext.pagedown import PageDown
+pagedown = PageDown()
+
