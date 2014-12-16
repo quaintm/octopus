@@ -127,6 +127,7 @@ class Case(SurrogatePK, Model):
     examiner_risk_score = Column(db.Integer, unique=False, nullable=True)
     tags = relationship('Tag', secondary=case_tag_map,
                         backref=db.backref('cases', lazy='dynamic'))
+
     files = relationship('CaseFile', backref='case_files')
 
     tasks = relationship('Task', backref='case_tasks')
@@ -149,6 +150,9 @@ class Case(SurrogatePK, Model):
         return '<Case(id={id}, case_name={case_name}, )>'.format(id=self.id, case_name=self.case_name)
 
 
+# _________ task section ______________ 
+
+
 task_user_map = db.Table('task_user_map',
                          db.Column('user_id', db.Integer, db.ForeignKey('users.id'), index=True),
                          db.Column('task_id', db.Integer, db.ForeignKey('tasks.id'), index=True))
@@ -162,10 +166,11 @@ class Task(SurrogatePK, Model):
     end_date = Column(db.Date(), unique=False, nullable=True, index=True)
 
     task_creator = db.Column('task_creator', db.Integer, db.ForeignKey('user.id'))
-    parent_case = db.Column('parent_case', db.Integer, db.ForeignKey('case.id'))
+    case_id = ReferenceCol('cases', nullable=False)
+    parent_case = db.Column('Case', db.Integer, db.ForeignKey('case.id'))
 
     assignees = relationship('User', secondary=task_user_map,
-                             backref=db.backref('tasks', lazy='dynamic'))
+                             backref=db.backref('user_tasks', lazy='dynamic'))
 
     def __init__(self, *args, **kwargs):
         db.Model.__init__(self, *args, **kwargs)
@@ -174,7 +179,9 @@ class Task(SurrogatePK, Model):
         return '<Task(id={id}, task_name={task_name}, )>'.format(id=self.id, task_name=self.task_name)
 
 
-# Constants used for user's contract type
+
+# ___________ user section __________
+
 
 class Role(SurrogatePK, Model):
     __tablename__ = 'roles'
@@ -207,7 +214,7 @@ class User(UserMixin, SurrogatePK, Model):
     cases = association_proxy('user_cases', 'cases')
 
 
-    tasks = relationship('Task', secondary=task_user_map,
+    tasks = relationship('Task', secondary="task_user_map",
                          backref=db.backref('users', lazy='dynamic'))
 
     def __init__(self, username, email, password=None, **kwargs):
