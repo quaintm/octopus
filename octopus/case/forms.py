@@ -4,6 +4,8 @@ from flask_wtf import Form
 from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional, Length
 from wtforms.fields.html5 import DateField, IntegerField
+from flask.ext.pagedown.fields import PageDownField
+from wtforms.fields import SubmitField
 
 from octopus.case.queries import single_case_staff
 from octopus.models import Region, CaseType, Case, Tag, CaseStaffMap, CaseFile, User
@@ -68,7 +70,6 @@ class EditCoreCaseForm(Form):
     crd_number = IntegerField('CRD Number',
                               validators=[Optional()])
     case_name = StringField('Case Name', validators=[Optional()])
-    case_desc = TextAreaField('Case Description')
     start_date = DateField('Start Date',
                            validators=[Optional()])
     end_date = DateField('End Date', validators=[Optional()])
@@ -108,7 +109,6 @@ class EditCoreCaseForm(Form):
 
         self.crd_number.data = self.current_case.crd_number
         self.case_name.data = self.current_case.case_name
-        self.case_desc.data = self.current_case.case_desc
         self.start_date.data = self.current_case.start_date
         self.end_date.data = self.current_case.end_date
 
@@ -121,8 +121,6 @@ class EditCoreCaseForm(Form):
     def commit_updates(self):
         if self.case_name.data:
             self.current_case.case_name = self.case_name.data
-        if self.case_desc.data:
-            self.current_case.case_desc = self.case_desc.data
         if self.crd_number.data:
             self.current_case.crd_number = self.crd_number.data
         if self.start_date.data:
@@ -278,4 +276,29 @@ class CaseFileForm(Form):
         self.file.save()
         return None
 
+
+class PageDownForm(Form):
+    pagedown = PageDownField('Enter your markdown')
+    submit = SubmitField('Submit')
+
+    def __init__(self, case_id, db_field_name, *args, **kwargs):
+        super(PageDownForm, self).__init__(*args, **kwargs)
+        self.case_id = case_id
+        self.db_field_name = db_field_name
+        case = Case.get_by_id(self.case_id)
+
+        if request.method != 'POST':
+            self.pagedown.data = getattr(case, self.db_field_name)
+
+    def validate(self):
+        initial_validation = super(PageDownForm, self).validate()
+        if not initial_validation:
+            return False
+        return True
+
+    def commit_updates(self):
+        case = Case.get_by_id(self.case_id)
+        setattr(case, self.db_field_name, self.pagedown.data)
+        case.save()
+        return None
 

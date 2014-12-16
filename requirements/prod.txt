@@ -39,6 +39,7 @@ Flask-Cache>=0.13.1
 
 # Markdown
 Flask-Misaka>=0.3
+Flask-PageDown>=0.1.5
 
 # Prod Server
 gevent>=1.0.1

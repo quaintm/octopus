@@ -12,7 +12,7 @@ from octopus.extensions import (
     migrate,
     debug_toolbar,
     nav,
-    misaka)
+    misaka, pagedown)
 from octopus import public, user, case, task
 
 
@@ -40,6 +40,7 @@ def register_extensions(app):
     nav.init_app(app)
     migrate.init_app(app, db)
     misaka.init_app(app)
+    pagedown.init_app(app)
     return None
 
 

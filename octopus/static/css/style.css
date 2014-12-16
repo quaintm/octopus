@@ -228,3 +228,11 @@ footer .footer-nav {
     content:"\e080";
     padding-left: 0.5em;
 }
+
+/* flask-pagedown */
+
+.flask-pagedown-input {
+    width: 100%;
+}
+
+/* end pagedown*/
