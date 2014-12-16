@@ -14,7 +14,12 @@ from octopus.utils import flash_errors, admin_required
 blueprint = Blueprint('public', __name__, static_folder="../static")
 
 nav.Bar('public', [
-    nav.Item('<i class="fa fa-home"></i>', 'public.home')
+    nav.Item('<i class="fa fa-home fa-lg"></i>', 'public.home',
+        html_attrs=str("data-placement='bottom',\
+            title='Home', \
+            data-toggle='tooltip'"
+        ),
+    )
 ])
 
 
