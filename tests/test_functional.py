@@ -7,7 +7,7 @@ import pytest
 from flask import url_for
 
 
-from octopus.user.models import User
+from octopus.models import User
 from .factories import UserFactory
 
 

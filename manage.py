@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-import sys
-import subprocess
+
 from flask.ext.script import Manager, Shell, Server
 from flask.ext.migrate import MigrateCommand
 
 from octopus.app import create_app
-from octopus.user.models import User, Role
-from octopus.case.models import Case, CaseType, Region, Tag, CaseStaffMap, case_tag_map
+from octopus.models import Case, CaseType, Region, Tag, CaseStaffMap, case_tag_map, User, Role
 from octopus.settings import DevConfig, ProdConfig
 from octopus.database import db
+
 
 if os.environ.get("OCTOPUS_ENV") == 'prod':
     app = create_app(ProdConfig)

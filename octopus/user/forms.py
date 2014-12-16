@@ -2,10 +2,8 @@ from flask import request
 from flask_wtf import Form
 from wtforms import PasswordField, StringField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
-from flask.ext.login import current_user, login_user
 
-from .models import User
-from octopus.utils import RequiredIf
+from octopus.models import User
 
 
 class RegisterForm(Form):

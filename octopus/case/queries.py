@@ -1,5 +1,4 @@
-from octopus.case.models import Case, CaseType, Region, CaseStaffMap
-from octopus.user.models import User
+from octopus.models import CaseStaffMap, User
 from octopus.extensions import db
 
 

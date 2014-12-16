@@ -2,7 +2,7 @@
 from factory import Sequence, PostGenerationMethodCall
 from factory.alchemy import SQLAlchemyModelFactory
 
-from octopus.user.models import User
+from octopus.models import User
 from octopus.database import db
 
 class BaseFactory(SQLAlchemyModelFactory):

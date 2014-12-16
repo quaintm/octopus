@@ -4,7 +4,7 @@ import datetime as dt
 
 import pytest
 
-from octopus.user.models import User, Role
+from octopus.models import User, Role
 from .factories import UserFactory
 
 @pytest.mark.usefixtures('db')

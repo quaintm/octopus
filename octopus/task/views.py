@@ -10,11 +10,11 @@ from octopus.models import CaseType, Case, Tag
 from octopus.utils import flash_errors, user_on_case
 
 
-blueprint = Blueprint("case", __name__, url_prefix='/case',
+blueprint = Blueprint("task", __name__, url_prefix='/task',
                       static_folder="../static")
 
-nav.Bar('case', [
-    nav.Item('<i class="fa fa-briefcase fa-lg"></i>', '', 
+nav.Bar('task', [
+    nav.Item('<i class="fa fa-tasks fa-lg"></i>', '', 
         html_attrs=str("data-placement='bottom',\
                     title='Cases'"
         ),

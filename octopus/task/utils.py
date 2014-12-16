@@ -6,7 +6,6 @@ from octopus.models import CaseStaffMap, User
 
 __author__ = 'MartinoW'
 
-
 def create_query(args, q):
     conditions = []
     joins = set()

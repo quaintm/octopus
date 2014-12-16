@@ -1,67 +1,50 @@
 from flask import request
 from flask.ext.login import current_user
 from flask_wtf import Form
-from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
+from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField
 from wtforms.validators import DataRequired, Optional, Length
 from wtforms.fields.html5 import DateField, IntegerField
 
-from octopus.case.queries import single_case_staff
+# from octopus.case.queries import single_case_staff
+
 from octopus.models import Region, CaseType, Case, Tag, CaseStaffMap, CaseFile, User
 from octopus.extensions import db
 
 
-class NewCaseForm(Form):
-    crd_number = IntegerField('CRD Number',
-                              validators=[DataRequired()])
-    case_name = StringField('Case Name', validators=[DataRequired()])
-    case_desc = TextAreaField('Case Description')
+class NewTaskForm(Form):
+    task_name = StringField('Task Name', validators=[DataRequired()])
+    task_desc = TextAreaField('Task Description')
     start_date = DateField('Start Date',
                            validators=[DataRequired()])
     end_date = DateField('End Date', validators=[Optional()])
-    case_type = SelectField('Case Type', validators=[DataRequired()])
 
-    case_region = SelectField('Regional Office', validators=[DataRequired()])
-    case_lead = SelectField('Case Lead', validators=[DataRequired()])
-
-    self_to_case = BooleanField('Add me to this case', default=True)
+    assignees = SelectMultipleField(label='Assign Staff', validators=[Optional()], coerce=int)
 
 
     def __init__(self, *args, **kwargs):
-        super(NewCaseForm, self).__init__(*args, **kwargs)
-        self.case_type.choices = [(unicode(i.id), i.code) for i in CaseType.query]
-        self.case_region.choices = [(unicode(i.id), i.code) for i in Region.query]
-        case_lead = [(unicode(i.id), i.full_name) for i in User.query]
-        for c, (i, d) in enumerate(case_lead):
-            if i == unicode(current_user.id):
-                case_lead.insert(0, case_lead.pop(c))
-        self.case_lead.choices = case_lead
+        super(NewTaskForm, self).__init__(*args, **kwargs)
+        self.assignees.choices = [(i.id, i.username) for i in User.query]
 
     def validate(self):
-        initial_validation = super(NewCaseForm, self).validate()
+        initial_validation = super(NewTaskForm, self).validate()
         if not initial_validation:
             return False
         return True
 
-    def commit_new_case(self):
-        case_type = CaseType.query.get(self.case_type.data)
-        region = Region.query.get(self.case_region.data)
+    def commit_new_task(self):
         case_lead = User.query.get(self.case_lead.data)
 
-        case = Case.create(crd_number=self.crd_number.data,
-                           case_name=self.case_name.data,
-                           case_desc=self.case_desc.data,
+        task = Task.create(task_name=self.task_name.data,
+                           task_desc=self.task_desc.data,
                            start_date=self.start_date.data,
                            end_date=self.end_date.data,
-                           case_type=case_type,
-                           region=region,
+                           task_creator=current_user
         )
 
-        # add case lead to staff table
-        lead = CaseStaffMap.create(user_id=case_lead.id,
-                                   case_id=case.id,
-                                   primary=True)
-        lead.save()
-        return case
+        task.assignees = self.assignees.data
+        task.save()
+
+        return task
 
 
 class EditCoreCaseForm(Form):

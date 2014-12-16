@@ -13,7 +13,7 @@ from octopus.extensions import (
     debug_toolbar,
     nav,
     misaka)
-from octopus import public, user, case
+from octopus import public, user, case, task
 
 
 def create_app(config_object=ProdConfig):
@@ -47,6 +47,7 @@ def register_blueprints(app):
     app.register_blueprint(public.views.blueprint)
     app.register_blueprint(user.views.blueprint)
     app.register_blueprint(case.views.blueprint)
+    app.register_blueprint(task.views.blueprint)
     return None
 
 
