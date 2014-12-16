@@ -71,6 +71,9 @@
         {% for item in nav.case %}
             {{ render_nav_items(item, true) }}
         {% endfor %}
+        {% for item in nav.task %}
+            {{ render_nav_items(item, true) }}
+        {% endfor %}
     </ul>
     <ul class="nav navbar-nav navbar-right">
       
