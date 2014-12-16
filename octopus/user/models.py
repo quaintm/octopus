@@ -5,6 +5,7 @@ from flask.ext.login import UserMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from octopus.extensions import bcrypt
+# from octopus.task.models import task_user_map
 
 from octopus.database import (
     Column,
@@ -46,6 +47,10 @@ class User(UserMixin, SurrogatePK, Model):
     user_cases = relationship('CaseStaffMap', cascade="all, delete-orphan",
                               backref='users')
     cases = association_proxy('user_cases', 'cases')
+
+
+    tasks = relationship('Task', secondary=task_user_map,
+                        backref=db.backref('users', lazy='dynamic'))
 
     def __init__(self, username, email, password=None, **kwargs):
         db.Model.__init__(self, username=username, email=email, **kwargs)

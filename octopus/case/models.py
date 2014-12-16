@@ -7,6 +7,7 @@ from sqlalchemy.orm import backref
 
 from octopus.extensions import bcrypt
 from octopus.user.models import User
+from octopus.task.models import Task
 from octopus.database import (
     Column,
     db,
@@ -125,6 +126,8 @@ class Case(SurrogatePK, Model):
     tags = relationship('Tag', secondary=case_tag_map,
                         backref=db.backref('cases', lazy='dynamic'))
     files = relationship('CaseFile', backref='case_files')
+
+    tasks = relationship('Task', backref='case_tasks')
 
     def __init__(self, *args, **kwargs):
         db.Model.__init__(self, *args, **kwargs)
