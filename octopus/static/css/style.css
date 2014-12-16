@@ -98,6 +98,7 @@ footer .footer-nav {
     -webkit-border-radius:0 6px 6px 6px;
     -moz-border-radius:0 6px 6px 6px;
     border-radius:0 6px 6px 6px;
+    z-index: 2;
 }
 .dropdown-submenu:hover>.dropdown-menu {
     display:block;
@@ -227,4 +228,9 @@ footer .footer-nav {
 .panel-heading a.collapsed.panel-collapse-switch:after {
     content:"\e080";
     padding-left: 0.5em;
+}
+
+
+.tooltip {
+    z-index: 1;
 }
