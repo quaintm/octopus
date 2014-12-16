@@ -1,0 +1,52 @@
+
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+  <h1>Edit Case Tags</h1>
+    <br/>
+    <form id="caseTags" class="form" method="POST" action="" role="form">
+            {{ form.hidden_tag() }}
+        <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    {{form.case_tags.label}}
+                    </br>
+                    <select multiple name="{{ form.case_tags.id }}" id="caseRiskTagsForm" data-role="tagsinput">
+                        {% for label, value in form.case_tags.choices %}
+                            <option value="{{ value }}"></option>
+                        {% endfor %}
+                    </select>
+                    </br>
+                    <input class="btn btn-default btn-submit left" type="submit" value="Save Tags">
+                </div>
+            </div>
+        </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        var caseRiskTags = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            local: {{ tags|safe }}
+        });
+        caseRiskTags.initialize();
+
+        $('#caseRiskTagsForm').tagsinput({
+            typeaheadjs: {
+                name: 'caseRiskTags',
+                displayKey: 'name',
+                valueKey: 'name',
+                source: caseRiskTags.ttAdapter()
+            },
+            trimValue: true,
+            confirmKeys: [44, 13]
+        });
+    </script>
+{% endblock %}
+
