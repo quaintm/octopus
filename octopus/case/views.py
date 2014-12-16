@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, redirect, flash, url_for,
 from flask.ext.login import login_required, current_user
 
 from octopus.case import queries
-from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm, CaseFileForm
+from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm, CaseFileForm, PageDownForm
 from octopus.case.utils import create_query
 from octopus.extensions import nav, db
 from octopus.models import CaseType, Case, Tag
@@ -133,6 +133,10 @@ def edit(case_id):
     if edit_form == 'core':
         form = EditCoreCaseForm(case_id, request.form)
         ret = render_template('case/new.html', form=form, case_id=case_id)
+    elif edit_form == 'case_desc':
+        form = PageDownForm(case_id, 'case_desc', request.form)
+        field_name = 'Edit Case Description'
+        ret = render_template('case/pagedown.html', form=form, case_id=case_id, field_name=field_name)
     elif edit_form == 'risk_tags':
         form = CaseTagsForm(case_id, 'risk', request.form)
         tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'risk')])

@@ -57,22 +57,38 @@
             </table>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <h4>Description</h4>
-                    <p class="text-justify">{{ case.case_desc|markdown }}</p>
-                </li>
-            </ul>
-        </div>
-    </div>
     </div>
 
     </div>
     </div>
     </div>
 {# End Core Case Details Panel #}
+
+{# Begin Case Desc Panel #}
+    <div class="panel-group" id="caseDescAccordian" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+
+    <div class="panel-heading clearfix" role="tab">
+        <span>Case Description</span>
+        <div class="pull-right">
+            <a href="{{ url_for('case.edit', case_id=case.id, edit_form='case_desc') }}">
+                <span class="glyphicon glyphicon-edit"></span>
+            </a>
+            <a class="panel-collapse-switch" data-toggle="collapse" data-parent="#accordion"
+               href="#caseDescPanel" aria-expanded="true" aria-controls="caseDescPanel">
+            </a>
+        </div>
+    </div>
+
+    <div id="caseDescPanel" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="caseDescPanel">
+    <div class="panel-body">
+{#        <p class="text-justify">{{ case.case_desc|markdown }}</p>#}
+        {{ case.case_desc|markdown }}
+    </div>
+    </div>
+    </div>
+    </div>
+{# End Case Desc Panel #}
 
 {# Begin Case Staff Panel #}
     <div class="panel-group" id="caseStaffAccordian" role="tablist" aria-multiselectable="true">
