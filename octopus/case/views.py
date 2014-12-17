@@ -141,24 +141,23 @@ def edit(case_id):
   elif edit_form == 'case_desc':
     form = PageDownForm(case_id, 'case_desc', request.form)
     field_name = 'Edit Case Description'
-    ret = render_template('case/pagedown.html', form=form, case_id=case_id,
-                          field_name=field_name)
+    ret = render_template('markdown/edit_form.html', form=form, case_id=case_id, field_name=field_name)
   elif edit_form == 'risk_tags':
     form = CaseTagsForm(case_id, 'risk', request.form)
     tags = json.dumps([{"name": unicode(i.tag)} for i in
                        Tag.query.filter(Tag.kind == 'risk')])
     ret = render_template('case/case_tags.html', form=form, case_id=case_id,
-                          tags=tags)
+                            tags=tags)
   elif edit_form == 'case_staff':
     form = CaseStaffForm(case_id, request.form)
     ret = render_template('case/case_staff.html', form=form,
-                          case_id=case_id)
+                            case_id=case_id)
   elif edit_form == 'non_qau_staff':
     form = CaseTagsForm(case_id, 'non_qau_staff', request.form)
     tags = json.dumps([{"name": unicode(i.tag)} for i in
-                       Tag.query.filter(Tag.kind == 'non_qau_staff')])
+                         Tag.query.filter(Tag.kind == 'non_qau_staff')])
     ret = render_template('case/case_tags.html', form=form, case_id=case_id,
-                          tags=tags)
+                            tags=tags)
   elif edit_form == 'case_file':
     file_id = request.args.get('file_id')
     if not file_id:
@@ -167,14 +166,6 @@ def edit(case_id):
     ret = render_template('case/case_file.html', form=form, file_id=file_id)
 
   else:
-    abort(404)
-
-  if request.method == 'POST':
-    if form.validate_on_submit():
-      form.commit_updates()
-      flash('Entries Updated', category='success')
-      return redirect(url_for('case.view', case_id=case_id))
-    else:
-      flash_errors(form)
+    flash_errors(form)
 
   return ret
