@@ -1,10 +1,7 @@
 from flask import flash
 from flask.ext.login import current_user
 
-from octopus.models import CaseStaffMap, User
-
-
-__author__ = 'MartinoW'
+from octopus.models import User
 
 def create_query(args, q):
     conditions = []
