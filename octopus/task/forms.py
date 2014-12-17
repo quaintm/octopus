@@ -1,11 +1,12 @@
-from flask import request
+# from flask import request
 from flask.ext.login import current_user
 from flask_wtf import Form
-from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField
-from wtforms.validators import DataRequired, Optional, Length
-from wtforms.fields.html5 import DateField, IntegerField
+from wtforms import StringField, TextAreaField, \
+    SelectMultipleField
+from wtforms.validators import DataRequired, Optional
+from wtforms.fields.html5 import DateField
 
-from octopus.task.queries import single_task_staff
+# from octopus.task.queries import single_task_staff
 
 from octopus.models import User, Task
 from octopus.extensions import db
@@ -18,8 +19,8 @@ class NewTaskForm(Form):
                            validators=[DataRequired()])
     end_date = DateField('End Date', validators=[Optional()])
 
-    assignees = SelectMultipleField(label='Assign Staff', validators=[Optional()], coerce=int)
-
+    assignees = SelectMultipleField(label='Assign Staff',
+                                    validators=[Optional()], coerce=int)
 
     def __init__(self, *args, **kwargs):
         super(NewTaskForm, self).__init__(*args, **kwargs)
@@ -38,7 +39,7 @@ class NewTaskForm(Form):
                            start_date=self.start_date.data,
                            end_date=self.end_date.data,
                            task_creator=current_user
-        )
+                           )
 
         task.assignees = self.assignees.data
         task.save()
@@ -54,12 +55,10 @@ class EditCoreTaskForm(Form):
                            validators=[Optional()])
     end_date = DateField('End Date', validators=[Optional()])
 
-
     def __init__(self, task_id, *args, **kwargs):
         super(EditCoreTaskForm, self).__init__(*args, **kwargs)
         self.task_id = task_id
         self.current_task = Task.get_by_id(self.task_id)
-
 
         self.task_name.data = self.current_task.task_name
         self.task_desc.data = self.current_task.task_desc
@@ -82,31 +81,35 @@ class EditCoreTaskForm(Form):
         if self.end_date.data:
             self.current_task.end_date = self.end_date.data
 
-
         self.current_task.save()
 
 
 class TaskStaffForm(Form):
-    contractors = SelectMultipleField(label='QAU Contractor Resources', validators=[Optional()], coerce=int)
-    qau_staff = SelectMultipleField(label='QAU Full Time Resources', validators=[Optional()], coerce=int)
+    contractors = SelectMultipleField(label='QAU Contractor Resources',
+                                      validators=[Optional()], coerce=int)
+    qau_staff = SelectMultipleField(label='QAU Full Time Resources',
+                                    validators=[Optional()], coerce=int)
 
     def __init__(self, case_id, *args, **kwargs):
         super(TaskStaffForm, self).__init__(*args, **kwargs)
         self.case_id = case_id
 
-        self.contractors.choices = [(i.id, i.username) for i in User.query if i.is_contractor]
-        self.qau_staff.choices = [(i.id, i.username) for i in User.query if i.is_permanent]
+        self.contractors.choices = [(i.id, i.username) for i in User.query
+                                    if i.is_contractor]
+        self.qau_staff.choices = [(i.id, i.username) for i in User.query
+                                  if i.is_permanent]
 
         # if request.method != 'POST':
-        #     staff = db.session.query(User). \
+        #    staff = db.session.query(User). \
         #         join('user_cases', 'case'). \
         #         filter(User.user_cases.any(case_id=case_id)). \
         #         filter(CaseStaffMap.primary == 0).all()
         #
-            # self.contractors.default = [unicode(i.id) for i in staff if i.is_contractor]
-            # self.qau_staff.default = [unicode(i.id) for i in staff if i.is_permanent]
+            # self.contractors.default = [unicode(i.id) for i in staff
+            # if i.is_contractor]
+            # self.qau_staff.default = [unicode(i.id) for i in staff
+            # if i.is_permanent]
             # self.process()
-
 
     def validate(self):
         initial_validation = super(TaskStaffForm, self).validate()
@@ -116,20 +119,20 @@ class TaskStaffForm(Form):
 
     def commit_updates(self):
 
-        task = Task.get_by_id(self.case_id)
+        # task = Task.get_by_id(self.case_id)
 
-        staff = db.session.query(User). \
-            join('user_cases', 'case'). \
-            filter(User.user_cases.any(case_id=self.case_id)).all()
+        # staff = db.session.query(User). \
+        #     join('user_cases', 'case'). \
+        #     filter(User.user_cases.any(case_id=self.case_id)).all()
 
-        # set of previously assigned users
-        prev_assigned = set([i.id for i in staff])
-        # set of what the new assignment should be
-        all_assigned = set(self.contractors.data + self.qau_staff.data)
-        # set of to be removed entries
-        prev_assigned_remove = prev_assigned.difference(all_assigned)
-        # set of all the new users added to the case
-        new_assigned_add = all_assigned.difference(prev_assigned)
+        # # set of previously assigned users
+        # prev_assigned = set([i.id for i in staff])
+        # # set of what the new assignment should be
+        # all_assigned = set(self.contractors.data + self.qau_staff.data)
+        # # set of to be removed entries
+        # prev_assigned_remove = prev_assigned.difference(all_assigned)
+        # # set of all the new users added to the case
+        # new_assigned_add = all_assigned.difference(prev_assigned)
 
         # start removing the old entries
         # for user_id in prev_assigned_remove:
@@ -140,7 +143,8 @@ class TaskStaffForm(Form):
         # # add in the new changes
         # for user_id in new_assigned_add:
         #     user = User.get_by_id(user_id)
-        #     # at some point we will need to toggle primary or not, this is how you set that flag
+        #     # at some point we will need to toggle primary or not,
+        # this is how you set that flag
         #     CaseStaffMap.create(user=user, case=case).save()
 
         return None
