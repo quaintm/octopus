@@ -4,7 +4,7 @@ from flask.ext.login import login_required, current_user
 
 from octopus.task import queries
 from octopus.task.forms import (EditCoreTaskForm, NewTaskForm
-    ,CaseStaffForm
+    , TaskStaffForm
 )
 from octopus.case.utils import create_query
 from octopus.extensions import nav, db
@@ -97,17 +97,17 @@ def query():
         return redirect(url_for('public.home'))
 
 
-# ######### ????
-@blueprint.route('/view/<int:task_id>')
-@login_required
-@user_on_case
-def view(case_id=0):
-    lead, staff = queries.single_case_staff(task_id)
-    case = Case.get_by_id(case_id)
-    if not case:
-        abort(404)
-
-    return render_template('task/task.html', case=case, lead=lead, staff=staff)
+# # ######### ???? TODO: Fix this form
+# @blueprint.route('/view/<int:task_id>')
+# @login_required
+# @user_on_case
+# def view(task_id=0):
+#     lead, staff = queries.single_case_staff(task_id)
+#     task = Task.get_by_id(task_id)
+#     if not task:
+#         abort(404)
+#
+#     return render_template('task/task.html', task=task, lead=lead, staff=staff)
 
 
 @blueprint.route("/new", methods=["GET", "POST"])
