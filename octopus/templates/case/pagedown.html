@@ -1,8 +1,11 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h3>{{ field_name }}</h3>
-<h4>MarkDown Editor</h4>
+<div class="clearfix">
+    <h3>{{ field_name }}</h3>
+    <h4>MarkDown Editor</h4>
+    <a class="pull-right btn btn-info" href="http://stackoverflow.com/editing-help">Syntax Help</a>
+</div>
 <form id="newCase" class="form" method="POST" action="" role="form">
 {{ form.hidden_tag() }}
 <div class="row">
