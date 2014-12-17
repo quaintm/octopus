@@ -183,8 +183,8 @@ class Task(SurrogatePK, Model):
 
     # ref to optional associated case
     case_id = ReferenceCol('cases', nullable=False)
-    parent_case = db.Column('parent_case', db.Integer,
-                            db.ForeignKey('cases.id'))
+    # parent_case = db.Column('parent_case', db.Integer,
+    #                         db.ForeignKey('cases.id'))
 
     # many-to-many users to tasks
     assignees = relationship('User', secondary=task_user_map,

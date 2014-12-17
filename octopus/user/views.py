@@ -44,7 +44,8 @@ def all_users():
          ]
          }
     ]
-    return render_template("user/members.html", users=users, extra_cols=extra_cols)
+    return render_template("user/members.html", users=users,
+                           extra_cols=extra_cols)
 
 
 @blueprint.route('/query')
