@@ -1,25 +1,25 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <h1>Edit Case Staff</h1>
-    <br/>
-    <form id="editCaseStaff" class="form" method="POST" action="" role="form">
-        {{ form.hidden_tag() }}
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="form-group">
-                    {{ form.qau_staff.label }}
-                    {{ form.qau_staff(class_="form-control") }}
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="form-group">
-                    {{ form.contractors.label }}
-                    {{ form.contractors(class_="form-control") }}
-                </div>
-            </div>
+  <h1>Edit Case Staff</h1>
+  <br/>
+  <form id="editCaseStaff" class="form" method="POST" action="" role="form">
+    {{ form.hidden_tag() }}
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="form-group">
+          {{ form.qau_staff.label }}
+          {{ form.qau_staff(class_="form-control") }}
         </div>
-        <p><input class="btn btn-default btn-submit" type="submit"
-                  value="Save Staff Edits"></p>
-    </form>
+      </div>
+      <div class="col-lg-6">
+        <div class="form-group">
+          {{ form.contractors.label }}
+          {{ form.contractors(class_="form-control") }}
+        </div>
+      </div>
+    </div>
+    <p><input class="btn btn-default btn-submit" type="submit"
+          value="Save Staff Edits"></p>
+  </form>
 {% endblock %}

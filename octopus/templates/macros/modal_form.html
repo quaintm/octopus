@@ -1,23 +1,23 @@
 {% macro render_modal(btn_txt, data_target, modal_title, btn_type="btn-default", btn_size="btn-sm") %}
 <!-- Button trigger modal -->
 <button type="button" class="btn {{ btn_type }} {{ btn_size }}" data-toggle="modal" data-target="#{{ data_target }}">
-    {{ btn_txt|safe }}
+  {{ btn_txt|safe }}
 </button>
 
 <!-- Modal -->
 <div class="modal fade" id="{{ data_target }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">
-            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
-        </button>
-        <h4 class="modal-title" id="myModalLabel">{{ modal_title|safe }}</h4>
-      </div>
-      <div class="modal-body">
-          {{ caller() }}
-      </div>
+  <div class="modal-content">
+    <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">
+      <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+    </button>
+    <h4 class="modal-title" id="myModalLabel">{{ modal_title|safe }}</h4>
     </div>
+    <div class="modal-body">
+      {{ caller() }}
+    </div>
+  </div>
   </div>
 </div>
 

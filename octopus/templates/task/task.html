@@ -2,288 +2,288 @@
 
 {% block content %}
 
-    <h2 class="text-center">{{ case.case_name|default('Case Not Found') }}</h2>
-    {# Begin Core Case Panel #}
-    <div class="panel-group" id="coreCaseEditAccordian" role="tablist"
-         aria-multiselectable="true">
-        <div class="panel panel-default">
+  <h2 class="text-center">{{ task.task_name|default('Task Not Found') }}</h2>
+  {# Begin Core Task Panel #}
+  <div class="panel-group" id="coreTaskEditAccordian" role="tablist"
+     aria-multiselectable="true">
+    <div class="panel panel-default">
 
-            <div class="panel-heading clearfix" role="tab">
-                <span>Core Case Details</span>
+      <div class="panel-heading clearfix" role="tab">
+        <span>Core Task Details</span>
 
-                <div class="pull-right">
-                    <a href="{{ url_for('case.edit', case_id=case.id, edit_form='core') }}">
-                        <span class="glyphicon glyphicon-edit"></span>
-                    </a>
-                    <a class="panel-collapse-switch" data-toggle="collapse"
-                       data-parent="#accordion"
-                       href="#coreCaseEditPanel" aria-expanded="true"
-                       aria-controls="coreCaseEditPanel">
-                    </a>
-                </div>
-            </div>
-
-            <div id="coreCaseEditPanel" class="panel-collapse collapse in"
-                 role="tabpanel" aria-labelledby="coreCaseEditPanel">
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-lg-5">
-                            <table class="table table-condensed table-striped table-bordered">
-                                <tbody class="">
-                                <tr>
-                                    <td>Case ID #</td>
-                                    <td>{{ case.id }}</td>
-                                </tr>
-                                <tr>
-                                    <td>CRD #</td>
-                                    <td>{{ case.crd_number }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Case Type</td>
-                                    <td>{{ case.case_type.description }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Region</td>
-                                    <td>{{ case.region.code }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Start Date</td>
-                                    <td>{{ case.start_date }}</td>
-                                </tr>
-                                <tr>
-                                    <td>End Date</td>
-                                    {% if case.end_date %}
-                                        <td>{{ case.end_date }}</td>
-                                    {% else %}
-                                        <td>Still Open</td>
-                                    {% endif %}
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    <h4>Description</h4>
-
-                                    <p class="text-justify">{{ case.case_desc|markdown }}</p>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+        <div class="pull-right">
+          <a href="{{ url_for('task.edit', task_id=task.id, edit_form='core') }}">
+            <span class="glyphicon glyphicon-edit"></span>
+          </a>
+          <a class="panel-collapse-switch" data-toggle="collapse"
+             data-parent="#accordion"
+             href="#coreTaskEditPanel" aria-expanded="true"
+             aria-controls="coreTaskEditPanel">
+          </a>
         </div>
-    </div>
-    {# End Core Case Details Panel #}
+      </div>
 
-    {# Begin Case Staff Panel #}
-    <div class="panel-group" id="caseStaffAccordian" role="tablist"
-         aria-multiselectable="true">
-        <div class="panel panel-default">
-
-            <div class="panel-heading clearfix" role="tab">
-                <span>QAU Staff Assigned</span>
-
-                <div class="pull-right">
-                    <a href="{{ url_for('case.edit', case_id=case.id, edit_form='case_staff') }}">
-                        <span class="glyphicon glyphicon-edit"></span>
-                    </a>
-                    <a class="panel-collapse-switch" data-toggle="collapse"
-                       data-parent="#accordion"
-                       href="#caseStaffPanel" aria-expanded="true"
-                       aria-controls="caseStaffPanel">
-                    </a>
-                </div>
+      <div id="coreTaskEditPanel" class="panel-collapse collapse in"
+         role="tabpanel" aria-labelledby="coreTaskEditPanel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-5">
+              <table class="table table-condensed table-striped table-bordered">
+                <tbody class="">
+                <tr>
+                  <td>Task ID #</td>
+                  <td>{{ task.id }}</td>
+                </tr>
+                <tr>
+                  <td>CRD #</td>
+                  <td>{{ task.crd_number }}</td>
+                </tr>
+                <tr>
+                  <td>Task Type</td>
+                  <td>{{ task.task_type.description }}</td>
+                </tr>
+                <tr>
+                  <td>Region</td>
+                  <td>{{ task.region.code }}</td>
+                </tr>
+                <tr>
+                  <td>Start Date</td>
+                  <td>{{ task.start_date }}</td>
+                </tr>
+                <tr>
+                  <td>End Date</td>
+                  {% if task.end_date %}
+                    <td>{{ task.end_date }}</td>
+                  {% else %}
+                    <td>Still Open</td>
+                  {% endif %}
+                </tr>
+                </tbody>
+              </table>
             </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <h4>Description</h4>
 
-            <div id="caseStaffPanel" class="panel-collapse collapse in"
-                 role="tabpanel" aria-labelledby="caseStaffPanel">
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <h4>Case Lead</h4>
-
-                            <div class="well">
-                                <ul class="list-inline list-inline-labels">
-                                    <li>
-                                        {% if lead %}
-                                            {{ lead[0].full_name }}
-                                        {% else %}
-                                            None
-                                        {% endif %}
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <h4>Other Staff</h4>
-
-                            <div class="well">
-                                <ul class="list-inline list-inline-labels">
-                                    {% if staff %}
-                                        {% for i in staff %}
-                                            <li>{{ i.full_name }}</li>
-                                        {% endfor %}
-                                    {% else %}
-                                        <li>None</li>
-                                    {% endif %}
-                                </ul>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
+                  <p class="text-justify">{{ task.task_desc|markdown }}</p>
+                </li>
+              </ul>
             </div>
+          </div>
         </div>
+
+      </div>
     </div>
-    {# End Case Staff Panel #}
+  </div>
+  {# End Core Task Details Panel #}
 
-    {# Start Exam Staff Panel #}
-    {% set non_qau_staff_tags = case.get_tags(kind='non_qau_staff') %}
-    <div class="panel-group" id="nonQauStaffAccordian" role="tablist"
-         aria-multiselectable="true">
-        <div class="panel panel-default">
-            {# Start Panel Heading#}
-            <div class="panel-heading clearfix" role="tab">
-                <span>Non QAU Exam Staff </span><span
-                    class="badge badge-info">{{ non_qau_staff_tags|length() }}</span>
+  {# Begin Task Staff Panel #}
+  <div class="panel-group" id="taskStaffAccordian" role="tablist"
+     aria-multiselectable="true">
+    <div class="panel panel-default">
 
-                <div class="pull-right">
-                    <a href="{{ url_for('case.edit', case_id=case.id, edit_form='non_qau_staff') }}">
-                        <span class="glyphicon glyphicon-edit"></span>
-                    </a>
-                    <a class="panel-collapse-switch" data-toggle="collapse"
-                       data-parent="#accordion"
-                       href="#nonQauStaffPanel" aria-expanded="true"
-                       aria-controls="nonQauStaffPanel">
-                    </a>
-                </div>
-            </div>
-            {# End Panel Heading#}
-            {# Start Panel Body #}
-            <div id="nonQauStaffPanel" class="panel-collapse collapse in"
-                 role="tabpanel" aria-labelledby="nonQauStaffPanel">
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <ul class="list-inline list-inline-labels">
-                                {% for tag in non_qau_staff_tags %}
-                                    <li class="label label-primary case-tag-info">{{ tag }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                {# End Panel Body #}
-            </div>
+      <div class="panel-heading clearfix" role="tab">
+        <span>QAU Staff Assigned</span>
+
+        <div class="pull-right">
+          <a href="{{ url_for('task.edit', task_id=task.id, edit_form='task_staff') }}">
+            <span class="glyphicon glyphicon-edit"></span>
+          </a>
+          <a class="panel-collapse-switch" data-toggle="collapse"
+             data-parent="#accordion"
+             href="#taskStaffPanel" aria-expanded="true"
+             aria-controls="taskStaffPanel">
+          </a>
         </div>
-    </div>
-    {# End Panel Tags #}
+      </div>
 
-    {# Start Tags Panel #}
-    {% set risk_tags = case.get_tags(kind='risk') %}
-    <div class="panel-group" id="caseTagsAccordian" role="tablist"
-         aria-multiselectable="true">
-        <div class="panel panel-default">
+      <div id="taskStaffPanel" class="panel-collapse collapse in"
+         role="tabpanel" aria-labelledby="taskStaffPanel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <h4>Task Lead</h4>
 
-            {# Start Panel Heading#}
-            <div class="panel-heading clearfix" role="tab">
-                <span>Risk Tags </span><span
-                    class="badge badge-info">{{ risk_tags|length() }}</span>
-
-                <div class="pull-right">
-                    <a href="{{ url_for('case.edit', case_id=case.id, edit_form='risk_tags') }}">
-                        <span class="glyphicon glyphicon-edit"></span>
-                    </a>
-                    <a class="panel-collapse-switch" data-toggle="collapse"
-                       data-parent="#accordion"
-                       href="#caseTagsPanel" aria-expanded="true"
-                       aria-controls="caseTagsPanel">
-                    </a>
-                </div>
+              <div class="well">
+                <ul class="list-inline list-inline-labels">
+                  <li>
+                    {% if lead %}
+                      {{ lead[0].full_name }}
+                    {% else %}
+                      None
+                    {% endif %}
+                  </li>
+                </ul>
+              </div>
             </div>
-            {# End Panel Heading#}
+            <div class="col-lg-6">
+              <h4>Other Staff</h4>
 
-            {# Start Panel Body #}
-            <div id="caseTagsPanel" class="panel-collapse collapse in"
-                 role="tabpanel" aria-labelledby="caseTagsPanel">
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <ul class="list-inline list-inline-labels">
-                                {% for tag in risk_tags %}
-                                    <li class="label label-primary case-tag-info">{{ tag }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                {# End Panel Body #}
-            </div>
-        </div>
-    </div>
-    {# End Panel Tags #}
-
-    {# Start Files Panel #}
-    <div class="panel-group" id="caseFilesAccordian" role="tablist"
-         aria-multiselectable="true">
-        <div class="panel panel-default">
-
-            {# Start Panel Heading#}
-            <div class="panel-heading clearfix" role="tab">
-                <span>Case Files </span><span
-                    class="badge badge-info">{{ case.files|length() }}</span>
-
-                <div class="pull-right">
-                    <a href="{{ url_for('case.edit', case_id=case.id, edit_form='case_file') }}">
-                        <span class="glyphicon glyphicon-plus"></span>
-                    </a>
-                    <a class="panel-collapse-switch" data-toggle="collapse"
-                       data-parent="#accordion"
-                       href="#caseFilesPanel" aria-expanded="true"
-                       aria-controls="caseFilesPanel">
-                    </a>
-                </div>
-            </div>
-            {# End Panel Heading#}
-
-            {# Start Panel Body #}
-            <div id="caseFilesPanel" class="panel-collapse collapse in"
-                 role="tabpanel" aria-labelledby="caseFilesPanel">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Name</th>
-                        <th>Path</th>
-                        <th>Edit</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for file in case.files %}
-                        <tr>
-                            <td>{{ file.kind }}</td>
-                            <td>{{ file.name }}</td>
-                            <td>{{ file.path }}</td>
-                            <td>
-                                <a href="{{ url_for('case.edit', case_id=case.id, file_id=file.id, edit_form='case_file') }}"
-                                   class="btn btn-sm btn-default center-block">Edit
-                                    File</a>
-
-                            </td>
-                        </tr>
+              <div class="well">
+                <ul class="list-inline list-inline-labels">
+                  {% if staff %}
+                    {% for i in staff %}
+                      <li>{{ i.full_name }}</li>
                     {% endfor %}
-                    </tbody>
-                </table>
-                {# End Panel Body #}
+                  {% else %}
+                    <li>None</li>
+                  {% endif %}
+                </ul>
+              </div>
+
             </div>
+          </div>
         </div>
+      </div>
     </div>
-    {# End Panel Files #}
+  </div>
+  {# End Task Staff Panel #}
+
+  {# Start Exam Staff Panel #}
+  {% set non_qau_staff_tags = task.get_tags(kind='non_qau_staff') %}
+  <div class="panel-group" id="nonQauStaffAccordian" role="tablist"
+     aria-multiselectable="true">
+    <div class="panel panel-default">
+      {# Start Panel Heading#}
+      <div class="panel-heading clearfix" role="tab">
+        <span>Non QAU Exam Staff </span><span
+          class="badge badge-info">{{ non_qau_staff_tags|length() }}</span>
+
+        <div class="pull-right">
+          <a href="{{ url_for('task.edit', task_id=task.id, edit_form='non_qau_staff') }}">
+            <span class="glyphicon glyphicon-edit"></span>
+          </a>
+          <a class="panel-collapse-switch" data-toggle="collapse"
+             data-parent="#accordion"
+             href="#nonQauStaffPanel" aria-expanded="true"
+             aria-controls="nonQauStaffPanel">
+          </a>
+        </div>
+      </div>
+      {# End Panel Heading#}
+      {# Start Panel Body #}
+      <div id="nonQauStaffPanel" class="panel-collapse collapse in"
+         role="tabpanel" aria-labelledby="nonQauStaffPanel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-12">
+              <ul class="list-inline list-inline-labels">
+                {% for tag in non_qau_staff_tags %}
+                  <li class="label label-primary task-tag-info">{{ tag }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+        {# End Panel Body #}
+      </div>
+    </div>
+  </div>
+  {# End Panel Tags #}
+
+  {# Start Tags Panel #}
+  {% set risk_tags = task.get_tags(kind='risk') %}
+  <div class="panel-group" id="taskTagsAccordian" role="tablist"
+     aria-multiselectable="true">
+    <div class="panel panel-default">
+
+      {# Start Panel Heading#}
+      <div class="panel-heading clearfix" role="tab">
+        <span>Risk Tags </span><span
+          class="badge badge-info">{{ risk_tags|length() }}</span>
+
+        <div class="pull-right">
+          <a href="{{ url_for('task.edit', task_id=task.id, edit_form='risk_tags') }}">
+            <span class="glyphicon glyphicon-edit"></span>
+          </a>
+          <a class="panel-collapse-switch" data-toggle="collapse"
+             data-parent="#accordion"
+             href="#taskTagsPanel" aria-expanded="true"
+             aria-controls="taskTagsPanel">
+          </a>
+        </div>
+      </div>
+      {# End Panel Heading#}
+
+      {# Start Panel Body #}
+      <div id="taskTagsPanel" class="panel-collapse collapse in"
+         role="tabpanel" aria-labelledby="taskTagsPanel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-12">
+              <ul class="list-inline list-inline-labels">
+                {% for tag in risk_tags %}
+                  <li class="label label-primary task-tag-info">{{ tag }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+        {# End Panel Body #}
+      </div>
+    </div>
+  </div>
+  {# End Panel Tags #}
+
+  {# Start Files Panel #}
+  <div class="panel-group" id="taskFilesAccordian" role="tablist"
+     aria-multiselectable="true">
+    <div class="panel panel-default">
+
+      {# Start Panel Heading#}
+      <div class="panel-heading clearfix" role="tab">
+        <span>Task Files </span><span
+          class="badge badge-info">{{ task.files|length() }}</span>
+
+        <div class="pull-right">
+          <a href="{{ url_for('task.edit', task_id=task.id, edit_form='task_file') }}">
+            <span class="glyphicon glyphicon-plus"></span>
+          </a>
+          <a class="panel-collapse-switch" data-toggle="collapse"
+             data-parent="#accordion"
+             href="#taskFilesPanel" aria-expanded="true"
+             aria-controls="taskFilesPanel">
+          </a>
+        </div>
+      </div>
+      {# End Panel Heading#}
+
+      {# Start Panel Body #}
+      <div id="taskFilesPanel" class="panel-collapse collapse in"
+         role="tabpanel" aria-labelledby="taskFilesPanel">
+        <table class="table table-striped table-bordered table-hover">
+          <thead>
+          <tr>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Path</th>
+            <th>Edit</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for file in task.files %}
+            <tr>
+              <td>{{ file.kind }}</td>
+              <td>{{ file.name }}</td>
+              <td>{{ file.path }}</td>
+              <td>
+                <a href="{{ url_for('task.edit', task_id=task.id, file_id=file.id, edit_form='task_file') }}"
+                   class="btn btn-sm btn-default center-block">Edit
+                  File</a>
+
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {# End Panel Body #}
+      </div>
+    </div>
+  </div>
+  {# End Panel Files #}
 {% endblock %}
 
 
