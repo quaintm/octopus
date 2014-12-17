@@ -107,10 +107,11 @@ class EditCoreCaseForm(Form):
                     case_staff.insert(0, case_staff.pop(c))
         self.case_lead.choices = case_staff
 
-        self.crd_number.data = self.current_case.crd_number
-        self.case_name.data = self.current_case.case_name
-        self.start_date.data = self.current_case.start_date
-        self.end_date.data = self.current_case.end_date
+        if request.method != 'POST':
+            self.crd_number.data = self.current_case.crd_number
+            self.case_name.data = self.current_case.case_name
+            self.start_date.data = self.current_case.start_date
+            self.end_date.data = self.current_case.end_date
 
     def validate(self):
         initial_validation = super(EditCoreCaseForm, self).validate()
@@ -133,6 +134,30 @@ class EditCoreCaseForm(Form):
         if self.case_region.data:
             region = Region.query.get(self.case_region.data)
             self.current_case.region = region
+
+        if self.case_lead.data:
+            # we can be sure that this won't throw an error -- it must be a valid choice to make it here
+            new_lead_id = int(self.case_lead.data)
+
+            old_leads = CaseStaffMap.query.filter_by(case_id=self.case_id,
+                                                     primary=True).all()
+
+            if old_leads:
+                change_in_lead = False
+                for old_lead in old_leads:
+                    # Just in case there's a double mapping somehow, kill it
+                    # (thats why we loop through there should be just a single entry)
+                    if old_lead.id != new_lead_id:
+                        change_in_lead = True
+                        old_lead.delete(commit=True)
+            else:
+                change_in_lead = True
+
+            if change_in_lead:
+                # We don't want to do this lest we need to
+                user = User.get_by_id(new_lead_id)
+                # at some point we will need to toggle primary or not, this is how you set that flag
+                CaseStaffMap.create(user=user, case=self.current_case, primary=True).save()
 
         self.current_case.save()
 
