@@ -2,8 +2,10 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for, abort, json
 from flask.ext.login import login_required, current_user
 
-from octopus.case import queries
-from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, CaseStaffForm, CaseFileForm
+from octopus.task import queries
+from octopus.task.forms import (EditCoreTaskForm, NewTaskForm
+    ,CaseStaffForm
+)
 from octopus.case.utils import create_query
 from octopus.extensions import nav, db
 from octopus.models import CaseType, Case, Tag, Task
@@ -42,85 +44,84 @@ def all_tasks():
         {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
-             {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
+             {'func': lambda x: url_for('task.view', task_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
               'class': 'btn btn-sm btn-default center-block'}
          ]
         }
     ]
-    # get list of cases user has permission to view
+    # get list of cases user has permission to view ---- NEED TO CHANGE TO THREE-LAYER TASK AUTH
     if current_user.is_admin:
-        case_perm = ['admin']
+        task_perm = ['admin']
     else:
         cp = db.session.query(Case.id). \
             filter(Case.users.contains(current_user)).all()
         case_perm = [item for sublist in [i._asdict().values() for i in cp] for item in sublist]
 
-    return render_template("case/all_cases.html", cases=cases,
-                           extra_cols=extra_cols, case_perm=case_perm)
+    return render_template("task/all_tasks.html", cases=cases,
+                           extra_cols=extra_cols, task_perm=task_perm)
 
 
 @blueprint.route("/query")
 @login_required
 def query():
-    q = db.session.query(Case.id.label("ID"),
-                         Case.crd_number.label("CRD #"),
-                         Case.case_name.label("Name"),
-                         CaseType.code.label("Case Type"),
-                         Case.start_date.label("Start"),
-                         Case.end_date.label("End")
-    ).join(CaseType).order_by(Case.id.desc())
+    q = db.session.query(Task.id.label("ID"),
+                         Task.task_name.label("Name"),
+                         Task.start_date.label("Start"),
+                         Task.end_date.label("End")
+    ).order_by(Task.id.desc())
     extra_cols = [
         {'header': {'text': ""},
          'td-class': 'text-center',
          'contents': [
-             {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
+             {'func': lambda x: url_for('task.view', task_id=getattr(x, 'ID')),
               'text': 'View',
               'type': 'button',
               'class': 'btn btn-default btn-sm center-block'}
          ]}
     ]
-    valid, q = create_query(request.args, q)
-    # get list of cases user has permission to view
+    valid, q = create_query(request.args, q) 
+    # get list of cases user has permission to view ----- NEED TASK AUTH
     if current_user.is_admin:
-        case_perm = ['admin']
+        task_perm = ['admin']
     else:
         cp = db.session.query(Case.id). \
             filter(Case.users.contains(current_user)).all()
         case_perm = [item for sublist in [i._asdict().values() for i in cp] for item in sublist]
 
     if valid:
-        return render_template("case/query.html", cases=q, extra_cols=extra_cols, case_perm=case_perm)
+        return render_template("task/query.html", tasks=q, extra_cols=extra_cols, task_perm=task_perm)
     else:
         flash("Invalid Query")
         return redirect(url_for('public.home'))
 
 
-@blueprint.route('/view/<int:case_id>')
+# ######### ????
+@blueprint.route('/view/<int:task_id>')
 @login_required
 @user_on_case
 def view(case_id=0):
-    lead, staff = queries.single_case_staff(case_id)
+    lead, staff = queries.single_case_staff(task_id)
     case = Case.get_by_id(case_id)
     if not case:
         abort(404)
 
-    return render_template('case/case.html', case=case, lead=lead, staff=staff)
+    return render_template('task/task.html', case=case, lead=lead, staff=staff)
 
 
 @blueprint.route("/new", methods=["GET", "POST"])
 @login_required
 def new():
-    form = NewCaseForm(request.form)
+    form = NewTaskForm(request.form)
     if request.method == 'POST':
         if form.validate_on_submit():
-            case = form.commit_new_case()
-            flash("New Case Created")
-            return redirect(url_for('case.view', case_id=case.id))
+            task = form.commit_new_task()
+            flash("New Task Created")
+            return redirect(url_for('task.view', task_id=task.id))
         else:
             flash_errors(form)
-    return render_template("case/new.html", form=form)
+    return render_template("task/new.html", form=form)
 
 
 @blueprint.route("/edit/<int:case_id>", methods=["GET", "POST"])
@@ -130,25 +131,11 @@ def edit(task_id):
     edit_form = request.args.get('edit_form')
 
     if edit_form == 'core':
-        form = EditCoreCaseForm(case_id, request.form)
-        ret = render_template('case/new.html', form=form, case_id=case_id)
-    elif edit_form == 'risk_tags':
-        form = CaseTagsForm(case_id, 'risk', request.form)
-        tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'risk')])
-        ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
-    elif edit_form == 'case_staff': 
-        form = CaseStaffForm(case_id, request.form)
-        ret = render_template('case/case_staff.html', form=form, case_id=case_id)
-    elif edit_form == 'non_qau_staff':
-        form = CaseTagsForm(case_id, 'non_qau_staff', request.form)
-        tags = json.dumps([{"name": unicode(i.tag)} for i in Tag.query.filter(Tag.kind == 'non_qau_staff')])
-        ret = render_template('case/case_tags.html', form=form, case_id=case_id, tags=tags)
-    elif edit_form == 'case_file':
-        file_id = request.args.get('file_id')
-        if not file_id:
-            file_id = None
-        form = CaseFileForm(case_id, file_id, request.form)
-        ret = render_template('case/case_file.html', form=form, file_id=file_id)
+        form = EditCoreTaskForm(task_id, request.form)
+        ret = render_template('task/new.html', form=form, task_id=task_id)
+    # elif edit_form == 'task_staff': 
+    #     form = TaskStaffForm(task_id, request.form)
+    #     ret = render_template('task/task_staff.html', form=form, case_id=case_id)
 
     else:
         abort(404)
@@ -157,7 +144,7 @@ def edit(task_id):
         if form.validate_on_submit():
             form.commit_updates()
             flash('Entries Updated', category='success')
-            return redirect(url_for('case.view', case_id=case_id))
+            return redirect(url_for('task.view', task_id=task_id))
         else:
             flash_errors(form)
 
