@@ -165,10 +165,14 @@ class Task(SurrogatePK, Model):
     start_date = Column(db.Date(), unique=False, nullable=False, index=True)
     end_date = Column(db.Date(), unique=False, nullable=True, index=True)
 
-    task_creator = db.Column('task_creator', db.Integer, db.ForeignKey('users.id'))
-    case_id = ReferenceCol('cases', nullable=False)
-    # parent_case = db.Column('Case', db.Integer, db.ForeignKey('case.id'))
+    # one-to-many user to tasks
+    creator_id = db.Column('creator_id', db.Integer, db.ForeignKey('users.id'))
 
+    # ref to optional associated case
+    case_id = ReferenceCol('cases', nullable=False)
+    parent_case = db.Column('Case', db.Integer, db.ForeignKey('case.id'))
+
+    # many-to-many users to tasks
     assignees = relationship('User', secondary=task_user_map,
                              backref=db.backref('user_tasks', lazy='dynamic'))
 
@@ -209,10 +213,13 @@ class User(UserMixin, SurrogatePK, Model):
     contract = Column(db.String(20), default='None', nullable=True)
 
     # ref to staff table
-    user_cases = relationship('CaseStaffMap', cascade="all, delete-orphan",
+    user_cases = db.relationship('CaseStaffMap', cascade="all, delete-orphan",
                               backref='users')
     cases = association_proxy('user_cases', 'cases')
 
+
+    created_tasks = relationship('Task', backref='creator',
+                                lazy='dynamic')
 
     tasks = relationship('Task', secondary="task_user_map",
                          backref=db.backref('users', lazy='dynamic'))

@@ -1,4 +1,4 @@
-###Monica's to do:
+##Existing to do:
 
 case details -- see staff members on case form
 
@@ -6,11 +6,10 @@ add other staff besides lead to new case form-- with tags
 
 case lead change doesn't work right now
 
-change #CRD to string
 
+##Notes from demo:
 
-Notes from demo:
-
+* change #CRD to string
 * Change CSV in tables from buttons to clickable rows
 * Change edit button to text or apply tooltip
 * Markdown how-to
@@ -21,7 +20,7 @@ Notes from demo:
 * Projects 
   -- eg, NEAT2, NEAT3, MARS
 
-##Case additions
+###Case additions
 * Case Status select and filter
   -- Pre Exam
   -- In Field
