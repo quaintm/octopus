@@ -141,7 +141,7 @@ def edit(case_id):
     elif edit_form == 'case_desc':
         form = PageDownForm(case_id, 'case_desc', request.form)
         field_name = 'Edit Case Description'
-        ret = render_template('markdown/pagedown.html', form=form, case_id=case_id, field_name=field_name)
+        ret = render_template('markdown/edit_form.html', form=form, case_id=case_id, field_name=field_name)
     elif edit_form == 'risk_tags':
         form = CaseTagsForm(case_id, 'risk', request.form)
         tags = json.dumps([{"name": unicode(i.tag)} for i in
