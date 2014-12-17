@@ -12,15 +12,15 @@ blueprint = Blueprint("user", __name__, url_prefix='/user',
                       static_folder="../static")
 
 nav.Bar('user', [
-    nav.Item('<i class="fa fa-user fa-lg"></i>', '', 
-        html_attrs=str("data-placement='bottom',\
+    nav.Item('<i class="fa fa-user fa-lg"></i>', '',
+             html_attrs=str("data-placement='bottom',\
                     title='Users'"
-        ),
-        items=[
-        nav.Item('My Profile', 'user.view'),
-        nav.Item('All Users', 'user.all_users')
+             ),
+             items=[
+                 nav.Item('My Profile', 'user.view'),
+                 nav.Item('All Users', 'user.all_users')
 
-    ])
+             ])
 ])
 
 
@@ -32,7 +32,7 @@ def all_users():
                              User.first_name.label("First Name"),
                              User.last_name.label("Last Name"),
                              User.email.label("Email")
-                             ).order_by(User.id.desc())
+    ).order_by(User.id.desc())
     extra_cols = [
         {'header': {'text': ""},
          'td-class': 'text-center',
@@ -42,7 +42,7 @@ def all_users():
               'type': 'button',
               'class': 'btn btn-default btn-sm center-block'}
          ]
-         }
+        }
     ]
     return render_template("user/members.html", users=users,
                            extra_cols=extra_cols)

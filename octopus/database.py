@@ -48,10 +48,14 @@ class CRUDMixin(object):
     def _log_updates(self, method='save'):
         try:
             user = current_user.username
-            vals = {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
-            current_app.logger.info([('user', user), ('table', self.__class__.__name__), ('method', method), vals])
+            vals = {c.name: str(getattr(self, c.name)) for c in
+                    self.__table__.columns}
+            current_app.logger.info(
+                [('user', user), ('table', self.__class__.__name__),
+                 ('method', method), vals])
         except Exception as e:
-            current_app.logger.error('DB Change Logging Issue Encountered: {}'.format(str(e)))
+            current_app.logger.error(
+                'DB Change Logging Issue Encountered: {}'.format(str(e)))
 
 
 class Model(CRUDMixin, db.Model):

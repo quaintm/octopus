@@ -1,20 +1,22 @@
 from flask import request
 from flask.ext.login import current_user
 from flask_wtf import Form
-from wtforms import StringField, SelectField, TextAreaField, SelectMultipleField, BooleanField
+from wtforms import StringField, SelectField, TextAreaField, \
+    SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional, Length
-from wtforms.fields.html5 import DateField, IntegerField
+from wtforms.fields.html5 import DateField
 from flask.ext.pagedown.fields import PageDownField
 from wtforms.fields import SubmitField
 
 from octopus.case.queries import single_case_staff
-from octopus.models import Region, CaseType, Case, Tag, CaseStaffMap, CaseFile, User
+from octopus.models import Region, CaseType, Case, Tag, CaseStaffMap, CaseFile, \
+    User
 from octopus.extensions import db
 
 
 class NewCaseForm(Form):
     crd_number = StringField('CRD Number',
-                              validators=[DataRequired()])
+                             validators=[DataRequired()])
     case_name = StringField('Case Name', validators=[DataRequired()])
     case_desc = TextAreaField('Case Description')
     start_date = DateField('Start Date',
@@ -30,8 +32,10 @@ class NewCaseForm(Form):
 
     def __init__(self, *args, **kwargs):
         super(NewCaseForm, self).__init__(*args, **kwargs)
-        self.case_type.choices = [(unicode(i.id), i.code) for i in CaseType.query]
-        self.case_region.choices = [(unicode(i.id), i.code) for i in Region.query]
+        self.case_type.choices = [(unicode(i.id), i.code) for i in
+                                  CaseType.query]
+        self.case_region.choices = [(unicode(i.id), i.code) for i in
+                                    Region.query]
         case_lead = [(unicode(i.id), i.full_name) for i in User.query]
         for c, (i, d) in enumerate(case_lead):
             if i == unicode(current_user.id):
@@ -68,7 +72,7 @@ class NewCaseForm(Form):
 
 class EditCoreCaseForm(Form):
     crd_number = StringField('CRD Number',
-                              validators=[Optional()])
+                             validators=[Optional()])
     case_name = StringField('Case Name', validators=[Optional()])
     start_date = DateField('Start Date',
                            validators=[Optional()])
@@ -157,7 +161,8 @@ class EditCoreCaseForm(Form):
                 # We don't want to do this lest we need to
                 user = User.get_by_id(new_lead_id)
                 # at some point we will need to toggle primary or not, this is how you set that flag
-                CaseStaffMap.create(user=user, case=self.current_case, primary=True).save()
+                CaseStaffMap.create(user=user, case=self.current_case,
+                                    primary=True).save()
 
         self.current_case.save()
 
@@ -174,9 +179,12 @@ class CaseTagsForm(Form):
         super(CaseTagsForm, self).__init__(*args, **kwargs)
         self.case_id = case_id
         if kind not in {'risk', 'non_qau_staff'}:
-            raise ValueError('tag "kind" must be one of: "risk", "non_qau_staff"')
+            raise ValueError(
+                'tag "kind" must be one of: "risk", "non_qau_staff"')
         self.tag_kind = kind
-        self.case_tags.choices = [(i.tag, i.tag) for i in Case.get_by_id(case_id).tags if i.kind == self.tag_kind]
+        self.case_tags.choices = [(i.tag, i.tag) for i in
+                                  Case.get_by_id(case_id).tags if
+                                  i.kind == self.tag_kind]
         self.tag_values = None
 
     def commit_updates(self):
@@ -191,13 +199,15 @@ class CaseTagsForm(Form):
         tags = []
         if self.tag_values:
             for t in self.tag_values:
-                tag = Tag.query.filter(Tag.kind == self.tag_kind, Tag.tag == t).first()
+                tag = Tag.query.filter(Tag.kind == self.tag_kind,
+                                       Tag.tag == t).first()
                 if tag:
                     tags.append(tag)
                 else:
                     tags.append(Tag.create(kind=self.tag_kind, tag=t))
 
-        case.tags = tags + [i for i in Tag.query.filter(Tag.kind != self.tag_kind)]
+        case.tags = tags + [i for i in
+                            Tag.query.filter(Tag.kind != self.tag_kind)]
         case.save()
         return None
 
@@ -208,15 +218,19 @@ class CaseTagsForm(Form):
 
 
 class CaseStaffForm(Form):
-    contractors = SelectMultipleField(label='QAU Contractor Resources', validators=[Optional()], coerce=int)
-    qau_staff = SelectMultipleField(label='QAU Full Time Resources', validators=[Optional()], coerce=int)
+    contractors = SelectMultipleField(label='QAU Contractor Resources',
+                                      validators=[Optional()], coerce=int)
+    qau_staff = SelectMultipleField(label='QAU Full Time Resources',
+                                    validators=[Optional()], coerce=int)
 
     def __init__(self, case_id, *args, **kwargs):
         super(CaseStaffForm, self).__init__(*args, **kwargs)
         self.case_id = case_id
 
-        self.contractors.choices = [(i.id, i.username) for i in User.query if i.is_contractor]
-        self.qau_staff.choices = [(i.id, i.username) for i in User.query if i.is_permanent]
+        self.contractors.choices = [(i.id, i.username) for i in User.query if
+                                    i.is_contractor]
+        self.qau_staff.choices = [(i.id, i.username) for i in User.query if
+                                  i.is_permanent]
 
         if request.method != 'POST':
             staff = db.session.query(User). \
@@ -224,8 +238,10 @@ class CaseStaffForm(Form):
                 filter(User.user_cases.any(case_id=case_id)). \
                 filter(CaseStaffMap.primary == 0).all()
 
-            self.contractors.default = [unicode(i.id) for i in staff if i.is_contractor]
-            self.qau_staff.default = [unicode(i.id) for i in staff if i.is_permanent]
+            self.contractors.default = [unicode(i.id) for i in staff if
+                                        i.is_contractor]
+            self.qau_staff.default = [unicode(i.id) for i in staff if
+                                      i.is_permanent]
             self.process()
 
 
@@ -268,8 +284,10 @@ class CaseStaffForm(Form):
 
 
 class CaseFileForm(Form):
-    kind = StringField(label='File Type', validators=[DataRequired(), Length(min=5, max=30)])
-    name = StringField(label='File Name', validators=[DataRequired(), Length(min=5, max=60)])
+    kind = StringField(label='File Type',
+                       validators=[DataRequired(), Length(min=5, max=30)])
+    name = StringField(label='File Name',
+                       validators=[DataRequired(), Length(min=5, max=60)])
     path = StringField(label='File Path', validators=[DataRequired()])
 
     def __init__(self, case_id, file_id, *args, **kwargs):
@@ -294,9 +312,12 @@ class CaseFileForm(Form):
 
     def commit_updates(self):
         if self.file:
-            self.file.update(kind=self.kind.data, name=self.name.data, path=self.path.data, case_id=self.case_id)
+            self.file.update(kind=self.kind.data, name=self.name.data,
+                             path=self.path.data, case_id=self.case_id)
         else:
-            self.file = CaseFile.create(kind=self.kind.data, name=self.name.data, path=self.path.data,
+            self.file = CaseFile.create(kind=self.kind.data,
+                                        name=self.name.data,
+                                        path=self.path.data,
                                         case_id=self.case_id)
         self.file.save()
         return None

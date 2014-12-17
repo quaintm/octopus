@@ -13,24 +13,24 @@
 {%- endmacro %}
 
 
-{% macro render_row(row, extra_cols=None, case_perm=None) -%}
+{% macro render_row(row, extra_cols=None, item_perm=None) -%}
     <tr>
     {% for item in row %}
         <td>{{ item }}</td>
     {% endfor %}
 
     {% if extra_cols %}
-        {{ render_extra_row_items(row, extra_cols, case_perm) }}
+        {{ render_extra_row_items(row, extra_cols, item_perm) }}
     {% endif %}
     </tr>
 
 {%- endmacro %}
 
-{% macro render_extra_row_items(row, extra_cols, case_perm) %}
+{% macro render_extra_row_items(row, extra_cols, item_perm) %}
     {% for col in extra_cols %}
         <td class="{{ col['td-class'] }}">
-            {% if case_perm != ['admin'] and case_perm != None %}
-              {% if not row.ID in case_perm %}
+            {% if item_perm != ['admin'] and item_perm != None %}
+              {% if not row.ID in item_perm %}
               {% else %}
                 {% for item in col['contents'] %}
                     {% if item['func'] %}
@@ -62,7 +62,7 @@
 {% endmacro %}
 
 
-{% macro render_table(id, heading, sql_query, extra_cols=None, case_perm=None) -%}
+{% macro render_table(id, heading, sql_query, extra_cols=None, item_perm=None) -%}
     <div class="panel panel-default">
     <div class="panel-heading">
         {{ heading }}
@@ -76,7 +76,7 @@
     </thead>
     <tbody>
     {% for row in sql_query %}
-       {{ render_row(row, extra_cols=extra_cols, case_perm=case_perm) }}
+       {{ render_row(row, extra_cols=extra_cols, item_perm=item_perm) }}
     {% endfor %}
     </tbody>
     </table>
