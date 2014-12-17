@@ -25,6 +25,7 @@ js = Bundle(
     "libs/pagedown/Markdown.Converter.js",
     "libs/pagedown/Markdown.Sanitizer.js",
     "js/plugins.js",
+    "js/script.js",
     # filters='jsmin',
     output="public/js/common.js"
 )
