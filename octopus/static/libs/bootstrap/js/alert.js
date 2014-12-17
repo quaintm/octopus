@@ -14,14 +14,14 @@
   // ======================
 
   var dismiss = '[data-dismiss="alert"]'
-  var Alert   = function (el) {
+  var Alert = function (el) {
     $(el).on('click', dismiss, this.close)
   }
 
   Alert.VERSION = '3.2.0'
 
   Alert.prototype.close = function (e) {
-    var $this    = $(this)
+    var $this = $(this)
     var selector = $this.attr('data-target')
 
     if (!selector) {
@@ -62,7 +62,7 @@
   function Plugin(option) {
     return this.each(function () {
       var $this = $(this)
-      var data  = $this.data('bs.alert')
+      var data = $this.data('bs.alert')
 
       if (!data) $this.data('bs.alert', (data = new Alert(this)))
       if (typeof option == 'string') data[option].call($this)
@@ -71,7 +71,7 @@
 
   var old = $.fn.alert
 
-  $.fn.alert             = Plugin
+  $.fn.alert = Plugin
   $.fn.alert.Constructor = Alert
 
 

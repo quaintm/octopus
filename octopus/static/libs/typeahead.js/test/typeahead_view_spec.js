@@ -1,7 +1,7 @@
-describe('Typeahead', function() {
+describe('Typeahead', function () {
   var testDatum;
 
-  beforeEach(function() {
+  beforeEach(function () {
     var $fixture, $input;
 
     jasmine.Input.useMock();
@@ -25,12 +25,12 @@ describe('Typeahead', function() {
     this.dropdown = this.view.dropdown;
   });
 
-  describe('when dropdown triggers suggestionClicked', function() {
-    beforeEach(function() {
+  describe('when dropdown triggers suggestionClicked', function () {
+    beforeEach(function () {
       this.dropdown.getDatumForSuggestion.andReturn(testDatum);
     });
 
-    it('should select the datum', function() {
+    it('should select the datum', function () {
       var $e, spy;
 
       this.$input.on('typeahead:selected', spy = jasmine.createSpy());
@@ -39,25 +39,27 @@ describe('Typeahead', function() {
       expect(spy).toHaveBeenCalled();
       expect(this.input.setQuery).toHaveBeenCalledWith(testDatum.value);
       expect(this.input.setInputValue)
-      .toHaveBeenCalledWith(testDatum.value, true);
+        .toHaveBeenCalledWith(testDatum.value, true);
 
-      waitsFor(function() { return this.dropdown.close.callCount; });
+      waitsFor(function () {
+        return this.dropdown.close.callCount;
+      });
     });
   });
 
-  describe('when dropdown triggers cursorMoved', function() {
-    beforeEach(function() {
+  describe('when dropdown triggers cursorMoved', function () {
+    beforeEach(function () {
       this.dropdown.getDatumForCursor.andReturn(testDatum);
     });
 
-    it('should update the input value', function() {
+    it('should update the input value', function () {
       this.dropdown.trigger('cursorMoved');
 
       expect(this.input.setInputValue)
-      .toHaveBeenCalledWith(testDatum.value, true);
+        .toHaveBeenCalledWith(testDatum.value, true);
     });
 
-    it('should trigger cursorchanged', function() {
+    it('should trigger cursorchanged', function () {
       var spy;
 
       this.$input.on('typeahead:cursorchanged', spy = jasmine.createSpy());
@@ -68,14 +70,14 @@ describe('Typeahead', function() {
     });
   });
 
-  describe('when dropdown triggers cursorRemoved', function() {
-    it('should reset the input value', function() {
+  describe('when dropdown triggers cursorRemoved', function () {
+    it('should reset the input value', function () {
       this.dropdown.trigger('cursorRemoved');
 
       expect(this.input.resetInputValue).toHaveBeenCalled();
     });
 
-    it('should update the hint', function() {
+    it('should update the hint', function () {
       this.dropdown.getDatumForTopSuggestion.andReturn(testDatum);
       this.dropdown.isVisible.andReturn(true);
       this.input.hasOverflow.andReturn(false);
@@ -87,8 +89,8 @@ describe('Typeahead', function() {
     });
   });
 
-  describe('when dropdown triggers datasetRendered', function() {
-    it('should update the hint asynchronously', function() {
+  describe('when dropdown triggers datasetRendered', function () {
+    it('should update the hint asynchronously', function () {
       this.dropdown.getDatumForTopSuggestion.andReturn(testDatum);
       this.dropdown.isVisible.andReturn(true);
       this.input.hasOverflow.andReturn(false);
@@ -99,18 +101,18 @@ describe('Typeahead', function() {
       // ensure it wasn't called synchronously
       expect(this.input.setHint).not.toHaveBeenCalled();
 
-      waitsFor(function() {
+      waitsFor(function () {
         return !!this.input.setHint.callCount;
       });
 
-      runs(function() {
+      runs(function () {
         expect(this.input.setHint).toHaveBeenCalledWith(testDatum.value);
       });
     });
   });
 
-  describe('when dropdown triggers opened', function() {
-    it('should update the hint', function() {
+  describe('when dropdown triggers opened', function () {
+    it('should update the hint', function () {
       this.dropdown.getDatumForTopSuggestion.andReturn(testDatum);
       this.dropdown.isVisible.andReturn(true);
       this.input.hasOverflow.andReturn(false);
@@ -121,7 +123,7 @@ describe('Typeahead', function() {
       expect(this.input.setHint).toHaveBeenCalledWith(testDatum.value);
     });
 
-    it('should trigger typeahead:opened', function() {
+    it('should trigger typeahead:opened', function () {
       var spy;
 
       this.$input.on('typeahead:opened', spy = jasmine.createSpy());
@@ -132,14 +134,14 @@ describe('Typeahead', function() {
     });
   });
 
-  describe('when dropdown triggers closed', function() {
-    it('should clear the hint', function() {
+  describe('when dropdown triggers closed', function () {
+    it('should clear the hint', function () {
       this.dropdown.trigger('closed');
 
       expect(this.input.clearHint).toHaveBeenCalled();
     });
 
-    it('should trigger typeahead:closed', function() {
+    it('should trigger typeahead:closed', function () {
       var spy;
 
       this.$input.on('typeahead:closed', spy = jasmine.createSpy());
@@ -150,46 +152,46 @@ describe('Typeahead', function() {
     });
   });
 
-  describe('when input triggers focused', function() {
-    it('should activate the typeahead', function() {
+  describe('when input triggers focused', function () {
+    it('should activate the typeahead', function () {
       this.input.trigger('focused');
 
       expect(this.view.isActivated).toBe(true);
     });
 
-    it('should open the dropdown', function() {
+    it('should open the dropdown', function () {
       this.input.trigger('focused');
 
       expect(this.dropdown.open).toHaveBeenCalled();
     });
   });
 
-  describe('when input triggers blurred', function() {
-    it('should deactivate the typeahead', function() {
+  describe('when input triggers blurred', function () {
+    it('should deactivate the typeahead', function () {
       this.input.trigger('blurred');
 
       expect(this.view.isActivated).toBe(false);
     });
 
-    it('should empty the dropdown', function() {
+    it('should empty the dropdown', function () {
       this.input.trigger('blurred');
 
       expect(this.dropdown.empty).toHaveBeenCalled();
     });
 
-    it('should close the dropdown', function() {
+    it('should close the dropdown', function () {
       this.input.trigger('blurred');
 
       expect(this.dropdown.close).toHaveBeenCalled();
     });
   });
 
-  describe('when input triggers enterKeyed', function() {
-    beforeEach(function() {
+  describe('when input triggers enterKeyed', function () {
+    beforeEach(function () {
       this.dropdown.getDatumForCursor.andReturn(testDatum);
     });
 
-    it('should select the datum', function() {
+    it('should select the datum', function () {
       var $e, spy;
 
       $e = jasmine.createSpyObj('event', ['preventDefault']);
@@ -199,12 +201,14 @@ describe('Typeahead', function() {
       expect(spy).toHaveBeenCalled();
       expect(this.input.setQuery).toHaveBeenCalledWith(testDatum.value);
       expect(this.input.setInputValue)
-      .toHaveBeenCalledWith(testDatum.value, true);
+        .toHaveBeenCalledWith(testDatum.value, true);
 
-      waitsFor(function() { return this.dropdown.close.callCount; });
+      waitsFor(function () {
+        return this.dropdown.close.callCount;
+      });
     });
 
-    it('should prevent the default behavior of the event', function() {
+    it('should prevent the default behavior of the event', function () {
       var $e;
 
       $e = jasmine.createSpyObj('event', ['preventDefault']);
@@ -214,13 +218,13 @@ describe('Typeahead', function() {
     });
   });
 
-  describe('when input triggers tabKeyed', function() {
-    describe('when cursor is in use', function() {
-      beforeEach(function() {
+  describe('when input triggers tabKeyed', function () {
+    describe('when cursor is in use', function () {
+      beforeEach(function () {
         this.dropdown.getDatumForCursor.andReturn(testDatum);
       });
 
-      it('should select the datum', function() {
+      it('should select the datum', function () {
         var $e, spy;
 
         $e = jasmine.createSpyObj('event', ['preventDefault']);
@@ -230,12 +234,14 @@ describe('Typeahead', function() {
         expect(spy).toHaveBeenCalled();
         expect(this.input.setQuery).toHaveBeenCalledWith(testDatum.value);
         expect(this.input.setInputValue)
-        .toHaveBeenCalledWith(testDatum.value, true);
+          .toHaveBeenCalledWith(testDatum.value, true);
 
-        waitsFor(function() { return this.dropdown.close.callCount; });
+        waitsFor(function () {
+          return this.dropdown.close.callCount;
+        });
       });
 
-      it('should prevent the default behavior of the event', function() {
+      it('should prevent the default behavior of the event', function () {
         var $e;
 
         $e = jasmine.createSpyObj('event', ['preventDefault']);
@@ -245,8 +251,8 @@ describe('Typeahead', function() {
       });
     });
 
-    describe('when cursor is not in use', function() {
-      it('should autocomplete', function() {
+    describe('when cursor is not in use', function () {
+      it('should autocomplete', function () {
         var spy;
 
         this.input.getQuery.andReturn('bi');
@@ -263,148 +269,148 @@ describe('Typeahead', function() {
     });
   });
 
-  describe('when input triggers escKeyed', function() {
-    it('should close the dropdown', function() {
+  describe('when input triggers escKeyed', function () {
+    it('should close the dropdown', function () {
       this.input.trigger('escKeyed');
 
       expect(this.dropdown.close).toHaveBeenCalled();
     });
 
-    it('should reset the input value', function() {
+    it('should reset the input value', function () {
       this.input.trigger('escKeyed');
 
       expect(this.input.resetInputValue).toHaveBeenCalled();
     });
   });
 
-  describe('when input triggers upKeyed', function() {
-    beforeEach(function() {
+  describe('when input triggers upKeyed', function () {
+    beforeEach(function () {
       this.input.getQuery.andReturn('ghost');
     });
 
-    describe('when dropdown is empty and minLength is satisfied', function() {
-      beforeEach(function() {
+    describe('when dropdown is empty and minLength is satisfied', function () {
+      beforeEach(function () {
         this.dropdown.isEmpty = true;
         this.view.minLength = 2;
 
         this.input.trigger('upKeyed');
       });
 
-      it('should update dropdown', function() {
+      it('should update dropdown', function () {
         expect(this.dropdown.update).toHaveBeenCalledWith('ghost');
       });
 
-      it('should not move cursor up', function() {
+      it('should not move cursor up', function () {
         expect(this.dropdown.moveCursorUp).not.toHaveBeenCalled();
       });
     });
 
-    describe('when dropdown is not empty', function() {
-      beforeEach(function() {
+    describe('when dropdown is not empty', function () {
+      beforeEach(function () {
         this.dropdown.isEmpty = false;
         this.view.minLength = 2;
 
         this.input.trigger('upKeyed');
       });
 
-      it('should not update dropdown', function() {
+      it('should not update dropdown', function () {
         expect(this.dropdown.update).not.toHaveBeenCalled();
       });
 
-      it('should move cursor up', function() {
+      it('should move cursor up', function () {
         expect(this.dropdown.moveCursorUp).toHaveBeenCalled();
       });
     });
 
-    describe('when minLength is not satisfied', function() {
-      beforeEach(function() {
+    describe('when minLength is not satisfied', function () {
+      beforeEach(function () {
         this.dropdown.isEmpty = true;
         this.view.minLength = 10;
 
         this.input.trigger('upKeyed');
       });
 
-      it('should not update dropdown', function() {
+      it('should not update dropdown', function () {
         expect(this.dropdown.update).not.toHaveBeenCalled();
       });
 
-      it('should move cursor up', function() {
+      it('should move cursor up', function () {
         expect(this.dropdown.moveCursorUp).toHaveBeenCalled();
       });
     });
 
-    it('should open the dropdown', function() {
+    it('should open the dropdown', function () {
       this.input.trigger('upKeyed');
 
       expect(this.dropdown.open).toHaveBeenCalled();
     });
   });
 
-  describe('when input triggers downKeyed', function() {
-    beforeEach(function() {
+  describe('when input triggers downKeyed', function () {
+    beforeEach(function () {
       this.input.getQuery.andReturn('ghost');
     });
 
-    describe('when dropdown is empty and minLength is satisfied', function() {
-      beforeEach(function() {
+    describe('when dropdown is empty and minLength is satisfied', function () {
+      beforeEach(function () {
         this.dropdown.isEmpty = true;
         this.view.minLength = 2;
 
         this.input.trigger('downKeyed');
       });
 
-      it('should update dropdown', function() {
+      it('should update dropdown', function () {
         expect(this.dropdown.update).toHaveBeenCalledWith('ghost');
       });
 
-      it('should not move cursor down', function() {
+      it('should not move cursor down', function () {
         expect(this.dropdown.moveCursorDown).not.toHaveBeenCalled();
       });
     });
 
-    describe('when dropdown is not empty', function() {
-      beforeEach(function() {
+    describe('when dropdown is not empty', function () {
+      beforeEach(function () {
         this.dropdown.isEmpty = false;
         this.view.minLength = 2;
 
         this.input.trigger('downKeyed');
       });
 
-      it('should not update dropdown', function() {
+      it('should not update dropdown', function () {
         expect(this.dropdown.update).not.toHaveBeenCalled();
       });
 
-      it('should move cursor down', function() {
+      it('should move cursor down', function () {
         expect(this.dropdown.moveCursorDown).toHaveBeenCalled();
       });
     });
 
-    describe('when minLength is not satisfied', function() {
-      beforeEach(function() {
+    describe('when minLength is not satisfied', function () {
+      beforeEach(function () {
         this.dropdown.isEmpty = true;
         this.view.minLength = 10;
 
         this.input.trigger('downKeyed');
       });
 
-      it('should not update dropdown', function() {
+      it('should not update dropdown', function () {
         expect(this.dropdown.update).not.toHaveBeenCalled();
       });
 
-      it('should move cursor down', function() {
+      it('should move cursor down', function () {
         expect(this.dropdown.moveCursorDown).toHaveBeenCalled();
       });
     });
 
-    it('should open the dropdown', function() {
+    it('should open the dropdown', function () {
       this.input.trigger('downKeyed');
 
       expect(this.dropdown.open).toHaveBeenCalled();
     });
   });
 
-  describe('when input triggers leftKeyed', function() {
-    it('should autocomplete if language is rtl', function() {
+  describe('when input triggers leftKeyed', function () {
+    it('should autocomplete if language is rtl', function () {
       var spy;
 
       this.view.dir = 'rtl';
@@ -421,8 +427,8 @@ describe('Typeahead', function() {
     });
   });
 
-  describe('when input triggers rightKeyed', function() {
-    it('should autocomplete if language is ltr', function() {
+  describe('when input triggers rightKeyed', function () {
+    it('should autocomplete if language is ltr', function () {
       var spy;
 
       this.view.dir = 'ltr';
@@ -439,50 +445,50 @@ describe('Typeahead', function() {
     });
   });
 
-  describe('when input triggers queryChanged', function() {
-    it('should clear the hint if it has become invalid', function() {
+  describe('when input triggers queryChanged', function () {
+    it('should clear the hint if it has become invalid', function () {
       this.input.trigger('queryChanged', testDatum.value);
 
       expect(this.input.clearHintIfInvalid).toHaveBeenCalled();
     });
 
-    it('should empty dropdown if the query is empty', function() {
+    it('should empty dropdown if the query is empty', function () {
       this.input.trigger('queryChanged', '');
 
       expect(this.dropdown.empty).toHaveBeenCalled();
     });
 
-    it('should not empty dropdown if the query is non-empty', function() {
+    it('should not empty dropdown if the query is non-empty', function () {
       this.input.trigger('queryChanged', testDatum.value);
 
       expect(this.dropdown.empty).not.toHaveBeenCalled();
     });
 
-    it('should update dropdown', function() {
+    it('should update dropdown', function () {
       this.input.trigger('queryChanged', testDatum.value);
 
       expect(this.dropdown.update).toHaveBeenCalledWith(testDatum.value);
     });
 
-    it('should open the dropdown', function() {
+    it('should open the dropdown', function () {
       this.input.trigger('queryChanged', testDatum.value);
 
       expect(this.dropdown.open).toHaveBeenCalled();
     });
 
-    it('should set the language direction', function() {
+    it('should set the language direction', function () {
       this.input.getLanguageDirection.andReturn('rtl');
 
       this.input.trigger('queryChanged', testDatum.value);
 
       expect(this.view.dir).toBe('rtl');
-      expect(this.view.$node).toHaveCss({ direction: 'rtl' });
+      expect(this.view.$node).toHaveCss({direction: 'rtl'});
       expect(this.dropdown.setLanguageDirection).toHaveBeenCalledWith('rtl');
     });
   });
 
-  describe('when input triggers whitespaceChanged', function() {
-    it('should update the hint', function() {
+  describe('when input triggers whitespaceChanged', function () {
+    it('should update the hint', function () {
       this.dropdown.getDatumForTopSuggestion.andReturn(testDatum);
       this.dropdown.isVisible.andReturn(true);
       this.input.hasOverflow.andReturn(false);
@@ -493,31 +499,31 @@ describe('Typeahead', function() {
       expect(this.input.setHint).toHaveBeenCalledWith(testDatum.value);
     });
 
-    it('should open the dropdown', function() {
+    it('should open the dropdown', function () {
       this.input.trigger('whitespaceChanged');
 
       expect(this.dropdown.open).toHaveBeenCalled();
     });
   });
 
-  describe('#open', function() {
-    it('should open the dropdown', function() {
+  describe('#open', function () {
+    it('should open the dropdown', function () {
       this.view.open();
 
       expect(this.dropdown.open).toHaveBeenCalled();
     });
   });
 
-  describe('#close', function() {
-    it('should close the dropdown', function() {
+  describe('#close', function () {
+    it('should close the dropdown', function () {
       this.view.close();
 
       expect(this.dropdown.close).toHaveBeenCalled();
     });
   });
 
-  describe('#getVal', function() {
-    it('should return the current query', function() {
+  describe('#getVal', function () {
+    it('should return the current query', function () {
       this.input.getQuery.andReturn('woah');
       this.view.close();
 
@@ -525,15 +531,15 @@ describe('Typeahead', function() {
     });
   });
 
-  describe('#setVal', function() {
-    it('should update query', function() {
+  describe('#setVal', function () {
+    it('should update query', function () {
       this.view.isActivated = true;
       this.view.setVal('woah');
 
       expect(this.input.setInputValue).toHaveBeenCalledWith('woah');
     });
 
-    it('should update query silently if not activated', function() {
+    it('should update query silently if not activated', function () {
       this.view.setVal('woah');
 
       expect(this.input.setQuery).toHaveBeenCalledWith('woah');
@@ -541,26 +547,26 @@ describe('Typeahead', function() {
     });
   });
 
-  describe('#destroy', function() {
-    it('should destroy input', function() {
+  describe('#destroy', function () {
+    it('should destroy input', function () {
       this.view.destroy();
 
       expect(this.input.destroy).toHaveBeenCalled();
     });
 
-    it('should destroy dropdown', function() {
+    it('should destroy dropdown', function () {
       this.view.destroy();
 
       expect(this.dropdown.destroy).toHaveBeenCalled();
     });
 
-    it('should null out its reference to the wrapper element', function() {
+    it('should null out its reference to the wrapper element', function () {
       this.view.destroy();
 
       expect(this.view.$node).toBeNull();
     });
 
-    it('should revert DOM changes', function() {
+    it('should revert DOM changes', function () {
       this.view.destroy();
 
       // TODO: bad test

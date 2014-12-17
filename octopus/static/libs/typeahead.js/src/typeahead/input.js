@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var Input = (function() {
+var Input = (function () {
   'use strict';
 
   var specialKeyCodeMap;
@@ -39,16 +39,16 @@ var Input = (function() {
 
     this.$hint = $(o.hint);
     this.$input = $(o.input)
-    .on('blur.tt', onBlur)
-    .on('focus.tt', onFocus)
-    .on('keydown.tt', onKeydown);
+      .on('blur.tt', onBlur)
+      .on('focus.tt', onFocus)
+      .on('keydown.tt', onKeydown);
 
     // if no hint, noop all the hint related functions
     if (this.$hint.length === 0) {
       this.setHint =
-      this.getHint =
-      this.clearHint =
-      this.clearHintIfInvalid = _.noop;
+        this.getHint =
+          this.clearHint =
+            this.clearHintIfInvalid = _.noop;
     }
 
     // ie7 and ie8 don't support the input event
@@ -59,9 +59,11 @@ var Input = (function() {
     }
 
     else {
-      this.$input.on('keydown.tt keypress.tt cut.tt paste.tt', function($e) {
+      this.$input.on('keydown.tt keypress.tt cut.tt paste.tt', function ($e) {
         // if a special key triggered this, ignore it
-        if (specialKeyCodeMap[$e.which || $e.keyCode]) { return; }
+        if (specialKeyCodeMap[$e.which || $e.keyCode]) {
+          return;
+        }
 
         // give the browser a chance to update the value of the input
         // before checking to see if the query changed
@@ -80,7 +82,7 @@ var Input = (function() {
   // static methods
   // --------------
 
-  Input.normalizeQuery = function(str) {
+  Input.normalizeQuery = function (str) {
     // strips leading whitespace and condenses all whitespace
     return (str || '').replace(/^\s*/g, '').replace(/\s{2,}/g, ' ');
   };
@@ -124,8 +126,7 @@ var Input = (function() {
           inputValue = this.getInputValue();
 
           preventDefault = hintValue &&
-            hintValue !== inputValue &&
-            !withModifier($e);
+          hintValue !== inputValue && !withModifier($e);
           break;
 
         case 'up':
@@ -161,7 +162,7 @@ var Input = (function() {
       inputValue = this.getInputValue();
       areEquivalent = areQueriesEquivalent(inputValue, this.query);
       hasDifferentWhitespace = areEquivalent ?
-        this.query.length !== inputValue.length : false;
+      this.query.length !== inputValue.length : false;
 
       this.query = inputValue;
 
@@ -243,14 +244,14 @@ var Input = (function() {
       return this.$overflowHelper.width() >= constraint;
     },
 
-    isCursorAtEnd: function() {
+    isCursorAtEnd: function () {
       var valueLength, selectionStart, range;
 
       valueLength = this.$input.val().length;
       selectionStart = this.$input[0].selectionStart;
 
       if (_.isNumber(selectionStart)) {
-       return selectionStart === valueLength;
+        return selectionStart === valueLength;
       }
 
       else if (document.selection) {
@@ -280,25 +281,25 @@ var Input = (function() {
 
   function buildOverflowHelper($input) {
     return $('<pre aria-hidden="true"></pre>')
-    .css({
-      // position helper off-screen
-      position: 'absolute',
-      visibility: 'hidden',
-      // avoid line breaks and whitespace collapsing
-      whiteSpace: 'pre',
-      // use same font css as input to calculate accurate width
-      fontFamily: $input.css('font-family'),
-      fontSize: $input.css('font-size'),
-      fontStyle: $input.css('font-style'),
-      fontVariant: $input.css('font-variant'),
-      fontWeight: $input.css('font-weight'),
-      wordSpacing: $input.css('word-spacing'),
-      letterSpacing: $input.css('letter-spacing'),
-      textIndent: $input.css('text-indent'),
-      textRendering: $input.css('text-rendering'),
-      textTransform: $input.css('text-transform')
-    })
-    .insertAfter($input);
+      .css({
+        // position helper off-screen
+        position: 'absolute',
+        visibility: 'hidden',
+        // avoid line breaks and whitespace collapsing
+        whiteSpace: 'pre',
+        // use same font css as input to calculate accurate width
+        fontFamily: $input.css('font-family'),
+        fontSize: $input.css('font-size'),
+        fontStyle: $input.css('font-style'),
+        fontVariant: $input.css('font-variant'),
+        fontWeight: $input.css('font-weight'),
+        wordSpacing: $input.css('word-spacing'),
+        letterSpacing: $input.css('letter-spacing'),
+        textIndent: $input.css('text-indent'),
+        textRendering: $input.css('text-rendering'),
+        textTransform: $input.css('text-transform')
+      })
+      .insertAfter($input);
   }
 
   function areQueriesEquivalent(a, b) {

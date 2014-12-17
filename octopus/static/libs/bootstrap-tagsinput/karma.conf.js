@@ -11,12 +11,11 @@ files = [
   'src/bootstrap-tagsinput-angular.js',
 
   'test/helpers.js',
-  { pattern: 'test/bootstrap-tagsinput/*.tests.js' }
+  {pattern: 'test/bootstrap-tagsinput/*.tests.js'}
 ];
 
 // list of files to exclude
-exclude = [
-];
+exclude = [];
 
 preprocessors = {
   'src/*.js': 'coverage'
@@ -27,8 +26,8 @@ preprocessors = {
 reporters = ['progress', 'coverage'];
 
 coverageReporter = {
-  type : 'html',
-  dir : 'test/reports/coverage'
+  type: 'html',
+  dir: 'test/reports/coverage'
 };
 
 // web server port

@@ -1,27 +1,27 @@
 {% macro render_header(sql_query, extra_cols=None) -%}
   <tr>
-  {% for col in sql_query.column_descriptions %}
+    {% for col in sql_query.column_descriptions %}
       <th>{{ col.name }}</th>
-  {% endfor %}
-
-  {% if extra_cols %}
-    {% for col in extra_cols %}
-      <th class="{{ col['header']['class'] }}">{{ col['header']['text'] }}</th>
     {% endfor %}
-  {% endif %}
+
+    {% if extra_cols %}
+      {% for col in extra_cols %}
+        <th class="{{ col['header']['class'] }}">{{ col['header']['text'] }}</th>
+      {% endfor %}
+    {% endif %}
   </tr>
 {%- endmacro %}
 
 
 {% macro render_row(row, extra_cols=None, item_perm=None) -%}
   <tr>
-  {% for item in row %}
-    <td>{{ item }}</td>
-  {% endfor %}
+    {% for item in row %}
+      <td>{{ item }}</td>
+    {% endfor %}
 
-  {% if extra_cols %}
-    {{ render_extra_row_items(row, extra_cols, item_perm) }}
-  {% endif %}
+    {% if extra_cols %}
+      {{ render_extra_row_items(row, extra_cols, item_perm) }}
+    {% endif %}
   </tr>
 
 {%- endmacro %}
@@ -32,14 +32,14 @@
       {% if item_perm != ['admin'] and item_perm != None %}
         {% if not row.ID in item_perm %}
         {% else %}
-        {% for item in col['contents'] %}
-          {% if item['func'] %}
-            {{ make_link(href=item['func'](row),
+          {% for item in col['contents'] %}
+            {% if item['func'] %}
+              {{ make_link(href=item['func'](row),
                  text=item['text'],
                  type=item['type'],
                  class=item['class']) }}
-          {% endif %}
-        {% endfor %}
+            {% endif %}
+          {% endfor %}
         {% endif %}
 
       {% else %}
@@ -64,37 +64,38 @@
 
 {% macro render_table(id, heading, sql_query, extra_cols=None, item_perm=None) -%}
   <div class="panel panel-default">
-  <div class="panel-heading">
-    {{ heading }}
-  </div>
-  <!-- /.panel-heading -->
-  <div class="panel-body">
-  <div class="table-responsive">
-  <table class="table table-striped table-bordered table-hover" id="{{ id }}">
-  <thead>
-  {{ render_header(sql_query, extra_cols=extra_cols) }}
-  </thead>
-  <tbody>
-  {% for row in sql_query %}
-     {{ render_row(row, extra_cols=extra_cols, item_perm=item_perm) }}
-  {% endfor %}
-  </tbody>
-  </table>
-  </div>
-  <!-- /.table-responsive -->
-  </div>
-  <!-- /.panel-body -->
+    <div class="panel-heading">
+      {{ heading }}
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover"
+               id="{{ id }}">
+          <thead>
+          {{ render_header(sql_query, extra_cols=extra_cols) }}
+          </thead>
+          <tbody>
+          {% for row in sql_query %}
+            {{ render_row(row, extra_cols=extra_cols, item_perm=item_perm) }}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- /.table-responsive -->
+    </div>
+    <!-- /.panel-body -->
   </div>
   <!-- /.panel -->
 {%- endmacro %}
 
 {% macro render_js(id) %}
   $(document).ready( function () {
-    $('#{{ id|safe }}').DataTable({
-      "dom": 'T<"clear">lfrtip',
-      "tableTools": {
-        "sSwfPath": "/static/swf/copy_csv_xls_pdf.swf"
-      }
-    } );
+  $('#{{ id|safe }}').DataTable({
+  "dom": 'T<"clear">lfrtip',
+  "tableTools": {
+  "sSwfPath": "/static/swf/copy_csv_xls_pdf.swf"
+  }
+  } );
   } );
 {% endmacro %}

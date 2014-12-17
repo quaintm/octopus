@@ -14,11 +14,11 @@
   // ======================
 
   var Modal = function (element, options) {
-    this.options        = options
-    this.$body          = $(document.body)
-    this.$element       = $(element)
-    this.$backdrop      =
-    this.isShown        = null
+    this.options = options
+    this.$body = $(document.body)
+    this.$element = $(element)
+    this.$backdrop =
+      this.isShown = null
     this.scrollbarWidth = 0
 
     if (this.options.remote) {
@@ -30,7 +30,7 @@
     }
   }
 
-  Modal.VERSION  = '3.2.0'
+  Modal.VERSION = '3.2.0'
 
   Modal.DEFAULTS = {
     backdrop: true,
@@ -44,7 +44,7 @@
 
   Modal.prototype.show = function (_relatedTarget) {
     var that = this
-    var e    = $.Event('show.bs.modal', { relatedTarget: _relatedTarget })
+    var e = $.Event('show.bs.modal', {relatedTarget: _relatedTarget})
 
     this.$element.trigger(e)
 
@@ -81,7 +81,7 @@
 
       that.enforceFocus()
 
-      var e = $.Event('shown.bs.modal', { relatedTarget: _relatedTarget })
+      var e = $.Event('shown.bs.modal', {relatedTarget: _relatedTarget})
 
       transition ?
         that.$element.find('.modal-dialog') // wait for modal to slide in
@@ -232,8 +232,8 @@
 
   function Plugin(option, _relatedTarget) {
     return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.modal')
+      var $this = $(this)
+      var data = $this.data('bs.modal')
       var options = $.extend({}, Modal.DEFAULTS, $this.data(), typeof option == 'object' && option)
 
       if (!data) $this.data('bs.modal', (data = new Modal(this, options)))
@@ -244,7 +244,7 @@
 
   var old = $.fn.modal
 
-  $.fn.modal             = Plugin
+  $.fn.modal = Plugin
   $.fn.modal.Constructor = Modal
 
 
@@ -261,10 +261,10 @@
   // ==============
 
   $(document).on('click.bs.modal.data-api', '[data-toggle="modal"]', function (e) {
-    var $this   = $(this)
-    var href    = $this.attr('href')
+    var $this = $(this)
+    var href = $this.attr('href')
     var $target = $($this.attr('data-target') || (href && href.replace(/.*(?=#[^\s]+$)/, ''))) // strip for ie7
-    var option  = $target.data('bs.modal') ? 'toggle' : $.extend({ remote: !/#/.test(href) && href }, $target.data(), $this.data())
+    var option = $target.data('bs.modal') ? 'toggle' : $.extend({remote: !/#/.test(href) && href}, $target.data(), $this.data())
 
     if ($this.is('a')) e.preventDefault()
 

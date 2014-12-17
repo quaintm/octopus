@@ -49,7 +49,7 @@ class CRUDMixin(object):
     try:
       user = current_user.username
       vals = {c.name: str(getattr(self, c.name)) for c in
-          self.__table__.columns}
+              self.__table__.columns}
       current_app.logger.info(
         [('user', user), ('table', self.__class__.__name__),
          ('method', method), vals])

@@ -4,12 +4,12 @@
   // keep all span-level tags returned by a pagedown converter. It should allow
   // all span-level tags through, with or without attributes.
   var inlineTags = new RegExp(['^(<\\/?(a|abbr|acronym|applet|area|b|basefont|',
-                               'bdo|big|button|cite|code|del|dfn|em|figcaption|',
-                               'font|i|iframe|img|input|ins|kbd|label|map|',
-                               'mark|meter|object|param|progress|q|ruby|rp|rt|s|',
-                               'samp|script|select|small|span|strike|strong|',
-                               'sub|sup|textarea|time|tt|u|var|wbr)[^>]*>|',
-                               '<(br)\\s?\\/?>)$'].join(''), 'i');
+    'bdo|big|button|cite|code|del|dfn|em|figcaption|',
+    'font|i|iframe|img|input|ins|kbd|label|map|',
+    'mark|meter|object|param|progress|q|ruby|rp|rt|s|',
+    'samp|script|select|small|span|strike|strong|',
+    'sub|sup|textarea|time|tt|u|var|wbr)[^>]*>|',
+    '<(br)\\s?\\/?>)$'].join(''), 'i');
 
   /******************************************************************
    * Utility Functions                                              *
@@ -17,7 +17,7 @@
 
   // patch for ie7
   if (!Array.indexOf) {
-    Array.prototype.indexOf = function(obj) {
+    Array.prototype.indexOf = function (obj) {
       for (var i = 0; i < this.length; i++) {
         if (this[i] == obj) {
           return i;
@@ -46,7 +46,7 @@
 
   // Sanitize html, removing tags that aren't in the whitelist
   function sanitizeHtml(html, whitelist) {
-    return html.replace(/<[^>]*>?/gi, function(tag) {
+    return html.replace(/<[^>]*>?/gi, function (tag) {
       return tag.match(whitelist) ? tag : '';
     });
   }
@@ -55,9 +55,9 @@
   function union(x, y) {
     var obj = {};
     for (var i = 0; i < x.length; i++)
-       obj[x[i]] = x[i];
+      obj[x[i]] = x[i];
     for (i = 0; i < y.length; i++)
-       obj[y[i]] = y[i];
+      obj[y[i]] = y[i];
     var res = [];
     for (var k in obj) {
       if (obj.hasOwnProperty(k))
@@ -71,18 +71,18 @@
   // end of text (ETX), an idea borrowed from:
   // https://github.com/tanakahisateru/js-markdown-extra
   function addAnchors(text) {
-    if(text.charAt(0) != '\x02')
+    if (text.charAt(0) != '\x02')
       text = '\x02' + text;
-    if(text.charAt(text.length - 1) != '\x03')
+    if (text.charAt(text.length - 1) != '\x03')
       text = text + '\x03';
     return text;
   }
 
   // Remove STX and ETX sentinels.
   function removeAnchors(text) {
-    if(text.charAt(0) == '\x02')
+    if (text.charAt(0) == '\x02')
       text = text.substr(1);
-    if(text.charAt(text.length - 1) == '\x03')
+    if (text.charAt(text.length - 1) == '\x03')
       text = text.substr(0, text.length - 1);
     return text;
   }
@@ -107,6 +107,7 @@
     // Markdown extra adds two escapable characters, `:` and `|`
     return text.replace(/\\\|/g, '~I').replace(/\\:/g, '~i');
   }
+
   function processEscapesStep2(text) {
     return text.replace(/~I/g, '|').replace(/~i/g, ':');
   }
@@ -114,27 +115,27 @@
   // Duplicated from PageDown converter
   function unescapeSpecialChars(text) {
     // Swap back in all the special characters we've hidden.
-    text = text.replace(/~E(\d+)E/g, function(wholeMatch, m1) {
+    text = text.replace(/~E(\d+)E/g, function (wholeMatch, m1) {
       var charCodeToReplace = parseInt(m1);
       return String.fromCharCode(charCodeToReplace);
     });
     return text;
   }
-  
+
   function slugify(text) {
     return text.toLowerCase()
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-    .replace(/\-\-+/g, '-') // Replace multiple - with single -
-    .replace(/^-+/, '') // Trim - from start of text
-    .replace(/-+$/, ''); // Trim - from end of text
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+      .replace(/\-\-+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, ''); // Trim - from end of text
   }
 
   /*****************************************************************************
    * Markdown.Extra *
    ****************************************************************************/
 
-  Markdown.Extra = function() {
+  Markdown.Extra = function () {
     // For converting internal markdown (in tables for instance).
     // This is necessary since these methods are meant to be called as
     // preConversion hooks, and the Markdown converter passed to init()
@@ -144,7 +145,7 @@
     // Stores html blocks we generate in hooks so that
     // they're not destroyed if the user is using a sanitizing converter
     this.hashBlocks = [];
-    
+
     // Stores footnotes
     this.footnotes = {};
     this.usedFootnotes = [];
@@ -162,7 +163,7 @@
     this.tabWidth = 4;
   };
 
-  Markdown.Extra.init = function(converter, options) {
+  Markdown.Extra.init = function (converter, options) {
     // Each call to init creates a new instance of Markdown.Extra so it's
     // safe to have multiple converters, with different options, on a single page
     var extra = new Markdown.Extra();
@@ -209,12 +210,12 @@
     if (contains(options.extensions, "newlines")) {
       postSpanGamutTransformations.push("newlines");
     }
-    
-    converter.hooks.chain("postNormalization", function(text) {
+
+    converter.hooks.chain("postNormalization", function (text) {
       return extra.doTransform(postNormalizationTransformations, text) + '\n';
     });
 
-    converter.hooks.chain("preBlockGamut", function(text, blockGamutHookCallback) {
+    converter.hooks.chain("preBlockGamut", function (text, blockGamutHookCallback) {
       // Keep a reference to the block gamut callback to run recursively
       extra.blockGamutHookCallback = blockGamutHookCallback;
       text = processEscapesStep1(text);
@@ -223,13 +224,13 @@
       return text;
     });
 
-    converter.hooks.chain("postSpanGamut", function(text) {
+    converter.hooks.chain("postSpanGamut", function (text) {
       return extra.doTransform(postSpanGamutTransformations, text);
     });
 
     // Keep a reference to the hook chain running before doPostConversion to apply on hashed extra blocks
     extra.previousPostConversion = converter.hooks.postConversion;
-    converter.hooks.chain("postConversion", function(text) {
+    converter.hooks.chain("postConversion", function (text) {
       text = extra.doTransform(postConversionTransformations, text);
       // Clear state vars that may use unnecessary memory
       extra.hashBlocks = [];
@@ -254,45 +255,48 @@
   };
 
   // Do transformations
-  Markdown.Extra.prototype.doTransform = function(transformations, text) {
-    for(var i = 0; i < transformations.length; i++)
+  Markdown.Extra.prototype.doTransform = function (transformations, text) {
+    for (var i = 0; i < transformations.length; i++)
       text = this[transformations[i]](text);
     return text;
   };
 
   // Return a placeholder containing a key, which is the block's index in the
   // hashBlocks array. We wrap our output in a <p> tag here so Pagedown won't.
-  Markdown.Extra.prototype.hashExtraBlock = function(block) {
+  Markdown.Extra.prototype.hashExtraBlock = function (block) {
     return '\n<p>~X' + (this.hashBlocks.push(block) - 1) + 'X</p>\n';
   };
-  Markdown.Extra.prototype.hashExtraInline = function(block) {
+  Markdown.Extra.prototype.hashExtraInline = function (block) {
     return '~X' + (this.hashBlocks.push(block) - 1) + 'X';
   };
-  
+
   // Replace placeholder blocks in `text` with their corresponding
   // html blocks in the hashBlocks array.
-  Markdown.Extra.prototype.unHashExtraBlocks = function(text) {
+  Markdown.Extra.prototype.unHashExtraBlocks = function (text) {
     var self = this;
+
     function recursiveUnHash() {
       var hasHash = false;
-      text = text.replace(/(?:<p>)?~X(\d+)X(?:<\/p>)?/g, function(wholeMatch, m1) {
+      text = text.replace(/(?:<p>)?~X(\d+)X(?:<\/p>)?/g, function (wholeMatch, m1) {
         hasHash = true;
         var key = parseInt(m1, 10);
         return self.hashBlocks[key];
       });
-      if(hasHash === true) {
+      if (hasHash === true) {
         recursiveUnHash();
       }
     }
+
     recursiveUnHash();
     return text;
   };
-  
+
   // Wrap headers to make sure they won't be in def lists
-  Markdown.Extra.prototype.wrapHeaders = function(text) {
+  Markdown.Extra.prototype.wrapHeaders = function (text) {
     function wrap(text) {
       return '\n' + text + '\n';
     }
+
     text = text.replace(/^.+[ \t]*\n=+[ \t]*\n+/gm, wrap);
     text = text.replace(/^.+[ \t]*\n-+[ \t]*\n+/gm, wrap);
     text = text.replace(/^\#{1,6}[ \t]*.+?[ \t]*\#*\n+/gm, wrap);
@@ -309,15 +313,16 @@
   var attrBlock = "\\{[ \\t]*((?:[#.][-_:a-zA-Z0-9]+[ \\t]*)+)\\}";
   var hdrAttributesA = new RegExp("^(#{1,6}.*#{0,6})[ \\t]+" + attrBlock + "[ \\t]*(?:\\n|0x03)", "gm");
   var hdrAttributesB = new RegExp("^(.*)[ \\t]+" + attrBlock + "[ \\t]*\\n" +
-    "(?=[\\-|=]+\\s*(?:\\n|0x03))", "gm"); // underline lookahead
-  var fcbAttributes =  new RegExp("^(```[ \\t]*[^{\\s]*)[ \\t]+" + attrBlock + "[ \\t]*\\n" +
-    "(?=([\\s\\S]*?)\\n```[ \\t]*(\\n|0x03))", "gm");
-      
+  "(?=[\\-|=]+\\s*(?:\\n|0x03))", "gm"); // underline lookahead
+  var fcbAttributes = new RegExp("^(```[ \\t]*[^{\\s]*)[ \\t]+" + attrBlock + "[ \\t]*\\n" +
+  "(?=([\\s\\S]*?)\\n```[ \\t]*(\\n|0x03))", "gm");
+
   // Extract headers attribute blocks, move them above the element they will be
   // applied to, and hash them for later.
-  Markdown.Extra.prototype.hashHeaderAttributeBlocks = function(text) {
-    
+  Markdown.Extra.prototype.hashHeaderAttributeBlocks = function (text) {
+
     var self = this;
+
     function attributeCallback(wholeMatch, pre, attr) {
       return '<p>~XX' + (self.hashBlocks.push(attr) - 1) + 'XX</p>\n' + pre + "\n";
     }
@@ -326,14 +331,15 @@
     text = text.replace(hdrAttributesB, attributeCallback);  // underline headers
     return text;
   };
-  
+
   // Extract FCB attribute blocks, move them above the element they will be
   // applied to, and hash them for later.
-  Markdown.Extra.prototype.hashFcbAttributeBlocks = function(text) {
+  Markdown.Extra.prototype.hashFcbAttributeBlocks = function (text) {
     // TODO: use sentinels. Should we just add/remove them in doConversion?
     // TODO: better matches for id / class attributes
 
     var self = this;
+
     function attributeCallback(wholeMatch, pre, attr) {
       return '<p>~XX' + (self.hashBlocks.push(attr) - 1) + 'XX</p>\n' + pre + "\n";
     }
@@ -341,11 +347,11 @@
     return text.replace(fcbAttributes, attributeCallback);
   };
 
-  Markdown.Extra.prototype.applyAttributeBlocks = function(text) {
+  Markdown.Extra.prototype.applyAttributeBlocks = function (text) {
     var self = this;
     var blockRe = new RegExp('<p>~XX(\\d+)XX</p>[\\s]*' +
-                             '(?:<(h[1-6]|pre)(?: +class="(\\S+)")?(>[\\s\\S]*?</\\2>))', "gm");
-    text = text.replace(blockRe, function(wholeMatch, k, tag, cls, rest) {
+    '(?:<(h[1-6]|pre)(?: +class="(\\S+)")?(>[\\s\\S]*?</\\2>))', "gm");
+    text = text.replace(blockRe, function (wholeMatch, k, tag, cls, rest) {
       if (!tag) // no following header or fenced code block.
         return '';
 
@@ -379,39 +385,39 @@
    * Tables                                                         *
    *****************************************************************/
 
-  // Find and convert Markdown Extra tables into html.
-  Markdown.Extra.prototype.tables = function(text) {
+    // Find and convert Markdown Extra tables into html.
+  Markdown.Extra.prototype.tables = function (text) {
     var self = this;
 
     var leadingPipe = new RegExp(
-      ['^'                         ,
-       '[ ]{0,3}'                  , // Allowed whitespace
-       '[|]'                       , // Initial pipe
-       '(.+)\\n'                   , // $1: Header Row
+      ['^',
+        '[ ]{0,3}', // Allowed whitespace
+        '[|]', // Initial pipe
+        '(.+)\\n', // $1: Header Row
 
-       '[ ]{0,3}'                  , // Allowed whitespace
-       '[|]([ ]*[-:]+[-| :]*)\\n'  , // $2: Separator
+        '[ ]{0,3}', // Allowed whitespace
+        '[|]([ ]*[-:]+[-| :]*)\\n', // $2: Separator
 
-       '('                         , // $3: Table Body
-         '(?:[ ]*[|].*\\n?)*'      , // Table rows
-       ')',
-       '(?:\\n|$)'                   // Stop at final newline
+        '(', // $3: Table Body
+        '(?:[ ]*[|].*\\n?)*', // Table rows
+        ')',
+        '(?:\\n|$)'                   // Stop at final newline
       ].join(''),
       'gm'
     );
 
     var noLeadingPipe = new RegExp(
-      ['^'                         ,
-       '[ ]{0,3}'                  , // Allowed whitespace
-       '(\\S.*[|].*)\\n'           , // $1: Header Row
+      ['^',
+        '[ ]{0,3}', // Allowed whitespace
+        '(\\S.*[|].*)\\n', // $1: Header Row
 
-       '[ ]{0,3}'                  , // Allowed whitespace
-       '([-:]+[ ]*[|][-| :]*)\\n'  , // $2: Separator
+        '[ ]{0,3}', // Allowed whitespace
+        '([-:]+[ ]*[|][-| :]*)\\n', // $2: Separator
 
-       '('                         , // $3: Table Body
-         '(?:.*[|].*\\n?)*'        , // Table rows
-       ')'                         ,
-       '(?:\\n|$)'                   // Stop at final newline
+        '(', // $3: Table Body
+        '(?:.*[|].*\\n?)*', // Table rows
+        ')',
+        '(?:\\n|$)'                   // Stop at final newline
       ].join(''),
       'gm'
     );
@@ -494,14 +500,14 @@
   /******************************************************************
    * Footnotes                                                      *
    *****************************************************************/
-  
-  // Strip footnote, store in hashes.
-  Markdown.Extra.prototype.stripFootnoteDefinitions = function(text) {
+
+    // Strip footnote, store in hashes.
+  Markdown.Extra.prototype.stripFootnoteDefinitions = function (text) {
     var self = this;
 
     text = text.replace(
       /\n[ ]{0,3}\[\^(.+?)\]\:[ \t]*\n?([\s\S]*?)\n{1,2}((?=\n[ ]{0,3}\S)|$)/g,
-      function(wholeMatch, m1, m2) {
+      function (wholeMatch, m1, m2) {
         m1 = slugify(m1);
         m2 += "\n";
         m2 = m2.replace(/^[ ]{0,3}/g, "");
@@ -511,17 +517,17 @@
 
     return text;
   };
-  
+
 
   // Find and convert footnotes references.
-  Markdown.Extra.prototype.doFootnotes = function(text) {
+  Markdown.Extra.prototype.doFootnotes = function (text) {
     var self = this;
-    if(self.isConvertingFootnote === true) {
+    if (self.isConvertingFootnote === true) {
       return text;
     }
 
     var footnoteCounter = 0;
-    text = text.replace(/\[\^(.+?)\]/g, function(wholeMatch, m1) {
+    text = text.replace(/\[\^(.+?)\]/g, function (wholeMatch, m1) {
       var id = slugify(m1);
       var footnote = self.footnotes[id];
       if (footnote === undefined) {
@@ -530,8 +536,8 @@
       footnoteCounter++;
       self.usedFootnotes.push(id);
       var html = '<a href="#fn:' + id + '" id="fnref:' + id
-      + '" title="See footnote" class="footnote">' + footnoteCounter
-      + '</a>';
+        + '" title="See footnote" class="footnote">' + footnoteCounter
+        + '</a>';
       return self.hashExtraInline(html);
     });
 
@@ -539,7 +545,7 @@
   };
 
   // Print footnotes at the end of the document
-  Markdown.Extra.prototype.printFootnotes = function(text) {
+  Markdown.Extra.prototype.printFootnotes = function (text) {
     var self = this;
 
     if (self.usedFootnotes.length === 0) {
@@ -547,31 +553,31 @@
     }
 
     text += '\n\n<div class="footnotes">\n<hr>\n<ol>\n\n';
-    for(var i=0; i<self.usedFootnotes.length; i++) {
+    for (var i = 0; i < self.usedFootnotes.length; i++) {
       var id = self.usedFootnotes[i];
       var footnote = self.footnotes[id];
       self.isConvertingFootnote = true;
       var formattedfootnote = convertSpans(footnote, self);
       delete self.isConvertingFootnote;
       text += '<li id="fn:'
-        + id
-        + '">'
-        + formattedfootnote
-        + ' <a href="#fnref:'
-        + id
-        + '" title="Return to article" class="reversefootnote">&#8617;</a></li>\n\n';
+      + id
+      + '">'
+      + formattedfootnote
+      + ' <a href="#fnref:'
+      + id
+      + '" title="Return to article" class="reversefootnote">&#8617;</a></li>\n\n';
     }
     text += '</ol>\n</div>';
     return text;
   };
-  
-  
-  /******************************************************************
-  * Fenced Code Blocks  (gfm)                                       *
-  ******************************************************************/
 
-  // Find and convert gfm-inspired fenced code blocks into html.
-  Markdown.Extra.prototype.fencedCodeBlocks = function(text) {
+
+  /******************************************************************
+   * Fenced Code Blocks  (gfm)                                       *
+   ******************************************************************/
+
+    // Find and convert gfm-inspired fenced code blocks into html.
+  Markdown.Extra.prototype.fencedCodeBlocks = function (text) {
     function encodeCode(code) {
       code = code.replace(/&/g, "&amp;");
       code = code.replace(/</g, "&lt;");
@@ -583,7 +589,7 @@
     }
 
     var self = this;
-    text = text.replace(/(?:^|\n)```[ \t]*(\S*)[ \t]*\n([\s\S]*?)\n```[ \t]*(?=\n)/g, function(match, m1, m2) {
+    text = text.replace(/(?:^|\n)```[ \t]*(\S*)[ \t]*\n([\s\S]*?)\n```[ \t]*(?=\n)/g, function (match, m1, m2) {
       var language = m1, codeblock = m2;
 
       // adhere to specified options
@@ -599,7 +605,7 @@
       }
 
       var html = ['<pre', preclass, '><code', codeclass, '>',
-                  encodeCode(codeblock), '</code></pre>'].join('');
+        encodeCode(codeblock), '</code></pre>'].join('');
 
       // replace codeblock with placeholder until postConversion step
       return self.hashExtraBlock(html);
@@ -610,26 +616,26 @@
 
 
   /******************************************************************
-  * SmartyPants                                                     *
-  ******************************************************************/
-  
-  Markdown.Extra.prototype.educatePants = function(text) {
+   * SmartyPants                                                     *
+   ******************************************************************/
+
+  Markdown.Extra.prototype.educatePants = function (text) {
     var self = this;
     var result = '';
     var blockOffset = 0;
     // Here we parse HTML in a very bad manner
-    text.replace(/(?:<!--[\s\S]*?-->)|(<)([a-zA-Z1-6]+)([^\n]*?>)([\s\S]*?)(<\/\2>)/g, function(wholeMatch, m1, m2, m3, m4, m5, offset) {
+    text.replace(/(?:<!--[\s\S]*?-->)|(<)([a-zA-Z1-6]+)([^\n]*?>)([\s\S]*?)(<\/\2>)/g, function (wholeMatch, m1, m2, m3, m4, m5, offset) {
       var token = text.substring(blockOffset, offset);
       result += self.applyPants(token);
       self.smartyPantsLastChar = result.substring(result.length - 1);
       blockOffset = offset + wholeMatch.length;
-      if(!m1) {
+      if (!m1) {
         // Skip commentary
         result += wholeMatch;
         return;
       }
       // Skip special tags
-      if(!/code|kbd|pre|script|noscript|iframe|math|ins|del|pre/i.test(m2)) {
+      if (!/code|kbd|pre|script|noscript|iframe|math|ins|del|pre/i.test(m2)) {
         m4 = self.educatePants(m4);
       }
       else {
@@ -642,7 +648,7 @@
     self.smartyPantsLastChar = result.substring(result.length - 1);
     return result;
   };
-    
+
   function revertPants(wholeMatch, m1) {
     var blockText = m1;
     blockText = blockText.replace(/&\#8220;/g, "\"");
@@ -654,25 +660,25 @@
     blockText = blockText.replace(/&\#8230;/g, "...");
     return blockText;
   }
-  
-  Markdown.Extra.prototype.applyPants = function(text) {
+
+  Markdown.Extra.prototype.applyPants = function (text) {
     // Dashes
     text = text.replace(/---/g, "&#8212;").replace(/--/g, "&#8211;");
     // Ellipses
     text = text.replace(/\.\.\./g, "&#8230;").replace(/\.\s\.\s\./g, "&#8230;");
     // Backticks
-    text = text.replace(/``/g, "&#8220;").replace (/''/g, "&#8221;");
-    
-    if(/^'$/.test(text)) {
+    text = text.replace(/``/g, "&#8220;").replace(/''/g, "&#8221;");
+
+    if (/^'$/.test(text)) {
       // Special case: single-character ' token
-      if(/\S/.test(this.smartyPantsLastChar)) {
+      if (/\S/.test(this.smartyPantsLastChar)) {
         return "&#8217;";
       }
       return "&#8216;";
     }
-    if(/^"$/.test(text)) {
+    if (/^"$/.test(text)) {
       // Special case: single-character " token
-      if(/\S/.test(this.smartyPantsLastChar)) {
+      if (/\S/.test(this.smartyPantsLastChar)) {
         return "&#8221;";
       }
       return "&#8220;";
@@ -680,8 +686,8 @@
 
     // Special case if the very first character is a quote
     // followed by punctuation at a non-word-break. Close the quotes by brute force:
-    text = text.replace (/^'(?=[!"#\$\%'()*+,\-.\/:;<=>?\@\[\\]\^_`{|}~]\B)/, "&#8217;");
-    text = text.replace (/^"(?=[!"#\$\%'()*+,\-.\/:;<=>?\@\[\\]\^_`{|}~]\B)/, "&#8221;");
+    text = text.replace(/^'(?=[!"#\$\%'()*+,\-.\/:;<=>?\@\[\\]\^_`{|}~]\B)/, "&#8217;");
+    text = text.replace(/^"(?=[!"#\$\%'()*+,\-.\/:;<=>?\@\[\\]\^_`{|}~]\B)/, "&#8221;");
 
     // Special case for double sets of quotes, e.g.:
     //   <p>He said, "'Quoted' words in a larger quote."</p>
@@ -690,74 +696,74 @@
 
     // Special case for decade abbreviations (the '80s):
     text = text.replace(/'(?=\d{2}s)/g, "&#8217;");
-    
+
     // Get most opening single quotes:
     text = text.replace(/(\s|&nbsp;|--|&[mn]dash;|&\#8211;|&\#8212;|&\#x201[34];)'(?=\w)/g, "$1&#8216;");
-    
+
     // Single closing quotes:
     text = text.replace(/([^\s\[\{\(\-])'/g, "$1&#8217;");
     text = text.replace(/'(?=\s|s\b)/g, "&#8217;");
 
     // Any remaining single quotes should be opening ones:
     text = text.replace(/'/g, "&#8216;");
-    
+
     // Get most opening double quotes:
     text = text.replace(/(\s|&nbsp;|--|&[mn]dash;|&\#8211;|&\#8212;|&\#x201[34];)"(?=\w)/g, "$1&#8220;");
-    
+
     // Double closing quotes:
     text = text.replace(/([^\s\[\{\(\-])"/g, "$1&#8221;");
     text = text.replace(/"(?=\s)/g, "&#8221;");
-    
+
     // Any remaining quotes should be opening ones.
     text = text.replace(/"/ig, "&#8220;");
     return text;
   };
 
   // Find and convert markdown extra definition lists into html.
-  Markdown.Extra.prototype.runSmartyPants = function(text) {
+  Markdown.Extra.prototype.runSmartyPants = function (text) {
     this.smartyPantsLastChar = '';
     text = this.educatePants(text);
     // Clean everything inside html tags (some of them may have been converted due to our rough html parsing)
     text = text.replace(/(<([a-zA-Z1-6]+)\b([^\n>]*?)(\/)?>)/g, revertPants);
     return text;
   };
-  
-  /******************************************************************
-  * Definition Lists                                                *
-  ******************************************************************/
 
-  // Find and convert markdown extra definition lists into html.
-  Markdown.Extra.prototype.definitionLists = function(text) {
+  /******************************************************************
+   * Definition Lists                                                *
+   ******************************************************************/
+
+    // Find and convert markdown extra definition lists into html.
+  Markdown.Extra.prototype.definitionLists = function (text) {
     var wholeList = new RegExp(
-      ['(\\x02\\n?|\\n\\n)'          ,
-       '(?:'                         ,
-         '('                         , // $1 = whole list
-           '('                       , // $2
-             '[ ]{0,3}'              ,
-             '((?:[ \\t]*\\S.*\\n)+)', // $3 = defined term
-             '\\n?'                  ,
-             '[ ]{0,3}:[ ]+'         , // colon starting definition
-           ')'                       ,
-           '([\\s\\S]+?)'            ,
-           '('                       , // $4
-               '(?=\\0x03)'          , // \z
-             '|'                     ,
-               '(?='                 ,
-                 '\\n{2,}'           ,
-                 '(?=\\S)'           ,
-                 '(?!'               , // Negative lookahead for another term
-                   '[ ]{0,3}'        ,
-                   '(?:\\S.*\\n)+?'  , // defined term
-                   '\\n?'            ,
-                   '[ ]{0,3}:[ ]+'   , // colon starting definition
-                 ')'                 ,
-                 '(?!'               , // Negative lookahead for another definition
-                   '[ ]{0,3}:[ ]+'   , // colon starting definition
-                 ')'                 ,
-               ')'                   ,
-           ')'                       ,
-         ')'                         ,
-       ')'
+      ['(\\x02\\n?|\\n\\n)',
+        '(?:',
+        '(', // $1 = whole list
+        '(', // $2
+        '[ ]{0,3}',
+        '((?:[ \\t]*\\S.*\\n)+)', // $3 = defined term
+        '\\n?',
+        '[ ]{0,3}:[ ]+', // colon starting definition
+        ')',
+        '([\\s\\S]+?)',
+        '(', // $4
+        '(?=\\0x03)', // \z
+        '|',
+        '(?=',
+        '\\n{2,}',
+        '(?=\\S)',
+        '(?!', // Negative lookahead for another term
+        '[ ]{0,3}',
+        '(?:\\S.*\\n)+?', // defined term
+        '\\n?',
+        '[ ]{0,3}:[ ]+', // colon starting definition
+        ')',
+        '(?!', // Negative lookahead for another definition
+        '[ ]{0,3}:[ ]+', // colon starting definition
+        ')',
+        ')',
+        ')',
+        ')',
+        ')'
       ].join(''),
       'gm'
     );
@@ -765,7 +771,7 @@
     var self = this;
     text = addAnchors(text);
 
-    text = text.replace(wholeList, function(match, pre, list) {
+    text = text.replace(wholeList, function (match, pre, list) {
       var result = trim(self.processDefListItems(list));
       result = "<dl>\n" + result + "\n</dl>";
       return pre + self.hashExtraBlock(result) + "\n\n";
@@ -776,35 +782,35 @@
 
   // Process the contents of a single definition list, splitting it
   // into individual term and definition list items.
-  Markdown.Extra.prototype.processDefListItems = function(listStr) {
+  Markdown.Extra.prototype.processDefListItems = function (listStr) {
     var self = this;
 
     var dt = new RegExp(
-      ['(\\x02\\n?|\\n\\n+)'    , // leading line
-       '('                      , // definition terms = $1
-         '[ ]{0,3}'             , // leading whitespace
-         '(?![:][ ]|[ ])'       , // negative lookahead for a definition
-                                  //   mark (colon) or more whitespace
-         '(?:\\S.*\\n)+?'       , // actual term (not whitespace)
-       ')'                      ,
-       '(?=\\n?[ ]{0,3}:[ ])'     // lookahead for following line feed
+      ['(\\x02\\n?|\\n\\n+)', // leading line
+        '(', // definition terms = $1
+        '[ ]{0,3}', // leading whitespace
+        '(?![:][ ]|[ ])', // negative lookahead for a definition
+                          //   mark (colon) or more whitespace
+        '(?:\\S.*\\n)+?', // actual term (not whitespace)
+        ')',
+        '(?=\\n?[ ]{0,3}:[ ])'     // lookahead for following line feed
       ].join(''),                 //   with a definition mark
       'gm'
     );
 
     var dd = new RegExp(
-      ['\\n(\\n+)?'              , // leading line = $1
-       '('                       , // marker space = $2
-         '[ ]{0,3}'              , // whitespace before colon
-         '[:][ ]+'               , // definition mark (colon)
-       ')'                       ,
-       '([\\s\\S]+?)'            , // definition text = $3
-       '(?=\\n*'                 , // stop at next definition mark,
-         '(?:'                   , // next term or end of text
-           '\\n[ ]{0,3}[:][ ]|'  ,
-           '<dt>|\\x03'          , // \z
-         ')'                     ,
-       ')'
+      ['\\n(\\n+)?', // leading line = $1
+        '(', // marker space = $2
+        '[ ]{0,3}', // whitespace before colon
+        '[:][ ]+', // definition mark (colon)
+        ')',
+        '([\\s\\S]+?)', // definition text = $3
+        '(?=\\n*', // stop at next definition mark,
+        '(?:', // next term or end of text
+        '\\n[ ]{0,3}[:][ ]|',
+        '<dt>|\\x03', // \z
+        ')',
+        ')'
       ].join(''),
       'gm'
     );
@@ -814,7 +820,7 @@
     listStr = listStr.replace(/\n{2,}(?=\\x03)/, "\n");
 
     // Process definition terms.
-    listStr = listStr.replace(dt, function(match, pre, termsStr) {
+    listStr = listStr.replace(dt, function (match, pre, termsStr) {
       var terms = trim(termsStr).split("\n");
       var text = '';
       for (var i = 0; i < terms.length; i++) {
@@ -827,7 +833,7 @@
     });
 
     // Process actual definitions.
-    listStr = listStr.replace(dd, function(match, leadingLine, markerSpace, def) {
+    listStr = listStr.replace(dd, function (match, leadingLine, markerSpace, def) {
       if (leadingLine || def.match(/\n{2,}/)) {
         // replace marker with the appropriate whitespace indentation
         def = Array(markerSpace.length + 1).join(' ') + def;
@@ -849,10 +855,10 @@
 
 
   /***********************************************************
-  * Strikethrough                                            *
-  ************************************************************/
+   * Strikethrough                                            *
+   ************************************************************/
 
-  Markdown.Extra.prototype.strikethrough = function(text) {
+  Markdown.Extra.prototype.strikethrough = function (text) {
     // Pretty much duplicated from _DoItalicsAndBold
     return text.replace(/([\W_]|^)~T~T(?=\S)([^\r]*?\S[\*_]*)~T~T([\W_]|$)/g,
       "$1<del>$2</del>$3");
@@ -860,15 +866,15 @@
 
 
   /***********************************************************
-  * New lines                                                *
-  ************************************************************/
+   * New lines                                                *
+   ************************************************************/
 
-  Markdown.Extra.prototype.newlines = function(text) {
+  Markdown.Extra.prototype.newlines = function (text) {
     // We have to ignore already converted newlines and line breaks in sub-list items
-    return text.replace(/(<(?:br|\/li)>)?\n/g, function(wholeMatch, previousTag) {
+    return text.replace(/(<(?:br|\/li)>)?\n/g, function (wholeMatch, previousTag) {
       return previousTag ? wholeMatch : " <br>\n";
     });
   };
-  
+
 })();
 

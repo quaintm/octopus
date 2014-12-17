@@ -1,42 +1,42 @@
-
 {% extends "layout.html" %}
 {% from "macros/modal_form.html" import render_modal %}
 {% set modal_title = "Edit " + user.username + "'s Profile" %}
 
 {% block content %}
-{% call render_modal("Edit", "myModalLabel", modal_title) %}
-  <form id="editUserProfile" class="form" method="POST" action="" role="form">
+  {% call render_modal("Edit", "myModalLabel", modal_title) %}
+    <form id="editUserProfile" class="form" method="POST" action="" role="form">
       {{ form.hidden_tag() }}
       <div class="form-group">
-        {{form.username.label}}
-        {{form.username(placeholder=user.username, class_="form-control")}}
+        {{ form.username.label }}
+        {{ form.username(placeholder=user.username, class_="form-control") }}
       </div>
       <div class="form-group">
-        {{form.email.label}}
-        {{form.email(placeholder=form.email.placeholder, class_="form-control")}}
+        {{ form.email.label }}
+        {{ form.email(placeholder=form.email.placeholder, class_="form-control") }}
       </div>
       <div class="form-group">
-        {{form.first_name.label}}
-        {{form.first_name(placeholder=form.first_name.placeholder, class_="form-control")}}
+        {{ form.first_name.label }}
+        {{ form.first_name(placeholder=form.first_name.placeholder, class_="form-control") }}
       </div>
       <div class="form-group">
-        {{form.last_name.label}}
-        {{form.last_name(placeholder=form.last_name.placeholder, class_="form-control")}}
+        {{ form.last_name.label }}
+        {{ form.last_name(placeholder=form.last_name.placeholder, class_="form-control") }}
       </div>
       <div class="form-group">
-        {{form.old_password_confirm.label}}
-        {{form.old_password_confirm(placeholder="Old Password", class_="form-control")}}
+        {{ form.old_password_confirm.label }}
+        {{ form.old_password_confirm(placeholder="Old Password", class_="form-control") }}
       </div>
       <div class="form-group">
-        {{form.new_password.label}}
-        {{form.new_password(placeholder="New Password", class_="form-control")}}
+        {{ form.new_password.label }}
+        {{ form.new_password(placeholder="New Password", class_="form-control") }}
       </div>
       <div class="form-group">
-        {{form.new_confirm.label}}
-        {{form.new_confirm(placeholder="New Password (again)", class_="form-control")}}
+        {{ form.new_confirm.label }}
+        {{ form.new_confirm(placeholder="New Password (again)", class_="form-control") }}
       </div>
-      <p><input class="btn btn-default btn-submit" type="submit" value="Update Profile"></p>
-  </form>
-{% endcall %}
+      <p><input class="btn btn-default btn-submit" type="submit"
+                value="Update Profile"></p>
+    </form>
+  {% endcall %}
 
 {% endblock %}

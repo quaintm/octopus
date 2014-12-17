@@ -42,14 +42,14 @@ make_datepicker_tag %}
     <div class="row">
       <div class="col-lg-3">
         <div class="form-group">
-        {{form.parent_case.label}}
-        {{form.parent_case(class_="form-control")}}
+          {{ form.parent_case.label }}
+          {{ form.parent_case(class_="form-control") }}
         </div>
       </div>
     </div>
 
     <p><input class="btn btn-default btn-submit" type="submit"
-          value="{{ 'Save Edits' if task_id else 'Create New Task' }}">
+              value="{{ 'Save Edits' if task_id else 'Create New Task' }}">
     </p>
   </form>
 {% endblock %}

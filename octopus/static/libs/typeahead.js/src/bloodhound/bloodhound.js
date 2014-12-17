@@ -4,13 +4,13 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-(function(root) {
+(function (root) {
   'use strict';
 
   var old, keys;
 
   old = root.Bloodhound;
-  keys = { data: 'data', protocol: 'protocol', thumbprint: 'thumbprint' };
+  keys = {data: 'data', protocol: 'protocol', thumbprint: 'thumbprint'};
 
   // add Bloodhoud to global context
   root.Bloodhound = Bloodhound;
@@ -88,7 +88,9 @@
     _getFromRemote: function getFromRemote(query, cb) {
       var that = this, url, uriEncodedQuery;
 
-      if (!this.transport) { return; }
+      if (!this.transport) {
+        return;
+      }
 
       query = query || '';
       uriEncodedQuery = encodeURIComponent(query);
@@ -129,7 +131,7 @@
       // don't match or if the protocol it was originally stored under
       // has changed
       isExpired = stored.thumbprint !== thumbprint ||
-        stored.protocol !== location.protocol;
+      stored.protocol !== location.protocol;
 
       return stored.data && !isExpired ? stored.data : null;
     },
@@ -185,11 +187,11 @@
       function returnRemoteMatches(remoteMatches) {
         var matchesWithBackfill = matches.slice(0);
 
-        _.each(remoteMatches, function(remoteMatch) {
+        _.each(remoteMatches, function (remoteMatch) {
           var isDuplicate;
 
           // checks for duplicates
-          isDuplicate = _.some(matchesWithBackfill, function(match) {
+          isDuplicate = _.some(matchesWithBackfill, function (match) {
             return that.dupDetector(remoteMatch, match);
           });
 
@@ -215,7 +217,9 @@
       this.transport && Transport.resetCache();
     },
 
-    ttAdapter: function ttAdapter() { return _.bind(this.get, this); }
+    ttAdapter: function ttAdapter() {
+      return _.bind(this.get, this);
+    }
   });
 
   return Bloodhound;
@@ -226,9 +230,16 @@
   function getSorter(sortFn) {
     return _.isFunction(sortFn) ? sort : noSort;
 
-    function sort(array) { return array.sort(sortFn); }
-    function noSort(array) { return array; }
+    function sort(array) {
+      return array.sort(sortFn);
+    }
+
+    function noSort(array) {
+      return array;
+    }
   }
 
-  function ignoreDuplicates() { return false; }
+  function ignoreDuplicates() {
+    return false;
+  }
 })(this);

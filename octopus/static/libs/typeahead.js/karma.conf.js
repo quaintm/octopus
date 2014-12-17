@@ -6,7 +6,7 @@
 basePath = '';
 
 preprocessors = {
-'src/**/*.js': 'coverage'
+  'src/**/*.js': 'coverage'
 };
 
 // list of files / patterns to load in the browser
@@ -42,9 +42,7 @@ files = [
 
 
 // list of files to exclude
-exclude = [
-
-];
+exclude = [];
 
 
 // test results reporter to use
@@ -61,8 +59,8 @@ runnerPort = 9100;
 
 // code coverage configs
 coverageReporter = {
-  type : 'html',
-  dir : 'test/coverage/'
+  type: 'html',
+  dir: 'test/coverage/'
 }
 
 // enable / disable colors in the output (reporters and logs)

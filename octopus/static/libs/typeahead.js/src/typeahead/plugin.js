@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-(function() {
+(function () {
   'use strict';
 
   var old, typeaheadKey, methods;
@@ -27,14 +27,14 @@
       function attach() {
         var $input = $(this), eventBus, typeahead;
 
-        _.each(datasets, function(d) {
+        _.each(datasets, function (d) {
           // HACK: force highlight as a top-level config
           d.highlight = !!o.highlight;
         });
 
         typeahead = new Typeahead({
           input: $input,
-          eventBus: eventBus = new EventBus({ el: $input }),
+          eventBus: eventBus = new EventBus({el: $input}),
           withHint: _.isUndefined(o.hint) ? true : !!o.hint,
           minLength: o.minLength,
           autoselect: o.autoselect,
@@ -107,13 +107,15 @@
     }
   };
 
-  $.fn.typeahead = function(method) {
+  $.fn.typeahead = function (method) {
     var tts;
 
     // methods that should only act on intialized typeaheads
     if (methods[method] && method !== 'initialize') {
       // filter out non-typeahead inputs
-      tts = this.filter(function() { return !!$(this).data(typeaheadKey); });
+      tts = this.filter(function () {
+        return !!$(this).data(typeaheadKey);
+      });
       return methods[method].apply(tts, [].slice.call(arguments, 1));
     }
 

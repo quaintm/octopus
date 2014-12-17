@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var tokenizers = (function() {
+var tokenizers = (function () {
   'use strict';
 
   return {
@@ -33,7 +33,7 @@ var tokenizers = (function() {
       return function tokenize(o) {
         var tokens = [];
 
-        _.each(args, function(k) {
+        _.each(args, function (k) {
           tokens = tokens.concat(tokenizer(_.toStr(o[k])));
         });
 

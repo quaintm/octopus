@@ -1,10 +1,10 @@
 var semver = require('semver'),
-    f = require('util').format,
-    files = {
-      common: [
+  f = require('util').format,
+  files = {
+    common: [
       'src/common/utils.js'
-      ],
-      bloodhound: [
+    ],
+    bloodhound: [
       'src/bloodhound/version.js',
       'src/bloodhound/tokenizers.js',
       'src/bloodhound/lru_cache.js',
@@ -13,8 +13,8 @@ var semver = require('semver'),
       'src/bloodhound/search_index.js',
       'src/bloodhound/options_parser.js',
       'src/bloodhound/bloodhound.js'
-      ],
-      typeahead: [
+    ],
+    typeahead: [
       'src/typeahead/html.js',
       'src/typeahead/css.js',
       'src/typeahead/event_bus.js',
@@ -25,10 +25,10 @@ var semver = require('semver'),
       'src/typeahead/dropdown.js',
       'src/typeahead/typeahead.js',
       'src/typeahead/plugin.js'
-      ]
-    };
+    ]
+  };
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   grunt.initConfig({
     version: grunt.file.readJSON('package.json').version,
 
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         banner: '<%= banner %>',
-        enclose: { 'window.jQuery': '$' }
+        enclose: {'window.jQuery': '$'}
       },
       bloodhound: {
         options: {
@@ -135,10 +135,14 @@ module.exports = function(grunt) {
       git_add: 'git add .',
       git_push: 'git push && git push --tags',
       git_commit: {
-        cmd: function(m) { return f('git commit -m "%s"', m); }
+        cmd: function (m) {
+          return f('git commit -m "%s"', m);
+        }
       },
       git_tag: {
-        cmd: function(v) { return f('git tag v%s -am "%s"', v, v); }
+        cmd: function (v) {
+          return f('git tag v%s -am "%s"', v, v);
+        }
       },
       publish_assets: [
         'cp -r <%= buildDir %> typeahead.js',
@@ -163,12 +167,12 @@ module.exports = function(grunt) {
 
     connect: {
       server: {
-        options: { port: 8888, keepalive: true }
+        options: {port: 8888, keepalive: true}
       }
     },
 
     concurrent: {
-      options: { logConcurrentOutput: true },
+      options: {logConcurrentOutput: true},
       dev: ['server', 'watch']
     },
 
@@ -179,7 +183,7 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('release', '#shipit', function(version) {
+  grunt.registerTask('release', '#shipit', function (version) {
     var curVersion = grunt.config.get('version');
 
     version = semver.inc(curVersion, version) || version;
@@ -208,11 +212,11 @@ module.exports = function(grunt) {
     ]);
   });
 
-  grunt.registerTask('manifests', 'Update manifests.', function(version) {
+  grunt.registerTask('manifests', 'Update manifests.', function (version) {
     var _ = grunt.util._,
-        pkg = grunt.file.readJSON('package.json'),
-        bower = grunt.file.readJSON('bower.json'),
-        jqueryPlugin = grunt.file.readJSON('typeahead.js.jquery.json');
+      pkg = grunt.file.readJSON('package.json'),
+      bower = grunt.file.readJSON('bower.json'),
+      jqueryPlugin = grunt.file.readJSON('typeahead.js.jquery.json');
 
     bower = JSON.stringify(_.extend(bower, {
       name: pkg.name,

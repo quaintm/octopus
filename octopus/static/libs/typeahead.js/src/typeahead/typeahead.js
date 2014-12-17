@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var Typeahead = (function() {
+var Typeahead = (function () {
   'use strict';
 
   var attrsKey = 'ttAttrs';
@@ -35,7 +35,7 @@ var Typeahead = (function() {
     // blur cancellations when the scrollbar is clicked
     //
     // #351: preventDefault won't cancel blurs in ie <= 8
-    $input.on('blur.tt', function($e) {
+    $input.on('blur.tt', function ($e) {
       var active, isActive, hasActive;
 
       active = document.activeElement;
@@ -47,35 +47,39 @@ var Typeahead = (function() {
         // stop immediate in order to prevent Input#_onBlur from
         // getting exectued
         $e.stopImmediatePropagation();
-        _.defer(function() { $input.focus(); });
+        _.defer(function () {
+          $input.focus();
+        });
       }
     });
 
     // #351: prevents input blur due to clicks within dropdown menu
-    $menu.on('mousedown.tt', function($e) { $e.preventDefault(); });
+    $menu.on('mousedown.tt', function ($e) {
+      $e.preventDefault();
+    });
 
-    this.eventBus = o.eventBus || new EventBus({ el: $input });
+    this.eventBus = o.eventBus || new EventBus({el: $input});
 
-    this.dropdown = new Dropdown({ menu: $menu, datasets: o.datasets })
-    .onSync('suggestionClicked', this._onSuggestionClicked, this)
-    .onSync('cursorMoved', this._onCursorMoved, this)
-    .onSync('cursorRemoved', this._onCursorRemoved, this)
-    .onSync('opened', this._onOpened, this)
-    .onSync('closed', this._onClosed, this)
-    .onAsync('datasetRendered', this._onDatasetRendered, this);
+    this.dropdown = new Dropdown({menu: $menu, datasets: o.datasets})
+      .onSync('suggestionClicked', this._onSuggestionClicked, this)
+      .onSync('cursorMoved', this._onCursorMoved, this)
+      .onSync('cursorRemoved', this._onCursorRemoved, this)
+      .onSync('opened', this._onOpened, this)
+      .onSync('closed', this._onClosed, this)
+      .onAsync('datasetRendered', this._onDatasetRendered, this);
 
-    this.input = new Input({ input: $input, hint: $hint })
-    .onSync('focused', this._onFocused, this)
-    .onSync('blurred', this._onBlurred, this)
-    .onSync('enterKeyed', this._onEnterKeyed, this)
-    .onSync('tabKeyed', this._onTabKeyed, this)
-    .onSync('escKeyed', this._onEscKeyed, this)
-    .onSync('upKeyed', this._onUpKeyed, this)
-    .onSync('downKeyed', this._onDownKeyed, this)
-    .onSync('leftKeyed', this._onLeftKeyed, this)
-    .onSync('rightKeyed', this._onRightKeyed, this)
-    .onSync('queryChanged', this._onQueryChanged, this)
-    .onSync('whitespaceChanged', this._onWhitespaceChanged, this);
+    this.input = new Input({input: $input, hint: $hint})
+      .onSync('focused', this._onFocused, this)
+      .onSync('blurred', this._onBlurred, this)
+      .onSync('enterKeyed', this._onEnterKeyed, this)
+      .onSync('tabKeyed', this._onTabKeyed, this)
+      .onSync('escKeyed', this._onEscKeyed, this)
+      .onSync('upKeyed', this._onUpKeyed, this)
+      .onSync('downKeyed', this._onDownKeyed, this)
+      .onSync('leftKeyed', this._onLeftKeyed, this)
+      .onSync('rightKeyed', this._onRightKeyed, this)
+      .onSync('queryChanged', this._onQueryChanged, this)
+      .onSync('whitespaceChanged', this._onWhitespaceChanged, this);
 
     this._setLanguageDirection();
   }
@@ -327,12 +331,12 @@ var Typeahead = (function() {
     $hint = $input.clone().css(css.hint).css(getBackgroundStyles($input));
 
     $hint
-    .val('')
-    .removeData()
-    .addClass('tt-hint')
-    .removeAttr('id name placeholder required')
-    .prop('readonly', true)
-    .attr({ autocomplete: 'off', spellcheck: 'false', tabindex: -1 });
+      .val('')
+      .removeData()
+      .addClass('tt-hint')
+      .removeAttr('id name placeholder required')
+      .prop('readonly', true)
+      .attr({autocomplete: 'off', spellcheck: 'false', tabindex: -1});
 
     // store the original values of the attrs that get modified
     // so modifications can be reverted on destroy
@@ -344,18 +348,21 @@ var Typeahead = (function() {
     });
 
     $input
-    .addClass('tt-input')
-    .attr({ autocomplete: 'off', spellcheck: false })
-    .css(withHint ? css.input : css.inputWithNoHint);
+      .addClass('tt-input')
+      .attr({autocomplete: 'off', spellcheck: false})
+      .css(withHint ? css.input : css.inputWithNoHint);
 
     // ie7 does not like it when dir is set to auto
-    try { !$input.attr('dir') && $input.attr('dir', 'auto'); } catch (e) {}
+    try {
+      !$input.attr('dir') && $input.attr('dir', 'auto');
+    } catch (e) {
+    }
 
     return $input
-    .wrap($wrapper)
-    .parent()
-    .prepend(withHint ? $hint : null)
-    .append($dropdown);
+      .wrap($wrapper)
+      .parent()
+      .prepend(withHint ? $hint : null)
+      .append($dropdown);
   }
 
   function getBackgroundStyles($el) {
@@ -376,15 +383,15 @@ var Typeahead = (function() {
 
     // need to remove attrs that weren't previously defined and
     // revert attrs that originally had a value
-    _.each($input.data(attrsKey), function(val, key) {
+    _.each($input.data(attrsKey), function (val, key) {
       _.isUndefined(val) ? $input.removeAttr(key) : $input.attr(key, val);
     });
 
     $input
-    .detach()
-    .removeData(attrsKey)
-    .removeClass('tt-input')
-    .insertAfter($node);
+      .detach()
+      .removeData(attrsKey)
+      .removeClass('tt-input')
+      .insertAfter($node);
 
     $node.remove();
   }

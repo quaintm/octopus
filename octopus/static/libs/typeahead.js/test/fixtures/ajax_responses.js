@@ -14,6 +14,6 @@ fixtures.ajaxResps = {
   }
 };
 
-$.each(fixtures.ajaxResps, function(i, resp) {
+$.each(fixtures.ajaxResps, function (i, resp) {
   resp.responseText && (resp.parsed = $.parseJSON(resp.responseText));
 });

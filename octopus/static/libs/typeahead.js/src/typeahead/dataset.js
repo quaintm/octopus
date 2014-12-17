@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var Dataset = (function() {
+var Dataset = (function () {
   'use strict';
 
   var datasetKey = 'ttDataset', valueKey = 'ttValue', datumKey = 'ttDatum';
@@ -61,7 +61,9 @@ var Dataset = (function() {
     // ### private
 
     _render: function render(query, suggestions) {
-      if (!this.$el) { return; }
+      if (!this.$el) {
+        return;
+      }
 
       var that = this, hasSuggestions;
 
@@ -70,22 +72,22 @@ var Dataset = (function() {
 
       if (!hasSuggestions && this.templates.empty) {
         this.$el
-        .html(getEmptyHtml())
-        .prepend(that.templates.header ? getHeaderHtml() : null)
-        .append(that.templates.footer ? getFooterHtml() : null);
+          .html(getEmptyHtml())
+          .prepend(that.templates.header ? getHeaderHtml() : null)
+          .append(that.templates.footer ? getFooterHtml() : null);
       }
 
       else if (hasSuggestions) {
         this.$el
-        .html(getSuggestionsHtml())
-        .prepend(that.templates.header ? getHeaderHtml() : null)
-        .append(that.templates.footer ? getFooterHtml() : null);
+          .html(getSuggestionsHtml())
+          .prepend(that.templates.header ? getHeaderHtml() : null)
+          .append(that.templates.footer ? getFooterHtml() : null);
       }
 
       this.trigger('rendered');
 
       function getEmptyHtml() {
-        return that.templates.empty({ query: query, isEmpty: true });
+        return that.templates.empty({query: query, isEmpty: true});
       }
 
       function getSuggestionsHtml() {
@@ -110,12 +112,14 @@ var Dataset = (function() {
           var $el;
 
           $el = $(html.suggestion)
-          .append(that.templates.suggestion(suggestion))
-          .data(datasetKey, that.name)
-          .data(valueKey, that.displayFn(suggestion))
-          .data(datumKey, suggestion);
+            .append(that.templates.suggestion(suggestion))
+            .data(datasetKey, that.name)
+            .data(valueKey, that.displayFn(suggestion))
+            .data(datumKey, suggestion);
 
-          $el.children().each(function() { $(this).css(css.suggestionChild); });
+          $el.children().each(function () {
+            $(this).css(css.suggestionChild);
+          });
 
           return $el;
         }
@@ -187,7 +191,9 @@ var Dataset = (function() {
 
     return _.isFunction(display) ? display : displayFn;
 
-    function displayFn(obj) { return obj[display]; }
+    function displayFn(obj) {
+      return obj[display];
+    }
   }
 
   function getTemplates(templates, displayFn) {

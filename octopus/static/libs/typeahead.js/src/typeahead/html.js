@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var html = (function() {
+var html = (function () {
   return {
     wrapper: '<span class="twitter-typeahead"></span>',
     dropdown: '<span class="tt-dropdown-menu"></span>',

@@ -8,15 +8,16 @@ from octopus.models import User
 
 class RegisterForm(Form):
   username = StringField('Username',
-               validators=[DataRequired(), Length(min=3, max=25)])
+                         validators=[DataRequired(), Length(min=3, max=25)])
   email = StringField('Email',
-            validators=[DataRequired(), Email(),
-                  Length(min=6, max=40)])
+                      validators=[DataRequired(), Email(),
+                                  Length(min=6, max=40)])
   password = PasswordField('Password',
-               validators=[DataRequired(), Length(min=6, max=40)])
+                           validators=[DataRequired(), Length(min=6, max=40)])
   confirm = PasswordField('Verify password',
-              [DataRequired(), EqualTo('password',
-                           message='Passwords must match')])
+                          [DataRequired(),
+                           EqualTo('password',
+                                   message='Passwords must match')])
 
   def __init__(self, *args, **kwargs):
     super(RegisterForm, self).__init__(*args, **kwargs)
@@ -39,22 +40,23 @@ class RegisterForm(Form):
 
 class EditUserProfile(Form):
   username = StringField('Username',
-               validators=[Optional(), Length(min=3, max=25)])
+                         validators=[Optional(), Length(min=3, max=25)])
   email = StringField('Email',
-            validators=[Optional(), Email(), Length(min=6, max=40)])
+                      validators=[Optional(), Email(), Length(min=6, max=40)])
   first_name = StringField('First Name',
-               validators=[Optional()])
+                           validators=[Optional()])
   last_name = StringField('Last Name',
-              validators=[Optional()])
+                          validators=[Optional()])
 
   old_password_confirm = PasswordField('Old Password',
-                     validators=[Optional(),
-                           Length(min=6, max=40)])
+                                       validators=[Optional(),
+                                                   Length(min=6, max=40)])
   new_password = PasswordField('New Password',
-                 validators=[Optional(), Length(min=6, max=40)])
+                               validators=[Optional(), Length(min=6, max=40)])
   new_confirm = PasswordField('Verify New Password',
-                [Optional(), EqualTo('new_password',
-                           message='Passwords must match')])
+                              [Optional(),
+                               EqualTo('new_password',
+                                       message='Passwords must match')])
 
   def __init__(self, user_id, *args, **kwargs):
     super(EditUserProfile, self).__init__(*args, **kwargs)
@@ -80,19 +82,17 @@ class EditUserProfile(Form):
     if self.old_password_confirm.data:
       if self.new_password.data:
         if self.new_confirm.data:
-          if not self.user.check_password(
-              self.old_password_confirm.data):
-            self.old_password_confirm.errors.append(
-              'Old password was incorrect')
+          if not self.user.check_password(self.old_password_confirm.data):
+            self.old_password_confirm.errors.append('Old password '
+                                                    'was incorrect')
             valid = False
           else:
             if not self.new_password.data == self.new_confirm.data:
-              self.new_confirm.errors(
-                'Verify New Password field does not match New Password Field')
+              self.new_confirm.errors('Verify New Password field'
+                                      ' does not match New Password Field')
               valid = False
         else:
-          self.new_confirm.errors.append(
-            'Confirm Password Field was blank')
+          self.new_confirm.errors.append('Confirm Password Field was blank')
           valid = False
 
     if self.username.data:
@@ -125,6 +125,3 @@ class EditUserProfile(Form):
     if self.email.data:
       self.user.email = self.email.data
     self.user.save()
-
-
-

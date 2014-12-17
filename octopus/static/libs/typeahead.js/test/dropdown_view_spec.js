@@ -1,6 +1,6 @@
-describe('Dropdown', function() {
+describe('Dropdown', function () {
 
-  beforeEach(function() {
+  beforeEach(function () {
     var $fixture;
 
     jasmine.Dataset.useMock();
@@ -11,20 +11,25 @@ describe('Dropdown', function() {
     this.$menu = $fixture.find('.tt-dropdown-menu');
     this.$menu.html(fixtures.html.dataset);
 
-    this.view = new Dropdown({ menu: this.$menu, datasets: [{}] });
+    this.view = new Dropdown({menu: this.$menu, datasets: [{}]});
     this.dataset = this.view.datasets[0];
   });
 
-  it('should throw an error if menu and/or datasets is missing', function() {
+  it('should throw an error if menu and/or datasets is missing', function () {
     expect(noMenu).toThrow();
     expect(noDatasets).toThrow();
 
-    function noMenu() { new Dropdown({ menu: '.menu' }); }
-    function noDatasets() { new Dropdown({ datasets: true }); }
+    function noMenu() {
+      new Dropdown({menu: '.menu'});
+    }
+
+    function noDatasets() {
+      new Dropdown({datasets: true});
+    }
   });
 
-  describe('when click event is triggered on a suggestion', function() {
-    it('should trigger suggestionClicked', function() {
+  describe('when click event is triggered on a suggestion', function () {
+    it('should trigger suggestionClicked', function () {
       var spy;
 
       this.view.onSync('suggestionClicked', spy = jasmine.createSpy());
@@ -35,8 +40,8 @@ describe('Dropdown', function() {
     });
   });
 
-  describe('when mouseenter is triggered on a suggestion', function() {
-    it('should remove pre-existing cursor', function() {
+  describe('when mouseenter is triggered on a suggestion', function () {
+    it('should remove pre-existing cursor', function () {
       var $first, $last;
 
       $first = this.$menu.find('.tt-suggestion').first();
@@ -49,7 +54,7 @@ describe('Dropdown', function() {
       expect($last).toHaveClass('tt-cursor');
     });
 
-    it('should set the cursor', function() {
+    it('should set the cursor', function () {
       var $suggestion;
 
       $suggestion = this.$menu.find('.tt-suggestion').first();
@@ -58,7 +63,7 @@ describe('Dropdown', function() {
       expect($suggestion).toHaveClass('tt-cursor');
     });
 
-    it('should not trigger cursorMoved', function() {
+    it('should not trigger cursorMoved', function () {
       var spy, $suggestion;
 
       this.view.onSync('cursorMoved', spy = jasmine.createSpy());
@@ -70,8 +75,8 @@ describe('Dropdown', function() {
     });
   });
 
-  describe('when mouseleave is triggered on a suggestion', function() {
-    it('should remove the cursor', function() {
+  describe('when mouseleave is triggered on a suggestion', function () {
+    it('should remove the cursor', function () {
       var $suggestion;
 
       $suggestion = this.$menu.find('.tt-suggestion').first();
@@ -81,8 +86,8 @@ describe('Dropdown', function() {
     });
   });
 
-  describe('when rendered is triggered on a dataset', function() {
-    it('should hide the dropdown if empty', function() {
+  describe('when rendered is triggered on a dataset', function () {
+    it('should hide the dropdown if empty', function () {
       this.dataset.isEmpty.andReturn(true);
 
       this.view.open();
@@ -92,7 +97,7 @@ describe('Dropdown', function() {
       expect(this.$menu).not.toBeVisible();
     });
 
-    it('should show the dropdown if not empty', function() {
+    it('should show the dropdown if not empty', function () {
       this.dataset.isEmpty.andReturn(false);
 
       this.view.open();
@@ -102,7 +107,7 @@ describe('Dropdown', function() {
       expect(this.$menu).toBeVisible();
     });
 
-    it('should trigger datasetRendered', function() {
+    it('should trigger datasetRendered', function () {
       var spy;
 
       this.view.onSync('datasetRendered', spy = jasmine.createSpy());
@@ -112,8 +117,8 @@ describe('Dropdown', function() {
     });
   });
 
-  describe('#open', function() {
-    it('should display the menu if not empty', function() {
+  describe('#open', function () {
+    it('should display the menu if not empty', function () {
       this.view.close();
 
       this.view.isEmpty = false;
@@ -122,7 +127,7 @@ describe('Dropdown', function() {
       expect(this.$menu).toBeVisible();
     });
 
-    it('should not display the menu if empty', function() {
+    it('should not display the menu if empty', function () {
       this.view.close();
 
       this.view.isEmpty = true;
@@ -132,7 +137,7 @@ describe('Dropdown', function() {
     });
 
 
-    it('should trigger opened', function() {
+    it('should trigger opened', function () {
       var spy;
 
       this.view.onSync('opened', spy = jasmine.createSpy());
@@ -144,15 +149,15 @@ describe('Dropdown', function() {
     });
   });
 
-  describe('#close', function() {
-    it('should hide the menu', function() {
+  describe('#close', function () {
+    it('should hide the menu', function () {
       this.view.open();
       this.view.close();
 
       expect(this.$menu).not.toBeVisible();
     });
 
-    it('should trigger closed', function() {
+    it('should trigger closed', function () {
       var spy;
 
       this.view.onSync('closed', spy = jasmine.createSpy());
@@ -164,25 +169,25 @@ describe('Dropdown', function() {
     });
   });
 
-  describe('#setLanguageDirection', function() {
-    it('should update css for given language direction', function() {
+  describe('#setLanguageDirection', function () {
+    it('should update css for given language direction', function () {
       // TODO: eh, the toHaveCss matcher doesn't seem to work very well
       /*
-      this.view.setLanguageDirection('rtl');
-      expect(this.$menu).toHaveCss({ left: 'auto', right: '0px' });
+       this.view.setLanguageDirection('rtl');
+       expect(this.$menu).toHaveCss({ left: 'auto', right: '0px' });
 
-      this.view.setLanguageDirection('ltr');
-      expect(this.$menu).toHaveCss({ left: '0px', right: 'auto' });
-      */
+       this.view.setLanguageDirection('ltr');
+       expect(this.$menu).toHaveCss({ left: '0px', right: 'auto' });
+       */
     });
   });
 
-  describe('#moveCursorUp', function() {
-    beforeEach(function() {
+  describe('#moveCursorUp', function () {
+    beforeEach(function () {
       this.view.open();
     });
 
-    it('should move the cursor up', function() {
+    it('should move the cursor up', function () {
       var $first, $second;
 
       $first = this.view._getSuggestions().eq(0);
@@ -193,7 +198,7 @@ describe('Dropdown', function() {
       expect(this.view._getCursor()).toBe($first);
     });
 
-    it('should move cursor to bottom if cursor is not present', function() {
+    it('should move cursor to bottom if cursor is not present', function () {
       var $bottom;
 
       $bottom = this.view._getSuggestions().eq(-1);
@@ -202,7 +207,7 @@ describe('Dropdown', function() {
       expect(this.view._getCursor()).toBe($bottom);
     });
 
-    it('should remove cursor if already at top', function() {
+    it('should remove cursor if already at top', function () {
       var $first;
 
       $first = this.view._getSuggestions().eq(0);
@@ -213,12 +218,12 @@ describe('Dropdown', function() {
     });
   });
 
-  describe('#moveCursorDown', function() {
-    beforeEach(function() {
+  describe('#moveCursorDown', function () {
+    beforeEach(function () {
       this.view.open();
     });
 
-    it('should move the cursor down', function() {
+    it('should move the cursor down', function () {
       var $first, $second;
 
       $first = this.view._getSuggestions().eq(0);
@@ -229,7 +234,7 @@ describe('Dropdown', function() {
       expect(this.view._getCursor()).toBe($second);
     });
 
-    it('should move cursor to top if cursor is not present', function() {
+    it('should move cursor to top if cursor is not present', function () {
       var $first;
 
       $first = this.view._getSuggestions().eq(0);
@@ -238,7 +243,7 @@ describe('Dropdown', function() {
       expect(this.view._getCursor()).toBe($first);
     });
 
-    it('should remove cursor if already at bottom', function() {
+    it('should remove cursor if already at bottom', function () {
       var $bottom;
 
       $bottom = this.view._getSuggestions().eq(-1);
@@ -249,62 +254,62 @@ describe('Dropdown', function() {
     });
   });
 
-  describe('#getDatumForSuggestion', function() {
-    it('should extract the datum from the suggestion element', function() {
+  describe('#getDatumForSuggestion', function () {
+    it('should extract the datum from the suggestion element', function () {
       var $suggestion, datum;
 
-      $suggestion = $('<div>').data({ ttValue: 'one', ttDatum: 'two' });
+      $suggestion = $('<div>').data({ttValue: 'one', ttDatum: 'two'});
       datum = this.view.getDatumForSuggestion($suggestion);
 
-      expect(datum).toEqual({ value: 'one', raw: 'two' });
+      expect(datum).toEqual({value: 'one', raw: 'two'});
     });
 
-    it('should return null if no element is given', function() {
+    it('should return null if no element is given', function () {
       expect(this.view.getDatumForSuggestion($('notreal'))).toBeNull();
     });
   });
 
-  describe('#getDatumForCursor', function() {
-    it('should return the datum for the cursor', function() {
+  describe('#getDatumForCursor', function () {
+    it('should return the datum for the cursor', function () {
       var $first;
 
       $first = this.view._getSuggestions().eq(0);
-      $first.data({ ttValue: 'one', ttDatum: 'two' });
+      $first.data({ttValue: 'one', ttDatum: 'two'});
 
       this.view._setCursor($first);
       expect(this.view.getDatumForCursor())
-      .toEqual({ value: 'one', raw: 'two' });
+        .toEqual({value: 'one', raw: 'two'});
     });
   });
 
-  describe('#getDatumForTopSuggestion', function() {
-    it('should return the datum for top suggestion', function() {
+  describe('#getDatumForTopSuggestion', function () {
+    it('should return the datum for top suggestion', function () {
       var $first;
 
       $first = this.view._getSuggestions().eq(0);
-      $first.data({ ttValue: 'one', ttDatum: 'two' });
+      $first.data({ttValue: 'one', ttDatum: 'two'});
 
       expect(this.view.getDatumForTopSuggestion())
-      .toEqual({ value: 'one', raw: 'two' });
+        .toEqual({value: 'one', raw: 'two'});
     });
   });
 
-  describe('#update', function() {
-    it('should invoke update on each dataset', function() {
+  describe('#update', function () {
+    it('should invoke update on each dataset', function () {
       this.view.update();
       expect(this.dataset.update).toHaveBeenCalled();
     });
   });
 
-  describe('#empty', function() {
-    it('should invoke clear on each dataset', function() {
+  describe('#empty', function () {
+    it('should invoke clear on each dataset', function () {
       this.view.empty();
       expect(this.dataset.clear).toHaveBeenCalled();
     });
   });
 
-  describe('#isVisible', function() {
-    it('should return true if open and not empty', function() {
+  describe('#isVisible', function () {
+    it('should return true if open and not empty', function () {
       this.view.isOpen = true;
       this.view.isEmpty = false;
 
@@ -327,8 +332,8 @@ describe('Dropdown', function() {
     });
   });
 
-  describe('#destroy', function() {
-    it('should remove event handlers', function() {
+  describe('#destroy', function () {
+    it('should remove event handlers', function () {
       var $menu = this.view.$menu;
 
       spyOn($menu, 'off');
@@ -338,13 +343,13 @@ describe('Dropdown', function() {
       expect($menu.off).toHaveBeenCalledWith('.tt');
     });
 
-    it('should destroy its datasets', function() {
+    it('should destroy its datasets', function () {
       this.view.destroy();
 
       expect(this.dataset.destroy).toHaveBeenCalled();
     });
 
-    it('should null out its reference to the menu element', function() {
+    it('should null out its reference to the menu element', function () {
       this.view.destroy();
 
       expect(this.view.$menu).toBeNull();

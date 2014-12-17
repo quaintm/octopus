@@ -25,8 +25,8 @@ nav.Bar('case', [
              nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
              nav.Item('All Cases', 'case.all_cases'),
              nav.Item('Create New Case', 'case.new')
-                  ]
-           )
+           ]
+  )
 ])
 
 
@@ -39,7 +39,7 @@ def all_cases():
                            CaseType.code.label("Case Type"),
                            Case.start_date.label("Start"),
                            Case.end_date.label("End")
-                           ).join(CaseType).order_by(Case.id.desc())
+  ).join(CaseType).order_by(Case.id.desc())
 
   extra_cols = [
     {'header': {'text': ""},
@@ -50,7 +50,7 @@ def all_cases():
         'type': 'button',
         'class': 'btn btn-sm btn-default center-block'}
      ]
-     }
+    }
   ]
   # get list of cases user has permission to view
   if current_user.is_admin:
@@ -74,7 +74,7 @@ def query():
                        CaseType.code.label("Case Type"),
                        Case.start_date.label("Start"),
                        Case.end_date.label("End")
-                       ).join(CaseType).order_by(Case.id.desc())
+  ).join(CaseType).order_by(Case.id.desc())
   extra_cols = [
     {'header': {'text': ""},
      'td-class': 'text-center',
@@ -141,23 +141,24 @@ def edit(case_id):
   elif edit_form == 'case_desc':
     form = PageDownForm(case_id, 'case_desc', request.form)
     field_name = 'Edit Case Description'
-    ret = render_template('markdown/edit_form.html', form=form, case_id=case_id, field_name=field_name)
+    ret = render_template('markdown/edit_form.html', form=form, case_id=case_id,
+                          field_name=field_name)
   elif edit_form == 'risk_tags':
     form = CaseTagsForm(case_id, 'risk', request.form)
     tags = json.dumps([{"name": unicode(i.tag)} for i in
                        Tag.query.filter(Tag.kind == 'risk')])
     ret = render_template('case/case_tags.html', form=form, case_id=case_id,
-                            tags=tags)
+                          tags=tags)
   elif edit_form == 'case_staff':
     form = CaseStaffForm(case_id, request.form)
     ret = render_template('case/case_staff.html', form=form,
-                            case_id=case_id)
+                          case_id=case_id)
   elif edit_form == 'non_qau_staff':
     form = CaseTagsForm(case_id, 'non_qau_staff', request.form)
     tags = json.dumps([{"name": unicode(i.tag)} for i in
-                         Tag.query.filter(Tag.kind == 'non_qau_staff')])
+                       Tag.query.filter(Tag.kind == 'non_qau_staff')])
     ret = render_template('case/case_tags.html', form=form, case_id=case_id,
-                            tags=tags)
+                          tags=tags)
   elif edit_form == 'case_file':
     file_id = request.args.get('file_id')
     if not file_id:
@@ -166,6 +167,6 @@ def edit(case_id):
     ret = render_template('case/case_file.html', form=form, file_id=file_id)
 
   else:
-    flash_errors(form)
+    flash_errors(edit_form)
 
   return ret

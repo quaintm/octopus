@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
   var lib = [
     'angular/angular.min.js',
@@ -32,12 +32,36 @@ module.exports = function(grunt) {
     copy: {
       build: {
         files: [
-          {expand: true, flatten: true, src: ['src/*.*'], dest: 'dist/', filter: 'isFile'},
+          {
+            expand: true,
+            flatten: true,
+            src: ['src/*.*'],
+            dest: 'dist/',
+            filter: 'isFile'
+          },
 
-          {expand: true, flatten: false, cwd: 'bower_components/', src: [lib], dest: 'examples/lib/'},
-          {expand: true, flatten: false, cwd: 'dist/', src: ['**'], dest: 'examples/lib/bootstrap-tagsinput'},
+          {
+            expand: true,
+            flatten: false,
+            cwd: 'bower_components/',
+            src: [lib],
+            dest: 'examples/lib/'
+          },
+          {
+            expand: true,
+            flatten: false,
+            cwd: 'dist/',
+            src: ['**'],
+            dest: 'examples/lib/bootstrap-tagsinput'
+          },
 
-          {expand: true, flatten: false, cwd: 'bower_components/', src: [lib], dest: 'test/lib/'}
+          {
+            expand: true,
+            flatten: false,
+            cwd: 'bower_components/',
+            src: [lib],
+            dest: 'test/lib/'
+          }
         ]
       }
     },
@@ -73,8 +97,8 @@ module.exports = function(grunt) {
     zip: {
       delpoy: {
         cwd: 'dist/',
-        src:  ['dist/bootstrap-tagsinput*.*'],
-        dest:  'dist/<%= pkg.name %>.zip'
+        src: ['dist/bootstrap-tagsinput*.*'],
+        dest: 'dist/<%= pkg.name %>.zip'
       }
     },
     jquerymanifest: {

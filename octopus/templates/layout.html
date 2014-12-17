@@ -1,17 +1,17 @@
-
 <!doctype html>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>  <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
 <!--[if IE 8]>  <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
 
   <title>{% block page_title %}
-  
-  octopus
-  
+
+    octopus
+
   {% endblock %}
   </title>
   <meta name="description" content="{% block meta_description %}{% endblock %}">
@@ -21,7 +21,7 @@
   <meta name="viewport" content="width=device-width">
 
   {% assets "css_all" %}
-  <link rel="stylesheet" href="{{ ASSET_URL }}">
+    <link rel="stylesheet" href="{{ ASSET_URL }}">
   {% endassets %}
 
   {% block css %}{% endblock %}
@@ -29,49 +29,52 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
 {% block body %}
-{% with form=form  %}
-{% include "nav.html" %}
-{% endwith %}
-
-<header>{% block header %}{% endblock %}</header>
-<div class="{% block content_class %}container{% endblock content_class %}">
-
-  <div role="main">
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-  <div class="row">
-    <div class="col-md-12">
-    {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">
-      <a class="close" title="Close" href="#" data-dismiss="alert">&times;</a>
-     {{message}}
-    </div><!-- end .alert -->
-    {% endfor %}
-    </div><!-- end col-md -->
-  </div><!-- end row -->
-    {% endif %}
+  {% with form=form %}
+    {% include "nav.html" %}
   {% endwith %}
 
-  {% block content %}{% endblock %}
+  <header>{% block header %}{% endblock %}</header>
+  <div class="{% block content_class %}container{% endblock content_class %}">
 
-{# this is a target div for the generic macros.ajax_modal_link function, don't remove! #}
-<div class="modal fade" id="ajaxModalDiv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-content"></div>
-</div>
-{# end modal #}
-  </div>
+    <div role="main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="row">
+            <div class="col-md-12">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  <a class="close" title="Close" href="#"
+                     data-dismiss="alert">&times;</a>
+                  {{ message }}
+                </div><!-- end .alert -->
+              {% endfor %}
+            </div>
+            <!-- end col-md -->
+          </div><!-- end row -->
+        {% endif %}
+      {% endwith %}
 
-</div><!-- end container -->
+      {% block content %}{% endblock %}
 
-{% include "footer.html" %}
+      {# this is a target div for the generic macros.ajax_modal_link function, don't remove! #}
+      <div class="modal fade" id="ajaxModalDiv" tabindex="-1" role="dialog"
+           aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-content"></div>
+      </div>
+      {# end modal #}
+    </div>
 
-<!-- JavaScript at the bottom for fast page loading -->
-{% assets "js_all" %}
-  <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
-{% block js %}
-{% endblock %}
-<!-- end scripts -->
+  </div><!-- end container -->
+
+  {% include "footer.html" %}
+
+  <!-- JavaScript at the bottom for fast page loading -->
+  {% assets "js_all" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
+  {% block js %}
+  {% endblock %}
+  <!-- end scripts -->
 {% endblock %}
 </body>
 </html>

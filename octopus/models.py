@@ -30,7 +30,7 @@ class CaseType(SurrogatePK, Model):
 
   def __repr__(self):
     return '<CaseType (code={code}, description={desc})>'.format(
-    code=self.code, desc=self.description)
+      code=self.code, desc=self.description)
 
 
 class Region(SurrogatePK, Model):
@@ -64,10 +64,10 @@ class Tag(SurrogatePK, Model):
 
 
 case_tag_map = db.Table('case_tag_map',
-            db.Column('tag_id', db.Integer,
-                  db.ForeignKey('tags.id'), index=True),
-            db.Column('case_id', db.Integer,
-                  db.ForeignKey('cases.id'), index=True))
+                        db.Column('tag_id', db.Integer,
+                                  db.ForeignKey('tags.id'), index=True),
+                        db.Column('case_id', db.Integer,
+                                  db.ForeignKey('cases.id'), index=True))
 
 
 class CaseStaffMap(SurrogatePK, Model):
@@ -78,12 +78,12 @@ class CaseStaffMap(SurrogatePK, Model):
   secondary = db.Column(db.Boolean, default=False)
 
   case = db.relationship('Case',
-               backref=backref("user_cases",
-                       cascade="all, delete-orphan"))
+                         backref=backref("user_cases",
+                                         cascade="all, delete-orphan"))
   user = db.relationship('User')
 
   def __init__(self, user=None, case=None, primary=False,
-         secondary=False, **kwargs):
+               secondary=False, **kwargs):
     db.Model.__init__(self, **kwargs)
     self.user = user
     self.case = case
@@ -92,10 +92,10 @@ class CaseStaffMap(SurrogatePK, Model):
 
   def __repr__(self):
     return '<CaseStaffMap(id={id}, user_id={user_id}, ' \
-         'case_id={case_id}, ' \
-         'primary={primary}, sec={secondary})>' \
+           'case_id={case_id}, ' \
+           'primary={primary}, sec={secondary})>' \
       .format(id=self.id, user_id=self.user_id, case_id=self.case_id,
-          primary=self.primary, secondary=self.secondary)
+              primary=self.primary, secondary=self.secondary)
 
 
 class CaseFile(SurrogatePK, Model):
@@ -134,7 +134,7 @@ class Case(SurrogatePK, Model):
   qau_risk_score = Column(db.Integer, unique=False, nullable=True)
   examiner_risk_score = Column(db.Integer, unique=False, nullable=True)
   tags = relationship('Tag', secondary=case_tag_map,
-            backref=db.backref('cases', lazy='dynamic'))
+                      backref=db.backref('cases', lazy='dynamic'))
 
   files = relationship('CaseFile', backref='case_files')
 
@@ -163,12 +163,12 @@ class Case(SurrogatePK, Model):
 
 
 task_user_map = db.Table('task_user_map',
-             db.Column('user_id', db.Integer,
-                   db.ForeignKey('users.id'),
-                   index=True),
-             db.Column('task_id', db.Integer,
-                   db.ForeignKey('tasks.id'),
-                   index=True))
+                         db.Column('user_id', db.Integer,
+                                   db.ForeignKey('users.id'),
+                                   index=True),
+                         db.Column('task_id', db.Integer,
+                                   db.ForeignKey('tasks.id'),
+                                   index=True))
 
 
 class Task(SurrogatePK, Model):
@@ -183,11 +183,11 @@ class Task(SurrogatePK, Model):
 
   # ref to optional associated case
   case_id = db.Column('case_id', db.Integer,
-            db.ForeignKey('cases.id'), nullable=True)
+                      db.ForeignKey('cases.id'), nullable=True)
 
   # many-to-many users to tasks
   assignees = relationship('User', secondary=task_user_map,
-               backref=db.backref('user_tasks', lazy='dynamic'))
+                           backref=db.backref('user_tasks', lazy='dynamic'))
 
   def __init__(self, *args, **kwargs):
     db.Model.__init__(self, *args, **kwargs)
@@ -227,16 +227,16 @@ class User(UserMixin, SurrogatePK, Model):
 
   # ref to staff table
   user_cases = db.relationship('CaseStaffMap',
-                 cascade="all, delete-orphan",
-                 backref='users')
+                               cascade="all, delete-orphan",
+                               backref='users')
   cases = association_proxy('user_cases', 'cases')
 
   created_tasks = relationship('Task',
-                 backref='creator',
-                 lazy='dynamic')
+                               backref='creator',
+                               lazy='dynamic')
 
   tasks = relationship('Task', secondary="task_user_map",
-             backref=db.backref('users', lazy='dynamic'))
+                       backref=db.backref('users', lazy='dynamic'))
 
   def __init__(self, username, email, password=None, **kwargs):
     db.Model.__init__(self, username=username, email=email, **kwargs)
