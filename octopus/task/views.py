@@ -57,7 +57,7 @@ def all_tasks():
             filter(Case.users.contains(current_user)).all()
         case_perm = [item for sublist in [i._asdict().values() for i in cp] for item in sublist]
 
-    return render_template("case/all_cases.html", cases=cases,
+    return render_template("task/all_tasks.html", cases=cases,
                            extra_cols=extra_cols, case_perm=case_perm)
 
 
@@ -91,7 +91,7 @@ def query():
         case_perm = [item for sublist in [i._asdict().values() for i in cp] for item in sublist]
 
     if valid:
-        return render_template("case/query.html", cases=q, extra_cols=extra_cols, case_perm=case_perm)
+        return render_template("task/query.html", cases=q, extra_cols=extra_cols, case_perm=case_perm)
     else:
         flash("Invalid Query")
         return redirect(url_for('public.home'))
