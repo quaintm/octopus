@@ -1,19 +1,20 @@
 ##Existing to do:
 
-case details -- see staff members on case form
+1. case details: see staff members on case form
 
-add other staff besides lead to new case form-- with tags
+2. auto-add creator to case if not admin and not case lead
 
-case lead change doesn't work right now
+3. ~~case lead change doesn't work right now~~ Done
+
 
 
 ##Notes from demo:
 
-* change #CRD to string
+* ~~change #CRD to string~~ Done
 * Change CSV in tables from buttons to clickable rows
 * Change edit button to text or apply tooltip
 * Markdown how-to
-* File link > browseable window
+* File link --> browseable window
 * Tasks
   -- auth
   -- views
