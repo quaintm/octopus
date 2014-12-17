@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired
 
 from octopus.models import User
 
+
 class LoginForm(Form):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])

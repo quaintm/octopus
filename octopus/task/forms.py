@@ -2,29 +2,33 @@
 from flask.ext.login import current_user
 from flask_wtf import Form
 from wtforms import StringField, TextAreaField, \
-    SelectMultipleField
+    SelectMultipleField, SelectField
 from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField
 
 # from octopus.task.queries import single_task_staff
 
-from octopus.models import User, Task
-from octopus.extensions import db
+from octopus.models import User, Task, Case
+# from octopus.extensions import db
 
 
 class NewTaskForm(Form):
     task_name = StringField('Task Name', validators=[DataRequired()])
-    task_desc = TextAreaField('Task Description')
+    task_desc = TextAreaField('Task Description', validators=[Optional()])
     start_date = DateField('Start Date',
                            validators=[DataRequired()])
     end_date = DateField('End Date', validators=[Optional()])
 
-    assignees = SelectMultipleField(label='Assign Staff',
-                                    validators=[Optional()], coerce=int)
+    parent_case = SelectField('Assign Task to Case', validators=[Optional()])
+
+    # assignees = SelectMultipleField(label='Assign Staff',
+    # validators=[Optional()], coerce=int)
 
     def __init__(self, *args, **kwargs):
         super(NewTaskForm, self).__init__(*args, **kwargs)
-        self.assignees.choices = [(i.id, i.username) for i in User.query]
+        # self.assignees.choices = [(i.id, i.username) for i in User.query]
+        self.parent_case.choices = [(unicode(i.id), i.case_name) for i in
+                                    Case.query]
 
     def validate(self):
         initial_validation = super(NewTaskForm, self).validate()
@@ -33,22 +37,21 @@ class NewTaskForm(Form):
         return True
 
     def commit_new_task(self):
-
         task = Task.create(task_name=self.task_name.data,
                            task_desc=self.task_desc.data,
                            start_date=self.start_date.data,
                            end_date=self.end_date.data,
-                           task_creator=current_user
+                           case_id=int(self.parent_case.data),
+                           creator_id=current_user.id
                            )
 
-        task.assignees = self.assignees.data
-        task.save()
+        # task.assignees = self.assignees.data
+        # task.save()
 
         return task
 
 
 class EditCoreTaskForm(Form):
-
     task_name = StringField('Task Name', validators=[Optional()])
     task_desc = TextAreaField('Task Description')
     start_date = DateField('Start Date',
@@ -100,16 +103,16 @@ class TaskStaffForm(Form):
                                   if i.is_permanent]
 
         # if request.method != 'POST':
-        #    staff = db.session.query(User). \
+        # staff = db.session.query(User). \
         #         join('user_cases', 'case'). \
         #         filter(User.user_cases.any(case_id=case_id)). \
         #         filter(CaseStaffMap.primary == 0).all()
         #
-            # self.contractors.default = [unicode(i.id) for i in staff
-            # if i.is_contractor]
-            # self.qau_staff.default = [unicode(i.id) for i in staff
-            # if i.is_permanent]
-            # self.process()
+        # self.contractors.default = [unicode(i.id) for i in staff
+        # if i.is_contractor]
+        # self.qau_staff.default = [unicode(i.id) for i in staff
+        # if i.is_permanent]
+        # self.process()
 
     def validate(self):
         initial_validation = super(TaskStaffForm, self).validate()
@@ -117,12 +120,12 @@ class TaskStaffForm(Form):
             return False
         return True
 
-    def commit_updates(self):
-
+    @staticmethod
+    def commit_updates():
         # task = Task.get_by_id(self.case_id)
 
         # staff = db.session.query(User). \
-        #     join('user_cases', 'case'). \
+        # join('user_cases', 'case'). \
         #     filter(User.user_cases.any(case_id=self.case_id)).all()
 
         # # set of previously assigned users

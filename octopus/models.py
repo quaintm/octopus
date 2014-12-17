@@ -182,9 +182,8 @@ class Task(SurrogatePK, Model):
     creator_id = db.Column('creator_id', db.Integer, db.ForeignKey('users.id'))
 
     # ref to optional associated case
-    case_id = ReferenceCol('cases', nullable=False)
-    # parent_case = db.Column('parent_case', db.Integer,
-    #                         db.ForeignKey('cases.id'))
+    case_id = db.Column('case_id', db.Integer,
+                        db.ForeignKey('cases.id'), nullable=True)
 
     # many-to-many users to tasks
     assignees = relationship('User', secondary=task_user_map,
@@ -196,6 +195,7 @@ class Task(SurrogatePK, Model):
     def __repr__(self):
         return '<Task(id={id}, task_name={task_name}, )>'.format(
             id=self.id, task_name=self.task_name)
+
 
 # ___________ user section __________
 

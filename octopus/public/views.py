@@ -15,10 +15,10 @@ blueprint = Blueprint('public', __name__, static_folder="../static")
 
 nav.Bar('public', [
     nav.Item('<i class="fa fa-home fa-lg"></i>', 'public.home',
-        html_attrs=str("data-placement='bottom',\
+             html_attrs=str("data-placement='bottom',\
             title='Home', \
             data-toggle='tooltip'"
-        ),
+             ),
     )
 ])
 

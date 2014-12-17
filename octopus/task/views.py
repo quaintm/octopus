@@ -5,7 +5,7 @@ from flask.ext.login import login_required, current_user
 
 # from octopus.task import queries
 from octopus.task.forms import (EditCoreTaskForm, NewTaskForm
-    # , TaskStaffForm
+                                # , TaskStaffForm
                                 )
 from octopus.case.utils import create_query
 from octopus.extensions import nav, db
@@ -20,22 +20,22 @@ nav.Bar('task', [
     nav.Item('<i class="fa fa-tasks fa-lg"></i>', '',
              html_attrs=str("data-placement='bottom',\
                              title='Tasks'"
-             ),
+                            ),
              items=[nav.Item('My Tasks', 'task.query', args={'user_id': 'me'}),
                     nav.Item('All Tasks', 'task.all_tasks'),
                     nav.Item('Create New Task', 'task.new')]
-    )
+             )
 ])
 
 
 @blueprint.route("/all_tasks")
 @login_required
 def all_tasks():
-    cases = db.session.query(Task.id.label("ID"),
+    tasks = db.session.query(Task.id.label("ID"),
                              Task.task_name.label("Name"),
                              Task.start_date.label("Start"),
                              Task.end_date.label("End")
-    ).order_by(Task.id.desc())
+                             ).order_by(Task.id.desc())
 
     extra_cols = [
         {'header': {'text': ""},
@@ -46,22 +46,22 @@ def all_tasks():
               'type': 'button',
               'class': 'btn btn-sm btn-default center-block'}
          ]
-        }
+         }
     ]
     # get list of cases user has permission to view ---- NEED TO CHANGE TO
     # THREE-LAYER TASK AUTH
     # if current_user.is_admin:
-    #     task_perm = ['admin']
+    # item_perm = ['admin']
     # else:
     #     cp = db.session.query(Task.id). \
     #         filter(Task.assignees.contains(current_user)).all()
-    #     task_perm = [item for sublist in [i._asdict().values() for i in cp]
+    #     item_perm = [item for sublist in [i._asdict().values() for i in cp]
     #                  for item in sublist]
 
-    return render_template("task/all_tasks.html", cases=cases,
+    return render_template("task/all_tasks.html", tasks=tasks,
                            extra_cols=extra_cols
-                           # , task_perm=task_perm
-                            )
+                           # , item_perm=item_perm
+                           )
 
 
 @blueprint.route("/query")
@@ -71,7 +71,7 @@ def query():
                          Task.task_name.label("Name"),
                          Task.start_date.label("Start"),
                          Task.end_date.label("End")
-                        ).order_by(Task.id.desc())
+                         ).order_by(Task.id.desc())
     extra_cols = [
         {'header': {'text': ""},
          'td-class': 'text-center',
@@ -85,16 +85,16 @@ def query():
     valid, q = create_query(request.args, q)
     # get list of cases user has permission to view ----- NEED TASK AUTH
     if current_user.is_admin:
-        task_perm = ['admin']
+        item_perm = ['admin']
     else:
         cp = db.session.query(Task.id). \
             filter(Task.assignees.contains(current_user)).all()
-        task_perm = [item for sublist in [i._asdict().values() for i in cp]
+        item_perm = [item for sublist in [i._asdict().values() for i in cp]
                      for item in sublist]
 
     if valid:
         return render_template("task/query.html", tasks=q,
-                               extra_cols=extra_cols, task_perm=task_perm)
+                               extra_cols=extra_cols, item_perm=item_perm)
     else:
         flash("Invalid Query")
         return redirect(url_for('public.home'))
