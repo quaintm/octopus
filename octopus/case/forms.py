@@ -13,7 +13,7 @@ from octopus.extensions import db
 
 
 class NewCaseForm(Form):
-    crd_number = IntegerField('CRD Number',
+    crd_number = StringField('CRD Number',
                               validators=[DataRequired()])
     case_name = StringField('Case Name', validators=[DataRequired()])
     case_desc = TextAreaField('Case Description')
@@ -67,7 +67,7 @@ class NewCaseForm(Form):
 
 
 class EditCoreCaseForm(Form):
-    crd_number = IntegerField('CRD Number',
+    crd_number = StringField('CRD Number',
                               validators=[Optional()])
     case_name = StringField('Case Name', validators=[Optional()])
     start_date = DateField('Start Date',

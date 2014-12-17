@@ -4,7 +4,7 @@ case details -- see staff members on case form
 
 add other staff besides lead to new case form-- with tags
 
-case lead change doesn't work right now
+~~case lead change doesn't work right now~~ Done
 
 change #CRD to string
 

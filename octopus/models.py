@@ -108,7 +108,7 @@ class CaseFile(SurrogatePK, Model):
 
 class Case(SurrogatePK, Model):
     __tablename__ = 'cases'
-    crd_number = Column(db.Integer(), unique=False, nullable=False, index=True)
+    crd_number = Column(db.Text(), unique=False, nullable=False, index=True)
     case_name = Column(db.Text(), unique=False, nullable=True, index=True)
     case_desc = Column(db.Text(), unique=False, nullable=True)
     start_date = Column(db.Date(), unique=False, nullable=False, index=True)
