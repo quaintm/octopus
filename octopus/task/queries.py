@@ -4,12 +4,8 @@ from octopus.extensions import db
 
 def single_task_staff(task_id):
   creator = db.session.query(User).\
-                    join('user_cases', 'case').\
-                    filter(User.user_cases.any(case_id=case_id)).\
-                    filter(CaseStaffMap.primary == 1).all()
+                    filter(User.created_tasks.any(task_id=task_id)).all()
 
   assignees = db.session.query(User).\
-                    join('user_cases', 'case').\
-                    filter(User.user_cases.any(case_id=case_id)).\
-                    filter(CaseStaffMap.primary == 0).all()
-  return lead, staff
+                    filter(User.tasks.any(task_id=task_id)).all()
+  return creator, assignees
