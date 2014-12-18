@@ -21,12 +21,12 @@ class NewTaskForm(Form):
 
   parent_case = SelectField('Assign Task to Case', validators=[Optional()])
 
-  # assignees = SelectMultipleField(label='Assign Staff',
-  # validators=[Optional()], coerce=int)
+  assignees = SelectMultipleField(label='Assign Staff',
+                                  validators=[Optional()], coerce=int)
 
   def __init__(self, *args, **kwargs):
     super(NewTaskForm, self).__init__(*args, **kwargs)
-    # self.assignees.choices = [(i.id, i.username) for i in User.query]
+    self.assignees.choices = [(i.id, i.username) for i in User.query]
     self.parent_case.choices = [(unicode(i.id), i.case_name) for i in
                                 Case.query]
 
