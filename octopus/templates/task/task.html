@@ -28,7 +28,13 @@
         <div class="panel-body">
           <div class="row">
             <div class="col-lg-5">
-              <table class="table table-condensed table-striped table-bordered">
+              <table class="table table-condensed table-striped
+              table-bordered">
+                <thead class="">
+                 <tr>
+                   Basic Information
+                 </tr>
+                 </thead>
                 <tbody class="">
                 <tr>
                   <td>Task ID #</td>
@@ -48,10 +54,32 @@
                 </tr>
                 <tr>
                   <td>Task Creator</td>
-                  <td>{{ task.creator_id }}</td>
+                  <td>{{ creator.full_name }}</td>
                 </tr>
                 </tbody>
               </table>
+            </div>
+            <div class="col-lg-5">
+               <table class="table table-condensed table-bordered
+               table-striped">
+                 <thead class=""">
+                 <tr>
+                   Assigned Staff
+                 </tr>
+                 </thead>
+                 <tbody class="">
+                 {%  if not task.assignees %}
+                 <tr>
+                     <td>None</td>
+                 </tr>
+                 {% else %}
+                   {% for i in task.assignees %}
+                     <tr>
+                       <td>{{ i.full_name }}</td>
+                     </tr>
+                   {% endfor %}
+                 {% endif %}
+               </table>
             </div>
           </div>
           <div class="row">
@@ -70,6 +98,7 @@
       </div>
     </div>
   </div>
+
   {# End Core Task Details Panel #}
 
   {# Begin Task Staff Panel #}
@@ -133,4 +162,5 @@
     </div>
   </div>
   {# End Task Staff Panel #}
-#}
+
+{% endblock %}
