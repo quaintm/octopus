@@ -45,8 +45,12 @@ class NewTaskForm(Form):
                        creator_id=current_user.id
     )
 
-    # task.assignees = self.assignees.data
-    # task.save()
+    assigned_users = []
+    for i in self.assignees.data:
+      assigned_users.append(User.get_by_id(i))
+
+    task.assignees = assigned_users
+    task.save()
 
     return task
 

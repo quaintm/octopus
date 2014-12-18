@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, render_template, request, redirect, flash, \
   url_for, abort
-from flask.ext.login import login_required, current_user
+from flask.ext.login import login_required
 # from octopus.task import queries
 from octopus.task.forms import (EditCoreTaskForm, NewTaskForm
 # , TaskStaffForm
 )
 from octopus.task.utils import create_query
 from octopus.extensions import nav, db
-from octopus.models import Task
+from octopus.models import Task, User, Case
 from octopus.utils import flash_errors, admin_required
 
 
@@ -30,6 +30,7 @@ nav.Bar('task', [
   )
 ])
 
+
 # all tasks now only available to admins
 @blueprint.route("/all_tasks")
 @login_required
@@ -38,8 +39,9 @@ def all_tasks():
   tasks = db.session.query(Task.id.label("ID"),
                            Task.task_name.label("Name"),
                            Task.start_date.label("Start"),
-                           Task.end_date.label("End")
-  ).order_by(Task.id.desc())
+                           Task.end_date.label("End"),
+                           Case.case_name.label("Parent Case")
+                           ).join(Case).order_by(Task.id.desc())
 
   view_url = {'func': lambda x: url_for('task.view', task_id=getattr(x, 'ID'))}
 
@@ -54,8 +56,9 @@ def query():
   q = db.session.query(Task.id.label("ID"),
                        Task.task_name.label("Name"),
                        Task.start_date.label("Start"),
-                       Task.end_date.label("End")
-  ).order_by(Task.id.desc())
+                       Task.end_date.label("End"),
+                       Case.case_name.label("Parent Case")
+  ).join(Case).order_by(Task.id.desc())
   view_url = {'func': lambda x: url_for('task.view', task_id=getattr(x, 'ID'))}
 
   valid, q = create_query(request.args, q)
@@ -67,16 +70,15 @@ def query():
     return redirect(url_for('public.home'))
 
 
-# # ######### ???? TODO: Fix this form
 @blueprint.route('/view/<int:task_id>')
 @login_required
 def view(task_id=0):
-  # lead, staff = queries.single_case_staff(task_id)
   task = Task.get_by_id(task_id)
+  creator = User.get_by_id(task.creator_id)
   if not task:
     abort(404)
 
-  return render_template('task/task.html', task=task)
+  return render_template('task/task.html', task=task, creator=creator)
 
 
 @blueprint.route("/new", methods=["GET", "POST"])
