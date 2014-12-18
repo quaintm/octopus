@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime as dt
-
 from flask.ext.login import UserMixin
-
 from octopus.extensions import bcrypt
 # from octopus.task.models import task_user_map
 
