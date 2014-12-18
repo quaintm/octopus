@@ -1,6 +1,6 @@
-{% macro make_datepicker_tag(label, id) %}
+{% macro make_datepicker_tag(label, id, cur_val=None) %}
   <label for="{{ id|safe }}">{{ label }} <i class="fa fa-calendar"></i></label>
-  <input class="form-control" id="{{ id|safe }}" name="{{ id|safe }}" value=""
+  <input class="form-control" id="{{ id|safe }}" name="{{ id|safe }}" value="{{ cur_val if cur_val else "" }}"
          type="date">
 {% endmacro %}
 
