@@ -1,52 +1,29 @@
-{% macro render_header(sql_query, extra_cols=None) -%}
+{% macro render_header(sql_query) -%}
   <tr>
     {% for col in sql_query.column_descriptions %}
       <th>{{ col.name }}</th>
     {% endfor %}
 
-    {% if extra_cols %}
-      {% for col in extra_cols %}
-        <th class="{{ col['header']['class'] }}">{{ col['header']['text'] }}</th>
-      {% endfor %}
-    {% endif %}
   </tr>
 {%- endmacro %}
 
 
-{% macro render_row(row, extra_cols=None) -%}
-  <tr>
+{% macro render_row(row, view_url) -%}
+  <tr data-url="{{ make_link(row, view_url) }}">
+
     {% for item in row %}
       <td>{{ item }}</td>
     {% endfor %}
-
-    {% if extra_cols %}
-      {{ render_extra_row_items(row, extra_cols) }}
-    {% endif %}
   </tr>
-
 {%- endmacro %}
 
-{% macro render_extra_row_items(row, extra_cols) %}
-  {% for col in extra_cols %}
-    <td class="{{ col['td-class'] }}">
-      {% for item in col['contents'] %}
-        {% if item['func'] %}
-          {{ make_link(href=item['func'](row),
-                 text=item['text'],
-                 type=item['type'],
-                 class=item['class']) }}
-        {% endif %}
-      {% endfor %}
-    </td>
-  {% endfor %}
-{% endmacro %}
 
-{% macro make_link(href=None, text=None, type=None, class=None) %}
-  <a href="{{ href }}" type="{{ type }}" class="{{ class }}">{{ text }}</a>
+{% macro make_link(row=None, view_url=None) %}
+  {{ view_url['func'](row) }}
 {% endmacro %}
 
 
-{% macro render_table(id, heading, sql_query, extra_cols=None) -%}
+{% macro render_table(id, heading, sql_query, view_url=None) -%}
   <div class="panel panel-default">
     <div class="panel-heading">
       {{ heading }}
@@ -54,14 +31,14 @@
     <!-- /.panel-heading -->
     <div class="panel-body">
       <div class="table-responsive">
-        <table class="table table-striped table-bordered table-hover"
+        <table class="table table-striped table-bordered table-hover clickable_row "
                id="{{ id }}">
           <thead>
-          {{ render_header(sql_query, extra_cols=extra_cols) }}
+          {{ render_header(sql_query) }}
           </thead>
           <tbody>
           {% for row in sql_query %}
-            {{ render_row(row, extra_cols=extra_cols) }}
+            {{ render_row(row, view_url=view_url) }}
           {% endfor %}
           </tbody>
         </table>

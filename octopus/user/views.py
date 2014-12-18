@@ -33,20 +33,10 @@ def all_users():
                            User.last_name.label("Last Name"),
                            User.email.label("Email")
   ).order_by(User.id.desc())
-  extra_cols = [
-    {'header': {'text': ""},
-     'td-class': 'text-center',
-     'contents': [
-       {'func': lambda x: url_for('user.view', user_id=getattr(x, 'ID')),
-        'text': 'View',
-        'type': 'button',
-        'class': 'btn btn-default btn-sm center-block'}
-     ]
-    }
-  ]
-  return render_template("user/members.html", users=users,
-                         extra_cols=extra_cols)
+  view_url = {'func': lambda x: url_for('user.view', user_id=getattr(x, 'ID'))}
 
+  return render_template("user/members.html", users=users,
+                         view_url=view_url)
 
 @blueprint.route('/query')
 @login_required

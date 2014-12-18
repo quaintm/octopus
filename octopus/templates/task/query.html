@@ -8,11 +8,7 @@
     <!-- /.row -->
     <div class="row">
       <div class="col-lg-12">
-        {% if extra_cols %}
-          {{ render_table(table_id, "Query Results", tasks, extra_cols=extra_cols, task_perm=task_perm) }}
-        {% else %}
-          {{ render_table(table_id, "Query Results", tasks) }}
-        {% endif %}
+          {{ render_table(table_id, "Query Results", tasks, view_url=view_url) }}
       </div>
       <!-- /.col-lg-12 -->
     </div>

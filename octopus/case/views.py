@@ -42,20 +42,10 @@ def all_cases():
                            Case.end_date.label("End")
   ).join(CaseType).order_by(Case.id.desc())
 
-  extra_cols = [
-    {'header': {'text': ""},
-     'td-class': 'text-center',
-     'contents': [
-       {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
-        'text': 'View',
-        'type': 'button',
-        'class': 'btn btn-sm btn-default center-block'}
-     ]
-    }
-  ]
+  view_url = {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID'))}
 
   return render_template("case/all_cases.html", cases=cases,
-                         extra_cols=extra_cols)
+                         view_url=view_url)
 
 
 @blueprint.route("/query")
@@ -68,21 +58,14 @@ def query():
                        Case.start_date.label("Start"),
                        Case.end_date.label("End")
   ).join(CaseType).order_by(Case.id.desc())
-  extra_cols = [
-    {'header': {'text': ""},
-     'td-class': 'text-center',
-     'contents': [
-       {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID')),
-        'text': 'View',
-        'type': 'button',
-        'class': 'btn btn-default btn-sm center-block'}
-     ]}
-  ]
+
+  view_url = {'func': lambda x: url_for('case.view', case_id=getattr(x, 'ID'))}
+
   valid, q = create_query(request.args, q)
 
   if valid:
     return render_template("case/query.html", cases=q,
-                           extra_cols=extra_cols)
+                           view_url=view_url)
   else:
     flash("Invalid Query")
     return redirect(url_for('public.home'))

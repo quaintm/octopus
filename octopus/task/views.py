@@ -41,20 +41,10 @@ def all_tasks():
                            Task.end_date.label("End")
   ).order_by(Task.id.desc())
 
-  extra_cols = [
-    {'header': {'text': ""},
-     'td-class': 'text-center',
-     'contents': [
-       {'func': lambda x: url_for('task.view', task_id=getattr(x, 'ID')),
-        'text': 'View',
-        'type': 'button',
-        'class': 'btn btn-sm btn-default center-block'}
-     ]
-    }
-  ]
+  view_url = {'func': lambda x: url_for('task.view', task_id=getattr(x, 'ID'))}
 
   return render_template("task/all_tasks.html", tasks=tasks,
-                         extra_cols=extra_cols
+                         view_url=view_url
   )
 
 
@@ -66,23 +56,12 @@ def query():
                        Task.start_date.label("Start"),
                        Task.end_date.label("End")
   ).order_by(Task.id.desc())
-  extra_cols = [
-    {'header': {'text': ""},
-     'td-class': 'text-center',
-     'contents': [
-       {'func': lambda x: url_for('task.view', task_id=getattr(x, 'ID')),
-        'text': 'View',
-        'type': 'button',
-        'class': 'btn btn-default btn-sm center-block'}
-     ]}
-  ]
+  view_url = {'func': lambda x: url_for('task.view', task_id=getattr(x, 'ID'))}
+
   valid, q = create_query(request.args, q)
 
-
   if valid:
-    return render_template("task/query.html", tasks=q,
-                           # extra_cols=extra_cols
-    )
+    return render_template("task/query.html", tasks=q, view_url=view_url)
   else:
     flash("Invalid Query")
     return redirect(url_for('public.home'))
