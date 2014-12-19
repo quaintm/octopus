@@ -1,0 +1,8 @@
+{% macro render_item_link(item) -%}
+  <tr>
+    {% for col in sql_query.column_descriptions %}
+      <th>{{ col.name }}</th>
+    {% endfor %}
+
+  </tr>
+{%- endmacro %}

@@ -58,6 +58,9 @@
                 </tr>
                 <tr>
                   <td>Parent Case</td>
+                  {% if parent.case_name %}
+                  {'func': lambda x: url_for('user.view', user_id=getattr(x, 'ID'))}
+
                   <td>{{ parent.case_name }}</td>
                 </tr>
                 </tbody>
