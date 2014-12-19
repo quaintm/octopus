@@ -75,10 +75,12 @@ def query():
 def view(task_id=0):
   task = Task.get_by_id(task_id)
   creator = User.get_by_id(task.creator_id)
+  parent = Case.get_by_id(task.case_id)
   if not task:
     abort(404)
 
-  return render_template('task/task.html', task=task, creator=creator)
+  return render_template('task/task.html', task=task, creator=creator,
+                         parent=parent)
 
 
 @blueprint.route("/new", methods=["GET", "POST"])
