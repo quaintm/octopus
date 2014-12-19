@@ -253,7 +253,7 @@ footer .footer-nav {
 /* end pagedown*/
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-  background-color: #f9f9f9;
+  background-color: #e0e0e0;
 }
 
 .clickable_row {
