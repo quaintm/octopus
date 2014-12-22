@@ -9,7 +9,7 @@ from octopus.task.forms import (EditCoreTaskForm, NewTaskForm
 from octopus.task.utils import create_query
 from octopus.extensions import nav, db
 from octopus.models import Task, User, Case
-from octopus.utils import flash_errors, admin_required
+from octopus.utils import flash_errors, admin_required, user_on_task
 
 
 blueprint = Blueprint("task", __name__, url_prefix='/task',
@@ -34,7 +34,6 @@ nav.Bar('task', [
 # all tasks now only available to admins
 @blueprint.route("/all_tasks")
 @login_required
-@admin_required
 def all_tasks():
   tasks = db.session.query(Task.id.label("ID"),
                            Task.task_name.label("Name"),
@@ -72,6 +71,7 @@ def query():
 
 @blueprint.route('/view/<int:task_id>')
 @login_required
+@user_on_task
 def view(task_id=0):
   task = Task.get_by_id(task_id)
   creator = User.get_by_id(task.creator_id)
@@ -99,6 +99,7 @@ def new():
 
 @blueprint.route("/edit/<int:task_id>", methods=["GET", "POST"])
 @login_required
+@user_on_task
 def edit(task_id):
   edit_form = request.args.get('edit_form')
 

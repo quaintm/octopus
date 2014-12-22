@@ -70,3 +70,27 @@ def admin_required(fn):
   return update_wrapper(wrapped_function, fn)
 
 
+def user_on_task(fn):
+  @wraps(fn)
+  def wrapped_function(*args, **kwargs):
+
+    if not current_user.is_admin:
+
+      task_id = kwargs['task_id']
+      task_assignee = db.session.query(User). \
+        join('tasks'). \
+        filter(User.tasks.any(id=task_id)). \
+        filter(User.id == current_user.id).all()
+
+      if not task_assignee:
+        task_creator = db.session.query(User). \
+          join('created_tasks'). \
+          filter(User.created_tasks.any(id=task_id)). \
+          filter(User.id == current_user.id).all()
+
+        if not task_creator:
+          abort(403)
+
+    return fn(*args, **kwargs)
+
+  return update_wrapper(wrapped_function, fn)
