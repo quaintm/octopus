@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from "macros/render_link.html" import render_user_link, render_case_link%}
 
 {% block content %}
 
@@ -12,7 +13,8 @@
         <span>Core Task Details</span>
 
         <div class="pull-right">
-          <a href="{{ url_for('task.edit', task_id=task.id, edit_form='core') }}">
+          <a href="{{ url_for('task.edit', task_id=task.id,
+          edit_form='core') }}">
             <span class="glyphicon glyphicon-edit"></span>
           </a>
           <a class="panel-collapse-switch" data-toggle="collapse"
@@ -54,25 +56,33 @@
                 </tr>
                 <tr>
                   <td>Task Creator</td>
-                  <td>{{ creator.full_name }}</td>
+                  <td>
+                    <a href = {{ render_user_link(creator) }}>
+                      {{ creator.full_name }}
+                    </a>
+                  </td>
                 </tr>
                 <tr>
                   <td>Parent Case</td>
-                  {% if parent.case_name %}
-                  {'func': lambda x: url_for('user.view', user_id=getattr(x, 'ID'))}
-
-                  <td>{{ parent.case_name }}</td>
+                  <td>
+                  {% if not parent %}
+                    None
+                  {% else %}
+                    <a href = {{ render_case_link(parent) }}>
+                    {{ parent.case_name }}
+                    </a>
+                  {% endif %}
+                  </td>
                 </tr>
                 </tbody>
               </table>
             </div>
             <div class="col-lg-5">
-               <table class="table table-condensed table-bordered
-               table-striped">
+               <table class="table table-condensed table-bordered table-striped">
                  <thead class=""">
-                 <tr>
-                   Assigned Staff
-                 </tr>
+                   <tr>
+                     Assigned Staff
+                   </tr>
                  </thead>
                  <tbody class="">
                  {%  if not task.assignees %}
@@ -82,7 +92,11 @@
                  {% else %}
                    {% for i in task.assignees %}
                      <tr>
-                       <td>{{ i.full_name }}</td>
+                       <td>
+                         <a href = {{ render_user_link(i) }}>
+                           {{ i.full_name }}
+                         </a>
+                       </td>
                      </tr>
                    {% endfor %}
                  {% endif %}
