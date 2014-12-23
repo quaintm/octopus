@@ -4,7 +4,7 @@ from flask import flash, abort
 from functools import update_wrapper, wraps
 from flask.ext.login import current_user
 from octopus.extensions import db
-from octopus.models import User
+from octopus.models import User, Task, Case
 from wtforms.validators import Optional, DataRequired
 
 
@@ -89,7 +89,14 @@ def user_on_task(fn):
           filter(User.id == current_user.id).all()
 
         if not task_creator:
-          abort(403)
+          parent_case_id = Task.get_by_id(task_id).case_id
+          parent_case_user = db.session.query(User). \
+            join('user_cases', 'case'). \
+            filter(User.user_cases.any(case_id=parent_case_id)). \
+            filter(User.id == current_user.id).all()
+
+          if not parent_case_user:
+            abort(403)
 
     return fn(*args, **kwargs)
 
