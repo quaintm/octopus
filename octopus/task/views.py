@@ -3,9 +3,7 @@ from flask import Blueprint, render_template, request, redirect, flash, \
   url_for, abort
 from flask.ext.login import login_required
 # from octopus.task import queries
-from octopus.task.forms import (EditCoreTaskForm, NewTaskForm
-# , TaskStaffForm
-)
+from octopus.task.forms import (EditCoreTaskForm, NewTaskForm)
 from octopus.task.utils import create_query
 from octopus.extensions import nav, db
 from octopus.models import Task, User, Case
@@ -15,11 +13,27 @@ from octopus.utils import flash_errors, admin_required, user_on_task
 blueprint = Blueprint("task", __name__, url_prefix='/task',
                       static_folder="../static")
 
-# TODO: figure out how to hide 'all tasks' if user is not admin
-nav_submenu_items = [nav.Item('My Tasks', 'task.query',
-                              args={'user_id': 'me'}),
-                     nav.Item('All Tasks', 'task.all_tasks'),
+nav_submenu_items_admin = [nav.Item('My Assigned Tasks', 'task.query',
+                                    args={'user_id': 'me', 'type': 'assigned'}),
+                           nav.Item('My Created Tasks', 'task.query',
+                                    args={'user_id': 'me', 'type': 'created'}),
+                           nav.Item('All Tasks', 'task.all_tasks'),
+                           nav.Item('Create New Task', 'task.new')]
+
+nav_submenu_items = [nav.Item('My Assigned Tasks', 'task.query',
+                              args={'user_id': 'me', 'type': 'assigned'}),
+                     nav.Item('My Created Tasks', 'task.query',
+                              args={'user_id': 'me', 'type': 'created'}),
                      nav.Item('Create New Task', 'task.new')]
+
+nav.Bar('task_admin', [
+  nav.Item('<i class="fa fa-tasks fa-lg"></i>', '',
+           html_attrs=str("data-placement='bottom',\
+               title='Tasks'"
+           ),
+           items=nav_submenu_items_admin
+  )
+])
 
 nav.Bar('task', [
   nav.Item('<i class="fa fa-tasks fa-lg"></i>', '',
@@ -34,6 +48,7 @@ nav.Bar('task', [
 # all tasks now only available to admins
 @blueprint.route("/all_tasks")
 @login_required
+@admin_required
 def all_tasks():
   tasks = db.session.query(Task.id.label("ID"),
                            Task.task_name.label("Name"),
@@ -60,10 +75,11 @@ def query():
   ).join(Case).order_by(Task.id.desc())
   view_url = {'func': lambda x: url_for('task.view', task_id=getattr(x, 'ID'))}
 
-  valid, q = create_query(request.args, q)
+  valid, q, title = create_query(request.args, q)
 
   if valid:
-    return render_template("task/query.html", tasks=q, view_url=view_url)
+    return render_template("task/query.html", tasks=q, view_url=view_url,
+                           title=title)
   else:
     flash("Invalid Query")
     return redirect(url_for('public.home'))
