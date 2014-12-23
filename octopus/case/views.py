@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, render_template, request, redirect, flash, \
   url_for, abort, json
-from flask.ext.login import login_required, current_user
+from flask.ext.login import login_required
 
 from octopus.case import queries
 from octopus.case.forms import EditCoreCaseForm, NewCaseForm, CaseTagsForm, \
@@ -15,7 +15,7 @@ from octopus.utils import flash_errors, user_on_case, admin_required
 blueprint = Blueprint("case", __name__, url_prefix='/case',
                       static_folder="../static")
 
-nav.Bar('case', [
+nav.Bar('case_admin', [
   nav.Item('<i class="fa fa-briefcase fa-lg"></i>', '',
            html_attrs=str("data-placement='bottom',\
           title='Cases'"
@@ -24,6 +24,19 @@ nav.Bar('case', [
            items=[
              nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
              nav.Item('All Cases', 'case.all_cases'),
+             nav.Item('Create New Case', 'case.new')
+           ]
+  )
+])
+
+nav.Bar('case', [
+  nav.Item('<i class="fa fa-briefcase fa-lg"></i>', '',
+           html_attrs=str("data-placement='bottom',\
+          title='Cases'"
+           ),
+
+           items=[
+             nav.Item('My Cases', 'case.query', args={'user_id': 'me'}),
              nav.Item('Create New Case', 'case.new')
            ]
   )
@@ -75,12 +88,13 @@ def query():
 @login_required
 @user_on_case
 def view(case_id=0):
-  lead, staff = queries.single_case_staff(case_id)
+  lead, staff, tasks = queries.single_case_staff(case_id)
   case = Case.get_by_id(case_id)
   if not case:
     abort(404)
 
-  return render_template('case/case.html', case=case, lead=lead, staff=staff)
+  return render_template('case/case.html', case=case, lead=lead, staff=staff,
+                         tasks=tasks)
 
 
 @blueprint.route("/new", methods=["GET", "POST"])
