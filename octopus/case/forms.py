@@ -29,7 +29,6 @@ class NewCaseForm(Form):
 
   self_to_case = BooleanField('Add me to this case', default=True)
 
-
   def __init__(self, *args, **kwargs):
     super(NewCaseForm, self).__init__(*args, **kwargs)
     self.case_type.choices = [(unicode(i.id), i.code) for i in
@@ -88,7 +87,8 @@ class EditCoreCaseForm(Form):
     self.current_case = Case.get_by_id(self.case_id)
 
     # This step is needed for bypassing a defaulting of the SelectField bug
-    # we set the default by making the first element of the list the default value
+    # we set the default by making the first element of the list the
+    # default value
     case_types = [(unicode(i.id), i.code) for i in CaseType.query]
     if self.current_case.case_type.id:
       for c, (i, d) in enumerate(case_types):
@@ -104,7 +104,7 @@ class EditCoreCaseForm(Form):
     self.case_region.choices = regions
 
     case_staff = [(unicode(i.id), i.full_name) for i in User.query]
-    lead, _ = single_case_staff(self.case_id)
+    lead, _, _ = single_case_staff(self.case_id)
     if lead:
       for c, (i, d) in enumerate(case_staff):
         if i == unicode(lead[0].id):
@@ -140,7 +140,8 @@ class EditCoreCaseForm(Form):
       self.current_case.region = region
 
     if self.case_lead.data:
-      # we can be sure that this won't throw an error -- it must be a valid choice to make it here
+      # we can be sure that this won't throw an error -- it must be a
+      # valid choice to make it here
       new_lead_id = int(self.case_lead.data)
 
       old_leads = CaseStaffMap.query.filter_by(case_id=self.case_id,
@@ -160,7 +161,8 @@ class EditCoreCaseForm(Form):
       if change_in_lead:
         # We don't want to do this lest we need to
         user = User.get_by_id(new_lead_id)
-        # at some point we will need to toggle primary or not, this is how you set that flag
+        # at some point we will need to toggle primary or not,
+        # this is how you set that flag
         CaseStaffMap.create(user=user, case=self.current_case,
                             primary=True).save()
 
@@ -244,7 +246,6 @@ class CaseStaffForm(Form):
                                 i.is_permanent]
       self.process()
 
-
   def validate(self):
     initial_validation = super(CaseStaffForm, self).validate()
     if not initial_validation:
@@ -277,7 +278,8 @@ class CaseStaffForm(Form):
     # add in the new changes
     for user_id in new_assigned_add:
       user = User.get_by_id(user_id)
-      # at some point we will need to toggle primary or not, this is how you set that flag
+      # at some point we will need to toggle primary or not, this is
+      # how you set that flag
       CaseStaffMap.create(user=user, case=case).save()
 
     return None
@@ -347,4 +349,3 @@ class PageDownForm(Form):
     setattr(case, self.db_field_name, self.pagedown.data)
     case.save()
     return None
-

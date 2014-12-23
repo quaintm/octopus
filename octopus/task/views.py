@@ -122,10 +122,7 @@ def edit(task_id):
   if edit_form == 'core':
     form = EditCoreTaskForm(task_id, request.form)
     ret = render_template('task/new.html', form=form, task_id=task_id)
-    # elif edit_form == 'task_staff':
-    # form = TaskStaffForm(task_id, request.form)
-    # ret = render_template('task/task_staff.html',
-    # form=form, case_id=case_id)
+
 
     if request.method == 'POST':
       if form.validate_on_submit():
