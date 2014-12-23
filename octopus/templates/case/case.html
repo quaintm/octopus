@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from "macros/render_link.html" import render_user_link%}
 
 {% block content %}
 
@@ -131,7 +132,9 @@
                 <ul class="list-inline list-inline-labels">
                   <li>
                     {% if lead %}
-                      {{ lead[0].full_name }}
+                      <a href = {{ render_user_link(lead[0]) }}>
+                        {{ lead[0].full_name }}
+                      </a>
                     {% else %}
                       None
                     {% endif %}
@@ -146,7 +149,9 @@
                 <ul class="list-inline list-inline-labels">
                   {% if staff %}
                     {% for i in staff %}
-                      <li>{{ i.full_name }}</li>
+                      <li><a href = {{ render_user_link(i) }}>
+                        {{ i.full_name }}
+                      </a></li>
                     {% endfor %}
                   {% else %}
                     <li>None</li>
