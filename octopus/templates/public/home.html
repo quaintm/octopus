@@ -15,18 +15,18 @@
           <h2><i class="fa fa-user"></i> Users</h2>
 
           <p>Check out every octopus user's details</p>
-          <br>
 
-          <p><a class="btn btn-default" href="{{ url_for('user.all_users') }}">Members &raquo;</a>
+          <p><a class="btn btn-default" href="
+            {{ url_for('user.all_users') }}">Members &raquo;</a>
           </p>
         </div>
         <div class="col-lg-4">
           <h2><i class="fa fa-briefcase"></i> Cases</h2>
 
-          <p>Check the progress, history or details of any case</p>
-          <br>
+          <p>Check the progress, history or details of cases</p>
 
-          <p><a class="btn btn-default" href="{{ url_for('case.all_cases') }}">Cases &raquo;</a>
+          <p><a class="btn btn-default" href="
+            {{ url_for('case.query',user_id='me') }}">Cases &raquo;</a>
           </p>
         </div>
 {#        <div class="col-lg-4">#}
@@ -38,9 +38,9 @@
         <div class="col-lg-4">
           <h2><i class="fa fa-tasks"></i> Tasks</h2>
 
-          <p>Examine tasks assigned to users, either standalone or part of cases</p>
+          <p>Examine tasks, either standalone or part of cases</p>
 
-          <p><a class="btn btn-default" href="{{ url_for('task.all_tasks') }}">Tasks &raquo;</a>
+          <p><a class="btn btn-default" href="{{ url_for('task.query',user_id='me',type='assigned') }}">Tasks &raquo;</a>
           </p>
         </div>
 
