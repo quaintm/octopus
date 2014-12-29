@@ -14,8 +14,8 @@
         <div class="col-lg-4">
           <h2><i class="fa fa-user"></i> Users</h2>
 
-          <p>Check out what every octopus user is working on, as well as their
-            meta-details</p>
+          <p>Check out every octopus user's details</p>
+          <br>
 
           <p><a class="btn btn-default" href="{{ url_for('user.all_users') }}">Members &raquo;</a>
           </p>
@@ -24,16 +24,26 @@
           <h2><i class="fa fa-briefcase"></i> Cases</h2>
 
           <p>Check the progress, history or details of any case</p>
+          <br>
 
           <p><a class="btn btn-default" href="{{ url_for('case.all_cases') }}">Cases &raquo;</a>
           </p>
         </div>
-        <div class="col-lg-4">
-          <h2><i class="fa fa-signal"></i> Visualizations</h2>
-
-          <p>Visualize the whole thing</p>
+{#        <div class="col-lg-4">#}
+{#          <h2><i class="fa fa-signal"></i> Visualizations</h2>#}
+{##}
+{#          <p>Visualize the whole thing</p>#}
           {#    <p><button type="button" class="btn btn-default" href="#" data-toggle="popover" data-content="Before we can do this part, we need data in the system.">Reports &raquo;</button></p>#}
+{#        </div>#}
+        <div class="col-lg-4">
+          <h2><i class="fa fa-tasks"></i> Tasks</h2>
+
+          <p>Examine tasks assigned to users, either standalone or part of cases</p>
+
+          <p><a class="btn btn-default" href="{{ url_for('task.all_tasks') }}">Tasks &raquo;</a>
+          </p>
         </div>
+
       </div>
       <!-- /.row -->
     </div>
