@@ -5,11 +5,7 @@ from wtforms import StringField, TextAreaField, \
   SelectMultipleField, SelectField
 from wtforms.validators import DataRequired, Optional
 from wtforms.fields.html5 import DateField
-
-# from octopus.task.queries import single_task_staff
-
 from octopus.models import User, Task, Case
-# from octopus.extensions import db
 
 
 class NewTaskForm(Form):
@@ -79,10 +75,8 @@ class EditCoreTaskForm(Form):
       self.assignees.default = [unicode(i.id) for i in
                                 self.current_task.assignees]
       self.parent_case.default = self.current_task.case_id
-
       self.process()
 
-      # TODO: Current start and end date values not populating
       self.start_date.data = self.current_task.start_date
       self.end_date.data = self.current_task.end_date
       self.task_name.data = self.current_task.task_name
