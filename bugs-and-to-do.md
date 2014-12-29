@@ -3,6 +3,7 @@
 - [ ] case details: see case lead on core form
 - [ ] auto-add creator to case if not admin and not case lead
 - [X] case lead change doesn't work
+- [X] remap links on front page to non-admin protected
 
 
 ##Notes from demo:
