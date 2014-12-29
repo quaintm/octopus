@@ -11,11 +11,11 @@
 ##Notes from demo:
 
 * ~~change #CRD to string~~ Done
-* Change CSV in tables from buttons to clickable rows
+* ~~Change CSV in tables from buttons to clickable rows~~ Done
 * Change edit button to text or apply tooltip
-* Markdown how-to
+* ~~Markdown how-to~~
 * File link --> browseable window
-* Tasks
+* ~~Tasks~~
   -- auth
   -- views
 * Projects 
