@@ -116,6 +116,7 @@ def new():
 @user_on_case
 def edit(case_id):
   edit_form = request.args.get('edit_form')
+  ret = []
 
   if edit_form == 'core':
     form = EditCoreCaseForm(case_id, request.form)
