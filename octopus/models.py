@@ -15,6 +15,91 @@ from octopus.database import (
 )
 
 
+# ___________ user section __________
+
+
+class Role(SurrogatePK, Model):
+  __tablename__ = 'roles'
+  name = Column(db.String(80), unique=True, nullable=False)
+  user_id = ReferenceCol('users', nullable=True)
+  user = relationship('User', backref='roles')
+
+  def __init__(self, name, **kwargs):
+    db.Model.__init__(self, name=name, **kwargs)
+
+  def __repr__(self):
+    return '<Role({name})>'.format(name=self.name)
+
+
+class User(UserMixin, SurrogatePK, Model):
+  __tablename__ = 'users'
+  username = Column(db.String(80), unique=True, nullable=False, index=True)
+  email = Column(db.String(80), unique=True, nullable=False)
+  password = Column(db.String(128), nullable=True)
+  created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+  first_name = Column(db.String(30), nullable=True)
+  last_name = Column(db.String(30), nullable=True)
+  active = Column(db.Boolean(), default=False)
+  is_admin = Column(db.Boolean(), default=False)
+  contract = Column(db.String(20), default='None', nullable=True)
+
+  # ref to case staff table
+  user_cases = db.relationship('CaseStaffMap',
+                               cascade="all, delete-orphan",
+                               backref='users')
+  cases = association_proxy('user_cases', 'cases')
+
+  # two types of task refs
+  created_tasks = relationship('Task',
+                               backref='creator',
+                               lazy='dynamic')
+
+  tasks = relationship('Task', secondary="task_user_map",
+                       backref=db.backref('users', lazy='dynamic'))
+
+  # project refs
+  projects = relationship('Project', secondary="project_user_map",
+                          backref=db.backref('users', lazy='dynamic'))
+
+  def __init__(self, username, email, password=None, **kwargs):
+    db.Model.__init__(self, username=username, email=email, **kwargs)
+    if password:
+      self.set_password(password)
+    else:
+      self.password = None
+
+  def set_password(self, password):
+    self.password = bcrypt.generate_password_hash(password)
+
+  def check_password(self, value):
+    return bcrypt.check_password_hash(self.password, value)
+
+  @property
+  def is_permanent(self):
+    return True if self.contract == 'permanent' else False
+
+  @property
+  def is_contractor(self):
+    return True if self.contract == 'contractor' else False
+
+  @property
+  def is_manager(self):
+    return True if self.contract == 'manager' else False
+
+  @property
+  def full_name(self):
+    if self.first_name and self.last_name:
+      return "{0} {1}".format(self.first_name, self.last_name)
+    else:
+      return self.username
+
+  def __repr__(self):
+    return '<User({username!r})>'.format(username=self.username)
+
+
+# ____________case section_____________
+
+
 class CaseType(SurrogatePK, Model):
   __tablename__ = 'case_types'
   code = Column(db.String(15), unique=True, nullable=False, index=True)
@@ -184,6 +269,10 @@ class Task(SurrogatePK, Model):
   assignees = relationship('User', secondary=task_user_map,
                            backref=db.backref('user_tasks', lazy='dynamic'))
 
+  # ref to optional associated project
+  project_id = db.Column('project_id', db.Integer,
+                         db.ForeignKey('projects.id'), nullable=True)
+
   def __init__(self, *args, **kwargs):
     db.Model.__init__(self, *args, **kwargs)
 
@@ -192,78 +281,32 @@ class Task(SurrogatePK, Model):
       id=self.id, task_name=self.task_name)
 
 
-# ___________ user section __________
+# ________project section___________
+
+project_user_map = db.Table('project_user_map',
+                            db.Column('user_id', db.Integer,
+                                      db.ForeignKey('users.id'),
+                                      index=True),
+                            db.Column('project_id', db.Integer,
+                                      db.ForeignKey('projects.id'),
+                                      index=True))
 
 
-class Role(SurrogatePK, Model):
-  __tablename__ = 'roles'
-  name = Column(db.String(80), unique=True, nullable=False)
-  user_id = ReferenceCol('users', nullable=True)
-  user = relationship('User', backref='roles')
+class Project(SurrogatePK, Model):
+  __tablename__ = 'projects'
+  project_name = Column(db.Text(), unique=False, nullable=True, index=True)
+  project_desc = Column(db.Text(), unique=False, nullable=True)
+  start_date = Column(db.Date(), unique=False, nullable=False, index=True)
+  end_date = Column(db.Date(), unique=False, nullable=True, index=True)
 
-  def __init__(self, name, **kwargs):
-    db.Model.__init__(self, name=name, **kwargs)
+  members = relationship('User', secondary=project_user_map,
+                           backref=db.backref('user_projects', lazy='dynamic'))
 
-  def __repr__(self):
-    return '<Role({name})>'.format(name=self.name)
+  tasks = relationship('Task', backref='project_tasks')
 
-
-class User(UserMixin, SurrogatePK, Model):
-  __tablename__ = 'users'
-  username = Column(db.String(80), unique=True, nullable=False, index=True)
-  email = Column(db.String(80), unique=True, nullable=False)
-  password = Column(db.String(128), nullable=True)
-  created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
-  first_name = Column(db.String(30), nullable=True)
-  last_name = Column(db.String(30), nullable=True)
-  active = Column(db.Boolean(), default=False)
-  is_admin = Column(db.Boolean(), default=False)
-  contract = Column(db.String(20), default='None', nullable=True)
-
-  # ref to staff table
-  user_cases = db.relationship('CaseStaffMap',
-                               cascade="all, delete-orphan",
-                               backref='users')
-  cases = association_proxy('user_cases', 'cases')
-
-  created_tasks = relationship('Task',
-                               backref='creator',
-                               lazy='dynamic')
-
-  tasks = relationship('Task', secondary="task_user_map",
-                       backref=db.backref('users', lazy='dynamic'))
-
-  def __init__(self, username, email, password=None, **kwargs):
-    db.Model.__init__(self, username=username, email=email, **kwargs)
-    if password:
-      self.set_password(password)
-    else:
-      self.password = None
-
-  def set_password(self, password):
-    self.password = bcrypt.generate_password_hash(password)
-
-  def check_password(self, value):
-    return bcrypt.check_password_hash(self.password, value)
-
-  @property
-  def is_permanent(self):
-    return True if self.contract == 'permanent' else False
-
-  @property
-  def is_contractor(self):
-    return True if self.contract == 'contractor' else False
-
-  @property
-  def is_manager(self):
-    return True if self.contract == 'manager' else False
-
-  @property
-  def full_name(self):
-    if self.first_name and self.last_name:
-      return "{0} {1}".format(self.first_name, self.last_name)
-    else:
-      return self.username
+  def __init__(self, *args, **kwargs):
+    db.Model.__init__(self, *args, **kwargs)
 
   def __repr__(self):
-    return '<User({username!r})>'.format(username=self.username)
+    return '<Project(id={id}, project_name={project_name}, )>'.format(
+      id=self.id, project_name=self.project_name)
