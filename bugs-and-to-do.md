@@ -4,6 +4,7 @@
 - [ ] auto-add creator to case if not admin and not case lead
 - [X] case lead change doesn't work
 - [X] remap links on front page to non-admin protected
+- [ ] database migrations without losing data
 
 
 ##Notes from demo:
@@ -19,6 +20,11 @@
   - [X] add tasks to main page
 - [ ] Projects
   - eg, NEAT2, NEAT3, MARS
+  - [ ] auth
+  - [ ] views (project, new, query, all)
+  - [ ] edit
+  - [ ] integration with main page
+  - [ ] integration with nav bar
 
 ###Case additions
 - [ ] Case Status select and filter
