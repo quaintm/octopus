@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import datetime as dt
-
 from flask.ext.login import UserMixin
-
 from octopus.extensions import bcrypt
-# from octopus.task.models import task_user_map
-
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import backref
-
 from octopus.database import (
   Column,
   db,

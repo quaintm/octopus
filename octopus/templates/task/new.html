@@ -19,13 +19,13 @@ make_datepicker_tag %}
       <div class="col-lg-3">
         <div class="form-group">
           {{ make_datepicker_tag(form.start_date.label,
-          form.start_date.id) }}
+          form.start_date.id, cur_val=form.start_date.data) }}
         </div>
       </div>
       <div class="col-lg-3">
         <div class="form-group">
           {{ make_datepicker_tag(form.end_date.label,
-          form.end_date.id) }}
+          form.end_date.id, cur_val=form.end_date.data) }}
         </div>
       </div>
     </div>
@@ -40,10 +40,20 @@ make_datepicker_tag %}
     </div>
 
     <div class="row">
-      <div class="col-lg-3">
+      <div class="col-lg-6">
         <div class="form-group">
+          {% if form.parent_case.choices %}
           {{ form.parent_case.label }}
           {{ form.parent_case(class_="form-control") }}
+          {% endif %}
+        </div>
+      </div>
+            <div class="col-lg-6">
+        <div class="form-group">
+          {% if form.assignees.choices %}
+          {{ form.assignees.label }}
+          {{ form.assignees(class_="form-control") }}
+          {% endif %}
         </div>
       </div>
     </div>

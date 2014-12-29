@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from "macros/render_link.html" import render_user_link, render_task_link%}
 
 {% block content %}
 
@@ -12,7 +13,8 @@
         <span>Core Case Details</span>
 
         <div class="pull-right">
-          <a href="{{ url_for('case.edit', case_id=case.id, edit_form='core') }}">
+          <a href="{{ url_for('case.edit', case_id=case.id,
+          edit_form='core') }}">
             <span class="glyphicon glyphicon-edit"></span>
           </a>
           <a class="panel-collapse-switch" data-toggle="collapse"
@@ -28,7 +30,8 @@
         <div class="panel-body">
           <div class="row">
             <div class="col-lg-5">
-              <table class="table table-condensed table-striped table-bordered">
+              <table class="table table-condensed table-striped
+              table-bordered">
                 <tbody class="">
                 <tr>
                   <td>Case ID #</td>
@@ -78,7 +81,8 @@
         <span>Case Description</span>
 
         <div class="pull-right">
-          <a href="{{ url_for('case.edit', case_id=case.id, edit_form='case_desc') }}">
+          <a href="{{ url_for('case.edit', case_id=case.id,
+          edit_form='case_desc') }}">
             <span class="glyphicon glyphicon-edit"></span>
           </a>
           <a class="panel-collapse-switch" data-toggle="collapse"
@@ -89,7 +93,8 @@
         </div>
       </div>
 
-      <div id="caseDescPanel" class="panel-collapse collapse in" role="tabpanel"
+      <div id="caseDescPanel" class="panel-collapse collapse in"
+           role="tabpanel"
            aria-labelledby="caseDescPanel">
         <div class="panel-body">
           {#    <p class="text-justify">{{ case.case_desc|markdown }}</p>#}
@@ -109,7 +114,8 @@
         <span>QAU Staff Assigned</span>
 
         <div class="pull-right">
-          <a href="{{ url_for('case.edit', case_id=case.id, edit_form='case_staff') }}">
+          <a href="{{ url_for('case.edit', case_id=case.id,
+          edit_form='case_staff') }}">
             <span class="glyphicon glyphicon-edit"></span>
           </a>
           <a class="panel-collapse-switch" data-toggle="collapse"
@@ -131,7 +137,9 @@
                 <ul class="list-inline list-inline-labels">
                   <li>
                     {% if lead %}
-                      {{ lead[0].full_name }}
+                      <a href = {{ render_user_link(lead[0]) }}>
+                        {{ lead[0].full_name }}
+                      </a>
                     {% else %}
                       None
                     {% endif %}
@@ -146,7 +154,9 @@
                 <ul class="list-inline list-inline-labels">
                   {% if staff %}
                     {% for i in staff %}
-                      <li>{{ i.full_name }}</li>
+                      <li><a href = {{ render_user_link(i) }}>
+                        {{ i.full_name }}
+                      </a></li>
                     {% endfor %}
                   {% else %}
                     <li>None</li>
@@ -173,7 +183,8 @@
           class="badge badge-info">{{ non_qau_staff_tags|length() }}</span>
 
         <div class="pull-right">
-          <a href="{{ url_for('case.edit', case_id=case.id, edit_form='non_qau_staff') }}">
+          <a href="{{ url_for('case.edit', case_id=case.id,
+          edit_form='non_qau_staff') }}">
             <span class="glyphicon glyphicon-edit"></span>
           </a>
           <a class="panel-collapse-switch" data-toggle="collapse"
@@ -216,7 +227,8 @@
           class="badge badge-info">{{ risk_tags|length() }}</span>
 
         <div class="pull-right">
-          <a href="{{ url_for('case.edit', case_id=case.id, edit_form='risk_tags') }}">
+          <a href="{{ url_for('case.edit', case_id=case.id,
+          edit_form='risk_tags') }}">
             <span class="glyphicon glyphicon-edit"></span>
           </a>
           <a class="panel-collapse-switch" data-toggle="collapse"
@@ -259,7 +271,8 @@
           class="badge badge-info">{{ case.files|length() }}</span>
 
         <div class="pull-right">
-          <a href="{{ url_for('case.edit', case_id=case.id, edit_form='case_file') }}">
+          <a href="{{ url_for('case.edit', case_id=case.id,
+          edit_form='case_file') }}">
             <span class="glyphicon glyphicon-plus"></span>
           </a>
           <a class="panel-collapse-switch" data-toggle="collapse"
@@ -290,7 +303,8 @@
               <td>{{ file.name }}</td>
               <td>{{ file.path }}</td>
               <td>
-                <a href="{{ url_for('case.edit', case_id=case.id, file_id=file.id, edit_form='case_file') }}"
+                <a href="{{ url_for('case.edit', case_id=case.id,
+                file_id=file.id, edit_form='case_file') }}"
                    class="btn btn-sm btn-default center-block">Edit File</a>
 
               </td>
@@ -303,6 +317,66 @@
     </div>
   </div>
   {# End Panel Files #}
+
+    {# Start Tasks Panel #}
+  <div class="panel-group" id="caseTasksAccordian" role="tablist"
+       aria-multiselectable="true">
+    <div class="panel panel-default">
+
+      {# Start Panel Heading#}
+      <div class="panel-heading clearfix" role="tab">
+        <span>Tasks Assigned to Case </span><span
+          class="badge badge-info">{{ tasks|length() }}</span>
+
+        <div class="pull-right">
+
+          <a class="panel-collapse-switch" data-toggle="collapse"
+             data-parent="#accordion"
+             href="#caseFilesPanel" aria-expanded="true"
+             aria-controls="caseFilesPanel">
+          </a>
+        </div>
+      </div>
+      {# End Panel Heading#}
+
+      {# Start Panel Body #}
+      <div id="caseTasksPanel" class="panel-collapse collapse in"
+           role="tabpanel" aria-labelledby="caseTasksPanel">
+        <table class="table table-striped table-bordered table-hover
+          clickable_row">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Assigned Task Staff</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for i in tasks %}
+            <tr data-url="{{ render_task_link(i) }}">
+              <td>{{ i.task_name }}</td>
+              <td>{{ i.start_date }}</td>
+              <td>{{ i.end_date }}</td>
+              <td>
+                {% for j in i.assignees %}
+                  {% if j.full_name %}
+                    <a href = {{render_user_link(j)}}>{{ j.full_name }}</a><br>
+                  {% else %}
+                    <a href = {{render_user_link(j)}}>{{ j.username }}</a><br>
+                  {% endif %}
+                {% endfor %}
+              </td>
+
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {# End Panel Body #}
+      </div>
+    </div>
+  </div>
+  {# End Tasks Panel #}
 {% endblock %}
 
 

@@ -1,0 +1,15 @@
+{% macro render_user_link(user) -%}
+  {{ url_for('user.view', user_id=user.id) }}
+{%- endmacro %}
+
+{% macro render_case_link(case) -%}
+  {{ url_for('case.view', case_id=case.id) }}
+{%- endmacro %}
+
+{% macro render_task_link(task) -%}
+  {{ url_for('task.view', task_id=task.id) }}
+{%- endmacro %}
+
+{% macro render_project_link(project) -%}
+  {{ url_for('project.view', project_id=project.id) }}
+{%- endmacro %}

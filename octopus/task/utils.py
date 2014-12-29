@@ -5,10 +5,9 @@ from octopus.models import User, Task
 
 
 def create_query(args, q):
-  conditions = []
-  joins = set()
   valid = True
   user_id = args.get('user_id')
+  type = args.get('type')
   if user_id:
 
     if user_id == "me":
@@ -21,6 +20,17 @@ def create_query(args, q):
         flash('Invalid User Id Entered')
         valid = False
     if valid:
-      q = q.filter(Task.assignees == user.id)
+      if type == 'assigned':
+        q = q.filter(Task.assignees.any(id=user.id))
+        title = "My Assigned Tasks"
 
-  return valid, q
+      elif type == 'created':
+        q = q.filter(Task.creator_id==user.id)
+        title = "My Created Tasks"
+
+      else:
+        None
+        title = "Query Results"
+
+  return valid, q, title
+

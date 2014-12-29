@@ -63,20 +63,37 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
       {% if current_user and current_user.is_authenticated() %}
-        <ul class="nav navbar-nav">
-          {% for item in nav.public %}
-            {{ render_nav_items(item, true) }}
-          {% endfor %}
-          {% for item in nav.user %}
-            {{ render_nav_items(item, true) }}
-          {% endfor %}
-          {% for item in nav.case %}
-            {{ render_nav_items(item, true) }}
-          {% endfor %}
-          {% for item in nav.task %}
-            {{ render_nav_items(item, true) }}
-          {% endfor %}
-        </ul>
+        {% if current_user.is_admin %}
+          <ul class="nav navbar-nav">
+            {% for item in nav.public %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.user %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.case_admin %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.task_admin %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+          </ul>
+        {% else %}
+          <ul class="nav navbar-nav">
+            {% for item in nav.public %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.user %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.case %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.task %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+          </ul>
+        {% endif %}
         <ul class="nav navbar-nav navbar-right">
 
 
