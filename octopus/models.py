@@ -113,6 +113,18 @@ class CaseType(SurrogatePK, Model):
       code=self.code, desc=self.description)
 
 
+class CaseStatus(SurrogatePK, Model):
+  __tablename__ = 'case_statuses'
+  type = Column(db.String(32),unique=True, nullable=True, index=True)
+
+  def __init__(self, name, **kwargs):
+    db.Model.__init__(self, name=name, **kwargs)
+
+  def __repr__(self):
+    return '<CaseStatus (type={type}>'.format(
+      type=self.type)
+
+
 class Region(SurrogatePK, Model):
   __tablename__ = 'regions'
   code = Column(db.String(4), unique=True, nullable=False)
@@ -204,6 +216,9 @@ class Case(SurrogatePK, Model):
 
   case_type_id = ReferenceCol('case_types', nullable=False)
   case_type = relationship('CaseType', backref='case_types')
+
+  case_status_id = ReferenceCol('case_statuses', nullable=False)
+  case_status = relationship('CaseStatus',backref='case_statuses')
 
   region_id = ReferenceCol('regions', nullable=False)
   region = relationship('Region', backref='regions')
