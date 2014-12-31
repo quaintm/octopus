@@ -26,6 +26,7 @@ target_metadata = current_app.extensions['migrate'].db.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+
 def run_migrations_offline():
   """Run migrations in 'offline' mode.
 
@@ -39,7 +40,8 @@ def run_migrations_offline():
 
   """
   url = config.get_main_option("sqlalchemy.url")
-  context.configure(url=url)
+  context.configure(url=url,
+                    render_as_batch=True)
 
   with context.begin_transaction():
     context.run_migrations()
@@ -60,7 +62,8 @@ def run_migrations_online():
   connection = engine.connect()
   context.configure(
     connection=connection,
-    target_metadata=target_metadata
+    target_metadata=target_metadata,
+    render_as_batch=True
   )
 
   try:
