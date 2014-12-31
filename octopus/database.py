@@ -15,7 +15,8 @@ relationship = relationship
 
 
 class CRUDMixin(object):
-  """Mixin that adds convenience methods for CRUD (create, read, update, delete)
+  """Mixin that adds convenience methods for CRUD
+  (create, read, update, delete)
   operations.
   """
 
@@ -83,14 +84,24 @@ class SurrogatePK(object):
     return None
 
 
-def ReferenceCol(tablename, nullable=False, pk_name='id', **kwargs):
+def ReferenceCol(tablename, nullable=False, pk_name='id', colname=None,
+                 parent_table=None, **kwargs):
   """Column that adds primary key foreign key reference.
+
+  overloaded with name generator -- alembic requires name for foreign key
+  assignments (SQLite does not)
 
   Usage: ::
 
     category_id = ReferenceCol('category')
     category = relationship('Category', backref='categories')
   """
+  name = None
+  if colname and parent_table:
+    name = "fk_{tablename}_{colname}_{referred_table_name}".format(
+      tablename=parent_table, colname=colname, referred_table_name=tablename
+    )
+
   return db.Column(
-    db.ForeignKey("{0}.{1}".format(tablename, pk_name)),
+    db.ForeignKey("{0}.{1}".format(tablename, pk_name), name=name),
     nullable=nullable, **kwargs)
