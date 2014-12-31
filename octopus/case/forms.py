@@ -9,8 +9,8 @@ from flask.ext.pagedown.fields import PageDownField
 from wtforms.fields import SubmitField
 
 from octopus.case.queries import single_case_staff
-from octopus.models import Region, CaseType, Case, Tag, CaseStaffMap, CaseFile, \
-  User
+from octopus.models import Region, CaseType, Case, Tag, CaseStaffMap, \
+  CaseFile, User, CaseStatus
 from octopus.extensions import db
 
 
@@ -24,10 +24,9 @@ class NewCaseForm(Form):
   end_date = DateField('End Date', validators=[Optional()])
   case_type = SelectField('Case Type', validators=[DataRequired()])
 
+  case_status = SelectField('Case Status', validators=[DataRequired()])
   case_region = SelectField('Regional Office', validators=[DataRequired()])
   case_lead = SelectField('Case Lead', validators=[DataRequired()])
-
-  self_to_case = BooleanField('Add me to this case', default=True)
 
   def __init__(self, *args, **kwargs):
     super(NewCaseForm, self).__init__(*args, **kwargs)
@@ -35,6 +34,9 @@ class NewCaseForm(Form):
                               CaseType.query]
     self.case_region.choices = [(unicode(i.id), i.code) for i in
                                 Region.query]
+    self.case_status.choices = [(unicode(i.id), i.type) for i in
+                                CaseStatus.query]
+
     case_lead = [(unicode(i.id), i.full_name) for i in User.query]
     for c, (i, d) in enumerate(case_lead):
       if i == unicode(current_user.id):
@@ -50,6 +52,7 @@ class NewCaseForm(Form):
   def commit_new_case(self):
     case_type = CaseType.query.get(self.case_type.data)
     region = Region.query.get(self.case_region.data)
+    case_status = CaseStatus.query.get(self.case_status.data)
     case_lead = User.query.get(self.case_lead.data)
 
     case = Case.create(crd_number=self.crd_number.data,
@@ -59,6 +62,7 @@ class NewCaseForm(Form):
                        end_date=self.end_date.data,
                        case_type=case_type,
                        region=region,
+                       case_status=case_status,
     )
 
     # add case lead to staff table
@@ -66,6 +70,12 @@ class NewCaseForm(Form):
                                case_id=case.id,
                                primary=True)
     lead.save()
+
+    # if case creator not admin and not case lead, auto add to case staff
+    if not current_user.is_admin:
+      if current_user != case_lead:
+        CaseStaffMap.create(user=current_user, case=case).save()
+
     return case
 
 
@@ -79,6 +89,8 @@ class EditCoreCaseForm(Form):
   case_type = SelectField('Case Type', validators=[Optional()])
 
   case_region = SelectField("Regional Office", validators=[Optional()])
+  case_status = SelectField("Case Status", validators=[DataRequired()])
+
   case_lead = SelectField('Case Lead', validators=[DataRequired()])
 
   def __init__(self, case_id, *args, **kwargs):
@@ -111,7 +123,14 @@ class EditCoreCaseForm(Form):
           case_staff.insert(0, case_staff.pop(c))
     self.case_lead.choices = case_staff
 
+    case_status = [(unicode(i.id), i.type) for i in CaseStatus.query]
+    self.case_status.choices = case_status
+
     if request.method != 'POST':
+      if self.current_case.case_status:
+        self.case_status.default = self.current_case.case_status.id
+        self.process()
+
       self.crd_number.data = self.current_case.crd_number
       self.case_name.data = self.current_case.case_name
       self.start_date.data = self.current_case.start_date
@@ -138,6 +157,9 @@ class EditCoreCaseForm(Form):
     if self.case_region.data:
       region = Region.query.get(self.case_region.data)
       self.current_case.region = region
+    if self.case_status.data:
+      case_status = CaseStatus.query.get(self.case_status.data)
+      self.current_case.case_status = case_status
 
     if self.case_lead.data:
       # we can be sure that this won't throw an error -- it must be a
@@ -167,6 +189,7 @@ class EditCoreCaseForm(Form):
                             primary=True).save()
 
     self.current_case.save()
+    return None
 
 
 class CaseTagsForm(Form):
@@ -238,7 +261,7 @@ class CaseStaffForm(Form):
       staff = db.session.query(User). \
         join('user_cases', 'case'). \
         filter(User.user_cases.any(case_id=case_id)). \
-        filter(CaseStaffMap.primary == 0).all()
+        filter(CaseStaffMap.primary != 1).all()
 
       self.contractors.default = [unicode(i.id) for i in staff if
                                   i.is_contractor]
