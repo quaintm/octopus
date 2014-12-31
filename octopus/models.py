@@ -217,7 +217,8 @@ class Case(SurrogatePK, Model):
   case_type_id = ReferenceCol('case_types', nullable=False)
   case_type = relationship('CaseType', backref='case_types')
 
-  case_status_id = ReferenceCol('case_statuses', nullable=False)
+  case_status_id = ReferenceCol('case_statuses', nullable=True,
+                                colname="case_status_id", parent_table='cases')
   case_status = relationship('CaseStatus',backref='case_statuses')
 
   region_id = ReferenceCol('regions', nullable=False)
