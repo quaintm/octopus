@@ -115,7 +115,7 @@ class CaseType(SurrogatePK, Model):
 
 class CaseStatus(SurrogatePK, Model):
   __tablename__ = 'case_statuses'
-  type = Column(db.String(32),unique=True, nullable=True, index=True)
+  type = Column(db.String(32), unique=True, nullable=True, index=True)
 
   def __init__(self, name, **kwargs):
     db.Model.__init__(self, name=name, **kwargs)

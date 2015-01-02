@@ -157,6 +157,8 @@ class EditCoreCaseForm(Form):
     if self.case_region.data:
       region = Region.query.get(self.case_region.data)
       self.current_case.region = region
+
+    # TODO: This edit field doesn't currently work D:
     if self.case_status.data:
       case_status = CaseStatus.query.get(self.case_status.data)
       self.current_case.case_status = case_status
