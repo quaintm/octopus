@@ -32,6 +32,9 @@
   - In Field
   - Evaluation Phase
   - Complete
+  - [ ] Fix broken edit field in Core Case Form
+  - [ ] Show on case view
+  - [ ] Show on case search page
 - [ ] IARD / MARS
 - [ ] Findings box
 - [ ] Enforcement actions
