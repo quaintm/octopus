@@ -115,7 +115,7 @@ class CaseType(SurrogatePK, Model):
 
 class CaseStatus(SurrogatePK, Model):
   __tablename__ = 'case_statuses'
-  type = Column(db.String(32),unique=True, nullable=True, index=True)
+  type = Column(db.String(32), unique=True, nullable=True, index=True)
 
   def __init__(self, name, **kwargs):
     db.Model.__init__(self, name=name, **kwargs)
@@ -218,8 +218,8 @@ class Case(SurrogatePK, Model):
   case_type = relationship('CaseType', backref='case_types')
 
   case_status_id = ReferenceCol('case_statuses', nullable=True,
-                                colname="case_status_id", parent_table='cases')
-  case_status = relationship('CaseStatus',backref='case_statuses')
+                                colname='case_status_id', parent_table='cases')
+  case_status = relationship('CaseStatus', backref='case_statuses')
 
   region_id = ReferenceCol('regions', nullable=False)
   region = relationship('Region', backref='regions')
