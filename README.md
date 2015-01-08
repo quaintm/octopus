@@ -1,3 +1,42 @@
+===============================
+#octopus
+===============================
+
+A case and task tracker for the QAU
+
+##Installation and Management
+
+Create a conda environment to run the app:
+
+    conda create -n octopus -f requirements/prod.txt
+
+Activate it and use pip to install the balance of the requirements:
+
+    activate octopus
+    pip install -r requirements.txt
+    
+To start the app, run from the root octopus folder:
+
+    python manage.py server
+
+###Deployment
+
+In your production environment, make sure the ``OCTOPUS_ENV`` environment variable is set to ``"prod"``.
+
+Twisted is the production server of choice, so `conda install gevent` is needed before releasing to production.
+
+To light up the production server, run `python run_prod.py`. The server will light up on localhost:9001
+
+###Shell
+
+To open the interactive shell, run:
+
+    python manage.py shell
+
+THe shell has access to all database models.
+
+
+
 ##App Structure
 
 ###Forms and Views
@@ -53,14 +92,6 @@ octopus/templates/macros. Markdown support is in octopus/templates/markdown.
 Static files (octopus/static) are partitioned in their own area and can be 
 accessed by the entire app. This is the location for font libraries, css, 
 javascript, and image files.
-
-
-
-
-
-
-
-
 
 
 <!-- _________________Migration Section______________ -->
