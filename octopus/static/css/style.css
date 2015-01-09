@@ -20,7 +20,7 @@ textarea {
   resize: vertical;
 }
 
-.container-narrow{
+.container-narrow {
   margin: 0 auto;
   max-width: 700px;
 }
@@ -32,7 +32,6 @@ textarea {
   width: 180px;
 }
 
-
 .form-register {
   width: 50%;
 }
@@ -43,8 +42,8 @@ textarea {
   height: auto;
   padding: 10px;
   -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 /* footer */
@@ -88,59 +87,68 @@ footer .footer-nav {
 /* This handles the submenu dropdown */
 
 .dropdown-submenu {
-    position:relative;
+  position: relative;
 }
-.dropdown-submenu>.dropdown-menu {
-    top:0;
-    left:100%;
-    margin-top:-6px;
-    margin-left:-1px;
-    -webkit-border-radius:0 6px 6px 6px;
-    -moz-border-radius:0 6px 6px 6px;
-    border-radius:0 6px 6px 6px;
+
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  -webkit-border-radius: 0 6px 6px 6px;
+  -moz-border-radius: 0 6px 6px 6px;
+  border-radius: 0 6px 6px 6px;
+  z-index: 2;
 }
-.dropdown-submenu:hover>.dropdown-menu {
-    display:block;
+
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
 }
-.dropdown-submenu>a:after {
-    display:block;
-    content:" ";
-    float:right;
-    width:0;
-    height:0;
-    border-color:transparent;
-    border-style:solid;
-    border-width:5px 0 5px 5px;
-    border-left-color:#cccccc;
-    margin-top:5px;
-    margin-right:-10px;
+
+.dropdown-submenu > a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
 }
-.dropdown-submenu:hover>a:after {
-    border-left-color:#ffffff;
+
+.dropdown-submenu:hover > a:after {
+  border-left-color: #ffffff;
 }
+
 .dropdown-submenu.pull-left {
-    float:none;
+  float: none;
 }
-.dropdown-submenu.pull-left>.dropdown-menu {
-    left:-100%;
-    margin-left:10px;
-    -webkit-border-radius:6px 0 6px 6px;
-    -moz-border-radius:6px 0 6px 6px;
-    border-radius:6px 0 6px 6px;
+
+.dropdown-submenu.pull-left > .dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  -webkit-border-radius: 6px 0 6px 6px;
+  -moz-border-radius: 6px 0 6px 6px;
+  border-radius: 6px 0 6px 6px;
 }
 
 /* end submenu dropdown portion */
 
 /* This is for the typeahead feature in tags-input */
 
-.bootstrap-tagsinput { width: 100%; }
+.bootstrap-tagsinput {
+  width: 100%;
+}
 
 .accordion {
-	margin-bottom:-3px;
+  margin-bottom: -3px;
 }
 
 .accordion-group {
-	border: none;
+  border: none;
 }
 
 .twitter-typeahead .tt-query,
@@ -150,7 +158,7 @@ footer .footer-nav {
 
 /*.twitter-typeahead .tt-hint*/
 /*{*/
-    /*display: none;*/
+/*display: none;*/
 /*}*/
 
 .tt-dropdown-menu {
@@ -173,6 +181,7 @@ footer .footer-nav {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box;
 }
+
 .tt-suggestion > p {
   display: block;
   padding: 3px 20px;
@@ -182,6 +191,7 @@ footer .footer-nav {
   color: #333333;
   white-space: nowrap;
 }
+
 .tt-suggestion > p:hover,
 .tt-suggestion > p:focus,
 .tt-suggestion.tt-cursor p {
@@ -192,14 +202,14 @@ footer .footer-nav {
 }
 
 .bootstrap-tagsinput span.label {
-    font-size: 100%;
-    padding: 0.2em 0.6em;
-    line-height: 2;
+  font-size: 100%;
+  padding: 0.2em 0.6em;
+  line-height: 2;
 }
 
 #scrollable-dropdown-menu .tt-dropdown-menu {
-    max-height: 150px;
-    overflow-y: auto;
+  max-height: 150px;
+  overflow-y: auto;
 }
 
 /* End typeahead*/
@@ -207,11 +217,11 @@ footer .footer-nav {
 /* Start tag list styling */
 
 .list-inline-labels {
-    margin: 0 auto;
+  margin: 0 auto;
 }
 
 .case-tag-info {
-    font-size: 100%;
+  font-size: 100%;
 }
 
 /* End tag list styling */
@@ -219,12 +229,35 @@ footer .footer-nav {
 /* Start collapsible panel styling */
 
 .panel-heading a.panel-collapse-switch:after {
-    font-family:'Glyphicons Halflings';
-    content:"\e114";
-    color: grey;
-    padding-left: 0.5em;
+  font-family: 'Glyphicons Halflings';
+  content: "\e114";
+  color: grey;
+  padding-left: 0.5em;
 }
+
 .panel-heading a.collapsed.panel-collapse-switch:after {
-    content:"\e080";
-    padding-left: 0.5em;
+  content: "\e080";
+  padding-left: 0.5em;
 }
+
+.tooltip {
+  z-index: 1;
+}
+
+/* flask-pagedown */
+
+.flask-pagedown-input {
+  width: 100%;
+}
+
+/* end pagedown*/
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #e0e0e0;
+}
+
+.clickable_row {
+  cursor: pointer;
+}
+
+

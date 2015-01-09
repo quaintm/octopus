@@ -1,13 +1,13 @@
-describe('Transport', function() {
+describe('Transport', function () {
 
-  beforeEach(function() {
+  beforeEach(function () {
     jasmine.Ajax.useMock();
     jasmine.Clock.useMock();
 
     this.transport = new Transport();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     // run twice to flush out  on-deck requests
     $.each(ajaxRequests, drop);
     $.each(ajaxRequests, drop);
@@ -20,7 +20,7 @@ describe('Transport', function() {
     }
   });
 
-  it('should use jQuery.ajax as the default transport mechanism', function() {
+  it('should use jQuery.ajax as the default transport mechanism', function () {
     var req, resp = fixtures.ajaxResps.ok, spy = jasmine.createSpy();
 
     this.transport.get('/test', spy);
@@ -32,12 +32,12 @@ describe('Transport', function() {
     expect(spy).toHaveBeenCalledWith(null, resp.parsed);
   });
 
-  it('should allow the transport mechanism to be configured', function() {
+  it('should allow the transport mechanism to be configured', function () {
     var resp = fixtures.ajaxResps.ok,
-        cbSpy = jasmine.createSpy(),
-        sendSpy = jasmine.createSpy().andCallFake(send);
+      cbSpy = jasmine.createSpy(),
+      sendSpy = jasmine.createSpy().andCallFake(send);
 
-    this.transport = new Transport({ transport: sendSpy });
+    this.transport = new Transport({transport: sendSpy});
     this.transport.get('/test', cbSpy);
 
     jasmine.Clock.tick(0);
@@ -51,10 +51,12 @@ describe('Transport', function() {
     );
 
     // send must be async
-    function send(url, o, onSuccess, onError) { onSuccess(resp.parsed); }
+    function send(url, o, onSuccess, onError) {
+      onSuccess(resp.parsed);
+    }
   });
 
-  it('should respect maxPendingRequests configuration', function() {
+  it('should respect maxPendingRequests configuration', function () {
     for (var i = 0; i < 10; i++) {
       this.transport.get('/test' + i, $.noop);
     }
@@ -62,8 +64,8 @@ describe('Transport', function() {
     expect(ajaxRequests.length).toBe(6);
   });
 
-  it('should support rate limiting', function() {
-    this.transport = new Transport({ rateLimiter: rateLimiter });
+  it('should support rate limiting', function () {
+    this.transport = new Transport({rateLimiter: rateLimiter});
 
     for (var i = 0; i < 5; i++) {
       this.transport.get('/test' + i, $.noop);
@@ -72,10 +74,12 @@ describe('Transport', function() {
     jasmine.Clock.tick(100);
     expect(ajaxRequests.length).toBe(1);
 
-    function rateLimiter(fn) { return _.debounce(fn, 20); }
+    function rateLimiter(fn) {
+      return _.debounce(fn, 20);
+    }
   });
 
-  it('should cache most recent requests', function() {
+  it('should cache most recent requests', function () {
     var spy1 = jasmine.createSpy(), spy2 = jasmine.createSpy();
 
     this.transport.get('/test1', $.noop);
@@ -98,8 +102,8 @@ describe('Transport', function() {
     expect(spy2).toHaveBeenCalledWith(null, fixtures.ajaxResps.ok1.parsed);
   });
 
-  it('should not cache requests if cache option is false', function() {
-    this.transport = new Transport({ cache: false });
+  it('should not cache requests if cache option is false', function () {
+    this.transport = new Transport({cache: false});
 
     this.transport.get('/test1', $.noop);
     mostRecentAjaxRequest().response(fixtures.ajaxResps.ok);
@@ -109,7 +113,7 @@ describe('Transport', function() {
     expect(ajaxRequests.length).toBe(2);
   });
 
-  it('should prevent dog pile', function() {
+  it('should prevent dog pile', function () {
     var spy1 = jasmine.createSpy(), spy2 = jasmine.createSpy();
 
     this.transport.get('/test1', spy1);
@@ -119,15 +123,17 @@ describe('Transport', function() {
 
     expect(ajaxRequests.length).toBe(1);
 
-    waitsFor(function() { return spy1.callCount && spy2.callCount; });
+    waitsFor(function () {
+      return spy1.callCount && spy2.callCount;
+    });
 
-    runs(function() {
+    runs(function () {
       expect(spy1).toHaveBeenCalledWith(null, fixtures.ajaxResps.ok.parsed);
       expect(spy2).toHaveBeenCalledWith(null, fixtures.ajaxResps.ok.parsed);
     });
   });
 
-  it('should always make a request for the last call to #get', function() {
+  it('should always make a request for the last call to #get', function () {
     var spy = jasmine.createSpy();
 
     for (var i = 0; i < 6; i++) {
@@ -137,7 +143,7 @@ describe('Transport', function() {
     this.transport.get('/test' + i, spy);
     expect(ajaxRequests.length).toBe(6);
 
-    _.each(ajaxRequests, function(req) {
+    _.each(ajaxRequests, function (req) {
       req.response(fixtures.ajaxResps.ok);
     });
 
@@ -147,7 +153,7 @@ describe('Transport', function() {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should invoke the callback with err set to true on failure', function() {
+  it('should invoke the callback with err set to true on failure', function () {
     var req, resp = fixtures.ajaxResps.err, spy = jasmine.createSpy();
 
     this.transport.get('/test', spy);
@@ -159,8 +165,8 @@ describe('Transport', function() {
     expect(spy).toHaveBeenCalledWith(true);
   });
 
-  it('should not send cancelled requests', function() {
-    this.transport = new Transport({ rateLimiter: rateLimiter });
+  it('should not send cancelled requests', function () {
+    this.transport = new Transport({rateLimiter: rateLimiter});
 
     this.transport.get('/test', $.noop);
     this.transport.cancel();
@@ -168,11 +174,13 @@ describe('Transport', function() {
     jasmine.Clock.tick(100);
     expect(ajaxRequests.length).toBe(0);
 
-    function rateLimiter(fn) { return _.debounce(fn, 20); }
+    function rateLimiter(fn) {
+      return _.debounce(fn, 20);
+    }
   });
 
-  it('should not send outdated requests', function() {
-    this.transport = new Transport({ rateLimiter: rateLimiter });
+  it('should not send outdated requests', function () {
+    this.transport = new Transport({rateLimiter: rateLimiter});
 
     // warm cache
     this.transport.get('/test1', $.noop);
@@ -192,6 +200,8 @@ describe('Transport', function() {
 
     expect(ajaxRequests.length).toBe(1);
 
-    function rateLimiter(fn) { return _.debounce(fn, 20); }
+    function rateLimiter(fn) {
+      return _.debounce(fn, 20);
+    }
   });
 });

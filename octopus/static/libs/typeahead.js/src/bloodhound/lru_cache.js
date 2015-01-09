@@ -6,7 +6,7 @@
 
 // inspired by https://github.com/jharding/lru-cache
 
-var LruCache = (function() {
+var LruCache = (function () {
   'use strict';
 
   function LruCache(maxSize) {
@@ -82,7 +82,7 @@ var LruCache = (function() {
       node.next ? node.next.prev = node.prev : this.tail = node.prev;
     },
 
-    moveToFront: function(node) {
+    moveToFront: function (node) {
       this.remove(node);
       this.add(node);
     }

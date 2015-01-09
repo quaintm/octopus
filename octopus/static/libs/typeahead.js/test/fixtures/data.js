@@ -2,29 +2,29 @@ var fixtures = fixtures || {};
 
 fixtures.data = {
   simple: [
-    { value: 'big' },
-    { value: 'bigger' },
-    { value: 'biggest' },
-    { value: 'small' },
-    { value: 'smaller' },
-    { value: 'smallest' }
+    {value: 'big'},
+    {value: 'bigger'},
+    {value: 'biggest'},
+    {value: 'small'},
+    {value: 'smaller'},
+    {value: 'smallest'}
   ],
   animals: [
-    { value: 'dog' },
-    { value: 'cat' },
-    { value: 'moose' }
+    {value: 'dog'},
+    {value: 'cat'},
+    {value: 'moose'}
   ]
 };
 
 fixtures.serialized = {
   simple: {
     "datums": [
-      { "value": "big" },
-      { "value": "bigger" },
-      { "value": "biggest" },
-      { "value": "small" },
-      { "value": "smaller" },
-      { "value": "smallest" }
+      {"value": "big"},
+      {"value": "bigger"},
+      {"value": "biggest"},
+      {"value": "small"},
+      {"value": "smaller"},
+      {"value": "smallest"}
     ],
     "trie": {
       "ids": [],

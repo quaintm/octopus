@@ -2,22 +2,18 @@
 {% from "macros/datatable.html" import render_table, render_js %}
 {% set table_id = "member-table" %}
 {% block content %}
-{# begin row #}
-<div class="row">
-<div class="col-lg-12">
-{% if extra_cols %}
-    {{ render_table(table_id, "List of all Members", users, extra_cols=extra_cols) }}
-{% else %}
-    {{ render_table(table_id, "List of all Members", users) }}
-{% endif %}
-</div>
-</div>
-{# end row #}
+  {# begin row #}
+  <div class="row">
+    <div class="col-lg-12">
+        {{ render_table(table_id, "List of all Members", users, view_url=view_url) }}
+    </div>
+  </div>
+  {# end row #}
 {% endblock %}
 
 {% block js %}
-{{ super() }}
-<script>
-{{ render_js(table_id) }}
- </script>
+  {{ super() }}
+  <script>
+    {{ render_js(table_id) }}
+  </script>
 {% endblock %}

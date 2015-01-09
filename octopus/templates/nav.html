@@ -1,89 +1,137 @@
 {% macro render_nav_item(item) %}
-    <li class="{{ 'active' if item.is_active else '' }}"><a href="{{ item.url }}">{{ item.label|safe }}</a></li>
+  <li class="{{ 'active' if item.is_active else '' }}">
+    <a href="{{ item.url }}"
+        {% if item.html_attrs %}
+          {{ item.html_attrs|safe }}
+        {% endif %}
+        >
+      {{ item.label|safe }}</a></li>
 {% endmacro %}
 
 {% macro render_nav_items(parent, is_top=false) %}
-    {% if parent.items %}
-        {% if is_top %}
-        <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-               role="button" aria-expanded="false">{{ parent.label|safe }}</a>
-            <ul class="dropdown-menu" role="menu">
-        {% else %}
-            <li class="dropdown-submenu">
-            <a href="{{ parent.url if parent.url else '#' }}" tabindex="-1">{{ parent.label }}</a>
-            <ul class="dropdown-menu">
-        {% endif %}
-        {% for item in parent.items %}
-            {% if item.items %}
-                {{ render_nav_items(item) }}
-            {% else %}
-                {{ render_nav_item(item) }}
-            {% endif %}
-        {% endfor %}
-        </ul></li>
+  {% if parent.items %}
+    {% if is_top %}
+      <li class="dropdown">
+      <a href="#" class="my-tooltip my-dropdown" data-toggle="dropdown"
+         role="button" aria-expanded="false"
+          {% if parent.html_attrs %}
+            {{ parent.html_attrs|safe }}
+          {% endif %}
+
+          >
+        {{ parent.label|safe }}</a>
+
+      <ul class="dropdown-menu" role="menu">
     {% else %}
-        {{ render_nav_item(parent) }}
+      <li class="dropdown-submenu">
+      <a href="{{ parent.url if parent.url else '#' }}"
+         tabindex="-1">{{ parent.label }}</a>
+      <ul class="dropdown-menu">
     {% endif %}
+  {% for item in parent.items %}
+    {% if item.items %}
+      {{ render_nav_items(item) }}
+    {% else %}
+      {{ render_nav_item(item) }}
+    {% endif %}
+  {% endfor %}
+  </ul></li>
+  {% else %}
+    {{ render_nav_item(parent) }}
+  {% endif %}
 {% endmacro %}
 
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
 
-  <!-- Brand and toggle get grouped for better mobile display -->
-  <div class="navbar-header">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand" href="{{ url_for('public.home') }}">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse"
+              data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ url_for('public.home') }}">
 
-      octopus
+        octopus
 
-    </a>
+      </a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      {% if current_user and current_user.is_authenticated() %}
+        {% if current_user.is_admin %}
+          <ul class="nav navbar-nav">
+            {% for item in nav.public %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.user %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.case_admin %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.task_admin %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+          </ul>
+        {% else %}
+          <ul class="nav navbar-nav">
+            {% for item in nav.public %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.user %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.case %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+            {% for item in nav.task %}
+              {{ render_nav_items(item, true) }}
+            {% endfor %}
+          </ul>
+        {% endif %}
+        <ul class="nav navbar-nav navbar-right">
+
+
+          <li>
+            <p class="navbar-text"><a class="navbar-link"
+                                      href="{{ url_for('user.view') }}">
+              {{ current_user.username }}</a></p>
+          </li>
+
+          {% if current_user.is_admin %}
+            <li>
+              <a href="{{ url_for('public.register') }}" class="navbar-link"
+                 data-toggle="tooltip" data-placement="bottom"
+                 title="Create User">
+                <i class="fa fa-magic fa-lg"></i></a></li>
+          {% endif %}
+
+          <li><a data-toggle="tooltip" data-placement="bottom" title="Logout"
+                 class="navbar-link" href="{{ url_for('public.logout') }}"><i
+              class="fa fa-sign-out fa-lg"></i></a></li>
+
+        </ul>
+      {% elif form %}
+
+        <form id="loginForm" method="POST"
+              class="navbar-form form-inline navbar-right" action="/"
+              role="login">
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+            {{ form.username(placeholder="Username", class_="form-control") }}
+            {{ form.password(placeholder="Password", class_="form-control") }}
+          </div>
+          <button type="submit" class="btn btn-default">Log in</button>
+        </form>
+      {% endif %}
+    </div>
+    <!-- /.navbar-collapse -->
   </div>
-  <!-- Collect the nav links, forms, and other content for toggling -->
-  <div class="collapse navbar-collapse navbar-ex1-collapse">
-  {% if current_user and current_user.is_authenticated() %}
-    <ul class="nav navbar-nav">
-        {% for item in nav.public %}
-            {{ render_nav_items(item, true) }}
-        {% endfor %}
-        {% for item in nav.user %}
-            {{ render_nav_items(item, true) }}
-        {% endfor %}
-        {% for item in nav.case %}
-            {{ render_nav_items(item, true) }}
-        {% endfor %}
-    </ul>
-    <ul class="nav navbar-nav navbar-right">
-      
-    {% if current_user.is_admin %}
-      <li><a href="{{ url_for('public.register') }}">Create User</a></li>
-    {% endif %}
-
-      <li>
-        <p class="navbar-text"><a class="navbar-link" href="{{ url_for('user.view') }}">
-          {{ current_user.username }}</a></p>
-      </li>
-      <li><a class="navbar-link" href="{{ url_for('public.logout') }}"><i class="fa fa-sign-out"></i></a></li>
-
-    </ul>
-  {% elif form %}
-
-    <form id="loginForm" method="POST" class="navbar-form form-inline navbar-right" action="/" role="login">
-      {{ form.hidden_tag() }}
-      <div class="form-group">
-        {{ form.username(placeholder="Username", class_="form-control") }}
-        {{ form.password(placeholder="Password", class_="form-control") }}
-      </div>
-      <button type="submit" class="btn btn-default">Log in</button>
-    </form>
-  {% endif %}
-  </div><!-- /.navbar-collapse -->
-  </div><!-- /.container -->
+  <!-- /.container -->
 </nav>
 

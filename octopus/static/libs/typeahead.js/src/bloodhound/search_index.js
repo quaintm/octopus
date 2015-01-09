@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var SearchIndex = (function() {
+var SearchIndex = (function () {
   'use strict';
 
   // constructor
@@ -35,18 +35,18 @@ var SearchIndex = (function() {
       this.trie = o.trie;
     },
 
-    add: function(data) {
+    add: function (data) {
       var that = this;
 
       data = _.isArray(data) ? data : [data];
 
-      _.each(data, function(datum) {
+      _.each(data, function (datum) {
         var id, tokens;
 
         id = that.datums.push(datum) - 1;
         tokens = normalizeTokens(that.datumTokenizer(datum));
 
-        _.each(tokens, function(token) {
+        _.each(tokens, function (token) {
           var node, chars, ch;
 
           node = that.trie;
@@ -65,7 +65,7 @@ var SearchIndex = (function() {
 
       tokens = normalizeTokens(this.queryTokenizer(query));
 
-      _.each(tokens, function(token) {
+      _.each(tokens, function (token) {
         var node, chars, ch, ids;
 
         // previous tokens didn't share any matches
@@ -93,7 +93,9 @@ var SearchIndex = (function() {
       });
 
       return matches ?
-        _.map(unique(matches), function(id) { return that.datums[id]; }) : [];
+        _.map(unique(matches), function (id) {
+          return that.datums[id];
+        }) : [];
     },
 
     reset: function reset() {
@@ -102,7 +104,7 @@ var SearchIndex = (function() {
     },
 
     serialize: function serialize() {
-      return { datums: this.datums, trie: this.trie };
+      return {datums: this.datums, trie: this.trie};
     }
   });
 
@@ -112,17 +114,21 @@ var SearchIndex = (function() {
   // ----------------
 
   function normalizeTokens(tokens) {
-   // filter out falsy tokens
-    tokens = _.filter(tokens, function(token) { return !!token; });
+    // filter out falsy tokens
+    tokens = _.filter(tokens, function (token) {
+      return !!token;
+    });
 
     // normalize tokens
-    tokens = _.map(tokens, function(token) { return token.toLowerCase(); });
+    tokens = _.map(tokens, function (token) {
+      return token.toLowerCase();
+    });
 
     return tokens;
   }
 
   function newNode() {
-    return { ids: [], children: {} };
+    return {ids: [], children: {}};
   }
 
   function unique(array) {
@@ -164,6 +170,8 @@ var SearchIndex = (function() {
 
     return intersection;
 
-    function compare(a, b) { return a - b; }
+    function compare(a, b) {
+      return a - b;
+    }
   }
 })();

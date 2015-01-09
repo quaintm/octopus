@@ -6,7 +6,7 @@
 
 // inspired by https://github.com/jharding/boomerang
 
-var EventEmitter = (function() {
+var EventEmitter = (function () {
   'use strict';
 
   var splitter = /\s+/, nextTick = getNextTick();
@@ -21,7 +21,9 @@ var EventEmitter = (function() {
   function on(method, types, cb, context) {
     var type;
 
-    if (!cb) { return this; }
+    if (!cb) {
+      return this;
+    }
 
     types = types.split(splitter);
     cb = context ? bindContext(cb, context) : cb;
@@ -29,7 +31,7 @@ var EventEmitter = (function() {
     this._callbacks = this._callbacks || {};
 
     while (type = types.shift()) {
-      this._callbacks[type] = this._callbacks[type] || { sync: [], async: [] };
+      this._callbacks[type] = this._callbacks[type] || {sync: [], async: []};
       this._callbacks[type][method].push(cb);
     }
 
@@ -47,7 +49,9 @@ var EventEmitter = (function() {
   function off(types) {
     var type;
 
-    if (!this._callbacks) { return this; }
+    if (!this._callbacks) {
+      return this;
+    }
 
     types = types.split(splitter);
 
@@ -61,7 +65,9 @@ var EventEmitter = (function() {
   function trigger(types) {
     var type, callbacks, args, syncFlush, asyncFlush;
 
-    if (!this._callbacks) { return this; }
+    if (!this._callbacks) {
+      return this;
+    }
 
     types = types.split(splitter);
     args = [].slice.call(arguments, 1);
@@ -97,14 +103,18 @@ var EventEmitter = (function() {
     // IE10+
     if (window.setImmediate) {
       nextTickFn = function nextTickSetImmediate(fn) {
-        setImmediate(function() { fn(); });
+        setImmediate(function () {
+          fn();
+        });
       };
     }
 
     // old browsers
     else {
       nextTickFn = function nextTickSetTimeout(fn) {
-        setTimeout(function() { fn(); }, 0);
+        setTimeout(function () {
+          fn();
+        }, 0);
       };
     }
 
@@ -114,6 +124,8 @@ var EventEmitter = (function() {
   function bindContext(fn, context) {
     return fn.bind ?
       fn.bind(context) :
-      function() { fn.apply(context, [].slice.call(arguments, 0)); };
+      function () {
+        fn.apply(context, [].slice.call(arguments, 0));
+      };
   }
 })();

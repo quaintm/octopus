@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var EventBus = (function() {
+var EventBus = (function () {
   'use strict';
 
   var namespace = 'typeahead:';
@@ -27,7 +27,7 @@ var EventBus = (function() {
 
     // ### public
 
-    trigger: function(type) {
+    trigger: function (type) {
       var args = [].slice.call(arguments, 1);
 
       this.$el.trigger(namespace + type, args);

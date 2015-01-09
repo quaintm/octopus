@@ -1,4 +1,4 @@
-
 {% macro render_modal_link(route, txt) %}
-<a data-toggle="modal" href="{{ url_for('case.edit', **kwargs) }}" data-target="#ajaxModalDiv">{{ txt }}</a>
+  <a data-toggle="modal" href="{{ url_for('case.edit', **kwargs) }}"
+     data-target="#ajaxModalDiv">{{ txt }}</a>
 {% endmacro %}

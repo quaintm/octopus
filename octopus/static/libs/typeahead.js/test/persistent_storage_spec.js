@@ -1,7 +1,7 @@
-describe('PersistentStorage', function() {
+describe('PersistentStorage', function () {
   var engine, ls = window.localStorage;
 
-  beforeEach(function() {
+  beforeEach(function () {
     engine = new PersistentStorage('ns');
 
     spyOn(ls, 'getItem').andCallThrough();
@@ -11,38 +11,38 @@ describe('PersistentStorage', function() {
     spyOn(Date.prototype, 'getTime').andReturn(0);
   });
 
-  afterEach(function() {
+  afterEach(function () {
     ls.clear();
   });
 
   // public methods
   // --------------
 
-  describe('#get', function() {
-    it('should access localStorage with prefixed key', function() {
+  describe('#get', function () {
+    it('should access localStorage with prefixed key', function () {
       engine.get('key');
       expect(ls.getItem).toHaveBeenCalledWith('__ns__key');
     });
 
-    it('should return undefined when key does not exist', function() {
+    it('should return undefined when key does not exist', function () {
       expect(engine.get('does not exist')).toEqual(undefined);
     });
 
-    it('should return value as correct type', function() {
+    it('should return value as correct type', function () {
       engine.set('string', 'i am a string');
       engine.set('number', 42);
       engine.set('boolean', true);
       engine.set('null', null);
-      engine.set('object', { obj: true });
+      engine.set('object', {obj: true});
 
       expect(engine.get('string')).toEqual('i am a string');
       expect(engine.get('number')).toEqual(42);
       expect(engine.get('boolean')).toEqual(true);
       expect(engine.get('null')).toBeNull();
-      expect(engine.get('object')).toEqual({ obj: true });
+      expect(engine.get('object')).toEqual({obj: true});
     });
 
-    it('should expire stale keys', function() {
+    it('should expire stale keys', function () {
       engine.set('key', 'value', -1);
 
       expect(engine.get('key')).toBeNull();
@@ -50,29 +50,29 @@ describe('PersistentStorage', function() {
     });
   });
 
-  describe('#set', function() {
-    it('should access localStorage with prefixed key', function() {
+  describe('#set', function () {
+    it('should access localStorage with prefixed key', function () {
       engine.set('key', 'val');
       expect(ls.setItem.mostRecentCall.args[0]).toEqual('__ns__key');
     });
 
-    it('should JSON.stringify value before storing', function() {
+    it('should JSON.stringify value before storing', function () {
       engine.set('key', 'val');
       expect(ls.setItem.mostRecentCall.args[1]).toEqual(JSON.stringify('val'));
     });
 
-    it('should store ttl if provided', function() {
+    it('should store ttl if provided', function () {
       var ttl = 1;
       engine.set('key', 'value', ttl);
 
       expect(ls.setItem.argsForCall[0])
-      .toEqual(['__ns__key__ttl__', ttl.toString()]);
+        .toEqual(['__ns__key__ttl__', ttl.toString()]);
     });
   });
 
-  describe('#remove', function() {
+  describe('#remove', function () {
 
-    it('should remove key from storage', function() {
+    it('should remove key from storage', function () {
       engine.set('key', 'val');
       engine.remove('key');
 
@@ -80,8 +80,8 @@ describe('PersistentStorage', function() {
     });
   });
 
-  describe('#clear', function() {
-    it('should work with namespaces that contain regex characters', function() {
+  describe('#clear', function () {
+    it('should work with namespaces that contain regex characters', function () {
       engine = new PersistentStorage('ns?()');
       engine.set('key1', 'val1');
       engine.set('key2', 'val2');
@@ -91,7 +91,7 @@ describe('PersistentStorage', function() {
       expect(engine.get('key2')).toEqual(undefined);
     });
 
-    it('should remove all keys that exist in namespace of engine', function() {
+    it('should remove all keys that exist in namespace of engine', function () {
       engine.set('key1', 'val1');
       engine.set('key2', 'val2');
       engine.set('key3', 'val3');
@@ -104,7 +104,7 @@ describe('PersistentStorage', function() {
       expect(engine.get('key4')).toEqual(undefined);
     });
 
-    it('should not affect keys with different namespace', function() {
+    it('should not affect keys with different namespace', function () {
       ls.setItem('diff_namespace', 'val');
       engine.clear();
 
@@ -112,18 +112,18 @@ describe('PersistentStorage', function() {
     });
   });
 
-  describe('#isExpired', function() {
-    it('should be false for keys without ttl', function() {
+  describe('#isExpired', function () {
+    it('should be false for keys without ttl', function () {
       engine.set('key', 'value');
       expect(engine.isExpired('key')).toBe(false);
     });
 
-    it('should be false for fresh keys', function() {
+    it('should be false for fresh keys', function () {
       engine.set('key', 'value', 1);
       expect(engine.isExpired('key')).toBe(false);
     });
 
-    it('should be true for stale keys', function() {
+    it('should be true for stale keys', function () {
       engine.set('key', 'value', -1);
       expect(engine.isExpired('key')).toBe(true);
     });

@@ -1,100 +1,63 @@
-{% macro render_header(sql_query, extra_cols=None) -%}
-    <tr>
+{% macro render_header(sql_query) -%}
+  <tr>
     {% for col in sql_query.column_descriptions %}
-            <th>{{ col.name }}</th>
+      <th>{{ col.name }}</th>
     {% endfor %}
 
-    {% if extra_cols %}
-        {% for col in extra_cols %}
-            <th class="{{ col['header']['class'] }}">{{ col['header']['text'] }}</th>
-        {% endfor %}
-    {% endif %}
-    </tr>
+  </tr>
 {%- endmacro %}
 
 
-{% macro render_row(row, extra_cols=None, case_perm=None) -%}
-    <tr>
+{% macro render_row(row, view_url) -%}
+  <tr data-url="{{ make_link(row, view_url) }}">
+
     {% for item in row %}
-        <td>{{ item }}</td>
+      <td>{{ item }}</td>
     {% endfor %}
-
-    {% if extra_cols %}
-        {{ render_extra_row_items(row, extra_cols, case_perm) }}
-    {% endif %}
-    </tr>
-
+  </tr>
 {%- endmacro %}
 
-{% macro render_extra_row_items(row, extra_cols, case_perm) %}
-    {% for col in extra_cols %}
-        <td class="{{ col['td-class'] }}">
-            {% if case_perm != ['admin'] and case_perm != None %}
-              {% if not row.ID in case_perm %}
-              {% else %}
-                {% for item in col['contents'] %}
-                    {% if item['func'] %}
-                        {{ make_link(href=item['func'](row),
-                                 text=item['text'],
-                                 type=item['type'],
-                                 class=item['class']) }}
-                    {% endif %}
-                {% endfor %}
-              {% endif %}
 
-            {% else %}
-                {% for item in col['contents'] %}
-                    {% if item['func'] %}
-                        {{ make_link(href=item['func'](row),
-                                 text=item['text'],
-                                 type=item['type'],
-                                 class=item['class']) }}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-
-        </td>
-    {% endfor %}
-{% endmacro %}
-
-{% macro make_link(href=None, text=None, type=None, class=None) %}
-    <a href="{{ href }}" type="{{ type }}" class="{{ class }}">{{ text }}</a>
+{% macro make_link(row=None, view_url=None) %}
+  {{ view_url['func'](row) }}
 {% endmacro %}
 
 
-{% macro render_table(id, heading, sql_query, extra_cols=None, case_perm=None) -%}
-    <div class="panel panel-default">
+{% macro render_table(id, heading, sql_query, view_url=None) -%}
+  <div class="panel panel-default">
     <div class="panel-heading">
-        {{ heading }}
+      {{ heading }}
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
-    <div class="table-responsive">
-    <table class="table table-striped table-bordered table-hover" id="{{ id }}">
-    <thead>
-    {{ render_header(sql_query, extra_cols=extra_cols) }}
-    </thead>
-    <tbody>
-    {% for row in sql_query %}
-       {{ render_row(row, extra_cols=extra_cols, case_perm=case_perm) }}
-    {% endfor %}
-    </tbody>
-    </table>
-    </div>
-    <!-- /.table-responsive -->
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover
+        clickable_row "
+               id="{{ id }}">
+          <thead>
+          {{ render_header(sql_query) }}
+          </thead>
+          <tbody>
+          {% for row in sql_query %}
+            {{ render_row(row, view_url=view_url) }}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- /.table-responsive -->
     </div>
     <!-- /.panel-body -->
-    </div>
-    <!-- /.panel -->
+  </div>
+  <!-- /.panel -->
 {%- endmacro %}
 
 {% macro render_js(id) %}
-    $(document).ready( function () {
-        $('#{{ id|safe }}').DataTable({
-            "dom": 'T<"clear">lfrtip',
-            "tableTools": {
-                "sSwfPath": "/static/swf/copy_csv_xls_pdf.swf"
-            }
-        } );
-    } );
+  $(document).ready( function () {
+  $('#{{ id|safe }}').DataTable({
+  "dom": 'T<"clear">lfrtip',
+  "tableTools": {
+  "sSwfPath": "/static/swf/copy_csv_xls_pdf.swf"
+  }
+  } );
+  } );
 {% endmacro %}

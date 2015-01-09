@@ -1,21 +1,21 @@
-describe('LruCache', function() {
+describe('LruCache', function () {
 
-  beforeEach(function() {
+  beforeEach(function () {
     this.cache = new LruCache(3);
   });
 
-  it('should make entries retrievable by their keys', function() {
+  it('should make entries retrievable by their keys', function () {
     var key = 'key', val = 42;
 
     this.cache.set(key, val);
     expect(this.cache.get(key)).toBe(val);
   });
 
-  it('should return undefined if key has not been set', function() {
+  it('should return undefined if key has not been set', function () {
     expect(this.cache.get('wat?')).toBeUndefined();
   });
 
-  it('should hold up to maxSize entries', function() {
+  it('should hold up to maxSize entries', function () {
     this.cache.set('one', 1);
     this.cache.set('two', 2);
     this.cache.set('three', 3);
@@ -27,7 +27,7 @@ describe('LruCache', function() {
     expect(this.cache.get('four')).toBe(4);
   });
 
-  it('should evict lru entry if cache is full', function() {
+  it('should evict lru entry if cache is full', function () {
     this.cache.set('one', 1);
     this.cache.set('two', 2);
     this.cache.set('three', 3);

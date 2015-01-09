@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var oParser = (function() {
+var oParser = (function () {
   'use strict';
 
   return {
@@ -30,7 +30,7 @@ var oParser = (function() {
 
     if (prefetch = o.prefetch || null) {
       // support basic (url) and advanced configuration
-      prefetch = _.isString(prefetch) ? { url: prefetch } : prefetch;
+      prefetch = _.isString(prefetch) ? {url: prefetch} : prefetch;
 
       prefetch = _.mixin(defaults, prefetch);
       prefetch.thumbprint = VERSION + prefetch.thumbprint;
@@ -61,7 +61,7 @@ var oParser = (function() {
 
     if (remote = o.remote || null) {
       // support basic (url) and advanced configuration
-      remote = _.isString(remote) ? { url: remote } : remote;
+      remote = _.isString(remote) ? {url: remote} : remote;
 
       remote = _.mixin(defaults, remote);
       remote.rateLimiter = /^throttle$/i.test(remote.rateLimitBy) ?
@@ -79,11 +79,15 @@ var oParser = (function() {
     return remote;
 
     function byDebounce(wait) {
-      return function(fn) { return _.debounce(fn, wait); };
+      return function (fn) {
+        return _.debounce(fn, wait);
+      };
     }
 
     function byThrottle(wait) {
-      return function(fn) { return _.throttle(fn, wait); };
+      return function (fn) {
+        return _.throttle(fn, wait);
+      };
     }
   }
 })();

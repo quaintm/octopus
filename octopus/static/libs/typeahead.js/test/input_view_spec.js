@@ -1,7 +1,7 @@
-describe('Input', function() {
+describe('Input', function () {
   var KEYS;
 
-   KEYS = {
+  KEYS = {
     enter: 13,
     esc: 27,
     tab: 9,
@@ -12,7 +12,7 @@ describe('Input', function() {
     normal: 65 // "A" key
   };
 
-  beforeEach(function() {
+  beforeEach(function () {
     var $fixture;
 
     setFixtures(fixtures.html.input + fixtures.html.hint);
@@ -21,17 +21,19 @@ describe('Input', function() {
     this.$input = $fixture.find('.tt-input');
     this.$hint = $fixture.find('.tt-hint');
 
-    this.view = new Input({ input: this.$input, hint: this.$hint });
+    this.view = new Input({input: this.$input, hint: this.$hint});
   });
 
-  it('should throw an error if no hint and/or input is provided', function() {
+  it('should throw an error if no hint and/or input is provided', function () {
     expect(noInput).toThrow();
 
-    function noInput() { new Input({ hint: '.hint' }); }
+    function noInput() {
+      new Input({hint: '.hint'});
+    }
   });
 
-  describe('when the blur DOM event is triggered', function() {
-    it('should reset the input value', function() {
+  describe('when the blur DOM event is triggered', function () {
+    it('should reset the input value', function () {
       this.view.setQuery('wine');
       this.view.setInputValue('cheese', true);
 
@@ -40,7 +42,7 @@ describe('Input', function() {
       expect(this.$input.val()).toBe('wine');
     });
 
-    it('should trigger blurred', function() {
+    it('should trigger blurred', function () {
       var spy;
 
       this.view.onSync('blurred', spy = jasmine.createSpy());
@@ -50,8 +52,8 @@ describe('Input', function() {
     });
   });
 
-  describe('when the focus DOM event is triggered', function() {
-    it('should trigger focused', function() {
+  describe('when the focus DOM event is triggered', function () {
+    it('should trigger focused', function () {
       var spy;
 
       this.view.onSync('focused', spy = jasmine.createSpy());
@@ -61,8 +63,8 @@ describe('Input', function() {
     });
   });
 
-  describe('when the keydown DOM event is triggered by tab', function() {
-    it('should trigger tabKeyed if no modifiers were pressed', function() {
+  describe('when the keydown DOM event is triggered by tab', function () {
+    it('should trigger tabKeyed if no modifiers were pressed', function () {
       var spy;
 
       this.view.onSync('tabKeyed', spy = jasmine.createSpy());
@@ -71,7 +73,7 @@ describe('Input', function() {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should not trigger tabKeyed if modifiers were pressed', function() {
+    it('should not trigger tabKeyed if modifiers were pressed', function () {
       var spy;
 
       this.view.onSync('tabKeyed', spy = jasmine.createSpy());
@@ -80,7 +82,7 @@ describe('Input', function() {
       expect(spy).not.toHaveBeenCalled();
     });
 
-    it('should prevent default behavior if there is a hint', function() {
+    it('should prevent default behavior if there is a hint', function () {
       var $e;
 
       this.view.setHint('good');
@@ -92,8 +94,8 @@ describe('Input', function() {
     });
   });
 
-  describe('when the keydown DOM event is triggered by esc', function() {
-    it('should trigger escKeyed', function() {
+  describe('when the keydown DOM event is triggered by esc', function () {
+    it('should trigger escKeyed', function () {
       var spy;
 
       this.view.onSync('escKeyed', spy = jasmine.createSpy());
@@ -103,8 +105,8 @@ describe('Input', function() {
     });
   });
 
-  describe('when the keydown DOM event is triggered by left', function() {
-    it('should trigger leftKeyed', function() {
+  describe('when the keydown DOM event is triggered by left', function () {
+    it('should trigger leftKeyed', function () {
       var spy;
 
       this.view.onSync('leftKeyed', spy = jasmine.createSpy());
@@ -114,8 +116,8 @@ describe('Input', function() {
     });
   });
 
-  describe('when the keydown DOM event is triggered by right', function() {
-    it('should trigger rightKeyed', function() {
+  describe('when the keydown DOM event is triggered by right', function () {
+    it('should trigger rightKeyed', function () {
       var spy;
 
       this.view.onSync('rightKeyed', spy = jasmine.createSpy());
@@ -125,8 +127,8 @@ describe('Input', function() {
     });
   });
 
-  describe('when the keydown DOM event is triggered by enter', function() {
-    it('should trigger enterKeyed', function() {
+  describe('when the keydown DOM event is triggered by enter', function () {
+    it('should trigger enterKeyed', function () {
       var spy;
 
       this.view.onSync('enterKeyed', spy = jasmine.createSpy());
@@ -136,8 +138,8 @@ describe('Input', function() {
     });
   });
 
-  describe('when the keydown DOM event is triggered by up', function() {
-    it('should trigger upKeyed', function() {
+  describe('when the keydown DOM event is triggered by up', function () {
+    it('should trigger upKeyed', function () {
       var spy;
 
       this.view.onSync('upKeyed', spy = jasmine.createSpy());
@@ -146,21 +148,21 @@ describe('Input', function() {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should prevent default if no modifers were pressed', function() {
+    it('should prevent default if no modifers were pressed', function () {
       var $e = simulateKeyEvent(this.$input, 'keydown', KEYS.up);
 
       expect($e.preventDefault).toHaveBeenCalled();
     });
 
-    it('should not prevent default if modifers were pressed', function() {
+    it('should not prevent default if modifers were pressed', function () {
       var $e = simulateKeyEvent(this.$input, 'keydown', KEYS.up, true);
 
       expect($e.preventDefault).not.toHaveBeenCalled();
     });
   });
 
-  describe('when the keydown DOM event is triggered by down', function() {
-    it('should trigger downKeyed', function() {
+  describe('when the keydown DOM event is triggered by down', function () {
+    it('should trigger downKeyed', function () {
       var spy;
 
       this.view.onSync('downKeyed', spy = jasmine.createSpy());
@@ -169,13 +171,13 @@ describe('Input', function() {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should prevent default if no modifers were pressed', function() {
+    it('should prevent default if no modifers were pressed', function () {
       var $e = simulateKeyEvent(this.$input, 'keydown', KEYS.down);
 
       expect($e.preventDefault).toHaveBeenCalled();
     });
 
-    it('should not prevent default if modifers were pressed', function() {
+    it('should not prevent default if modifers were pressed', function () {
       var $e = simulateKeyEvent(this.$input, 'keydown', KEYS.down, true);
 
       expect($e.preventDefault).not.toHaveBeenCalled();
@@ -184,17 +186,19 @@ describe('Input', function() {
 
   // NOTE: have to treat these as async because the ie polyfill acts
   // in a async manner
-  describe('when the input DOM event is triggered', function() {
-    it('should update query', function() {
+  describe('when the input DOM event is triggered', function () {
+    it('should update query', function () {
       this.view.setQuery('wine');
       this.view.setInputValue('cheese', true);
 
       simulateInputEvent(this.$input);
 
-      waitsFor(function() { return this.view.getQuery() === 'cheese'; });
+      waitsFor(function () {
+        return this.view.getQuery() === 'cheese';
+      });
     });
 
-    it('should trigger queryChanged if the query changed', function() {
+    it('should trigger queryChanged if the query changed', function () {
       var spy;
 
       this.view.setQuery('wine');
@@ -206,7 +210,7 @@ describe('Input', function() {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should trigger whitespaceChagned if whitespace changed', function() {
+    it('should trigger whitespaceChagned if whitespace changed', function () {
       var spy;
 
       this.view.setQuery('wine  bar');
@@ -219,8 +223,8 @@ describe('Input', function() {
     });
   });
 
-  describe('#focus', function() {
-    it('should focus the input', function() {
+  describe('#focus', function () {
+    it('should focus the input', function () {
       this.$input.blur();
       this.view.focus();
 
@@ -228,8 +232,8 @@ describe('Input', function() {
     });
   });
 
-  describe('#blur', function() {
-    it('should blur the input', function() {
+  describe('#blur', function () {
+    it('should blur the input', function () {
       this.$input.focus();
       this.view.blur();
 
@@ -237,27 +241,27 @@ describe('Input', function() {
     });
   });
 
-  describe('#getQuery/#setQuery', function() {
-    it('should act as getter/setter to the query property', function() {
+  describe('#getQuery/#setQuery', function () {
+    it('should act as getter/setter to the query property', function () {
       this.view.setQuery('mouse');
       expect(this.view.getQuery()).toBe('mouse');
     });
   });
 
-  describe('#getInputValue', function() {
-    it('should act as getter to the input value', function() {
+  describe('#getInputValue', function () {
+    it('should act as getter to the input value', function () {
       this.$input.val('cheese');
       expect(this.view.getInputValue()).toBe('cheese');
     });
   });
 
-  describe('#setInputValue', function() {
-    it('should act as setter to the input value', function() {
+  describe('#setInputValue', function () {
+    it('should act as setter to the input value', function () {
       this.view.setInputValue('cheese');
       expect(this.view.getInputValue()).toBe('cheese');
     });
 
-    it('should trigger {query|whitespace}Changed when applicable', function() {
+    it('should trigger {query|whitespace}Changed when applicable', function () {
       var spy1, spy2;
 
       this.view.onSync('queryChanged', spy1 = jasmine.createSpy());
@@ -273,15 +277,15 @@ describe('Input', function() {
     });
   });
 
-  describe('#getHint/#setHint', function() {
-    it('should act as getter/setter to value of hint', function() {
+  describe('#getHint/#setHint', function () {
+    it('should act as getter/setter to value of hint', function () {
       this.view.setHint('mountain');
       expect(this.view.getHint()).toBe('mountain');
     });
   });
 
-  describe('#resetInputValue', function() {
-    it('should reset input value to last query', function() {
+  describe('#resetInputValue', function () {
+    it('should reset input value to last query', function () {
       this.view.setQuery('cheese');
       this.view.setInputValue('wine', true);
 
@@ -290,8 +294,8 @@ describe('Input', function() {
     });
   });
 
-  describe('#clearHint', function() {
-    it('should set the hint value to the empty string', function() {
+  describe('#clearHint', function () {
+    it('should set the hint value to the empty string', function () {
       this.view.setHint('cheese');
       this.view.clearHint();
 
@@ -299,8 +303,8 @@ describe('Input', function() {
     });
   });
 
-  describe('#clearHintIfInvalid', function() {
-    it('should clear hint if input value is empty string', function() {
+  describe('#clearHintIfInvalid', function () {
+    it('should clear hint if input value is empty string', function () {
       this.view.setInputValue('', true);
       this.view.setHint('cheese');
       this.view.clearHintIfInvalid();
@@ -308,7 +312,7 @@ describe('Input', function() {
       expect(this.view.getHint()).toBe('');
     });
 
-    it('should clear hint if input value is not prefix of input', function() {
+    it('should clear hint if input value is not prefix of input', function () {
       this.view.setInputValue('milk', true);
       this.view.setHint('cheese');
       this.view.clearHintIfInvalid();
@@ -316,7 +320,7 @@ describe('Input', function() {
       expect(this.view.getHint()).toBe('');
     });
 
-    it('should clear hint if overflow exists', function() {
+    it('should clear hint if overflow exists', function () {
       spyOn(this.view, 'hasOverflow').andReturn(true);
       this.view.setInputValue('che', true);
       this.view.setHint('cheese');
@@ -325,7 +329,7 @@ describe('Input', function() {
       expect(this.view.getHint()).toBe('');
     });
 
-    it('should not clear hint if input value is prefix of input', function() {
+    it('should not clear hint if input value is prefix of input', function () {
       this.view.setInputValue('che', true);
       this.view.setHint('cheese');
       this.view.clearHintIfInvalid();
@@ -334,8 +338,8 @@ describe('Input', function() {
     });
   });
 
-  describe('#getLanguageDirection', function() {
-    it('should return the language direction of the input', function() {
+  describe('#getLanguageDirection', function () {
+    it('should return the language direction of the input', function () {
       this.$input.css('direction', 'ltr');
       expect(this.view.getLanguageDirection()).toBe('ltr');
 
@@ -344,15 +348,15 @@ describe('Input', function() {
     });
   });
 
-  describe('#hasOverflow', function() {
-    it('should return true if the input has overflow text', function() {
+  describe('#hasOverflow', function () {
+    it('should return true if the input has overflow text', function () {
       var longStr = new Array(1000).join('a');
 
       this.view.setInputValue(longStr);
       expect(this.view.hasOverflow()).toBe(true);
     });
 
-    it('should return false if the input has no overflow text', function() {
+    it('should return false if the input has no overflow text', function () {
       var shortStr = 'aah';
 
       this.view.setInputValue(shortStr);
@@ -360,15 +364,15 @@ describe('Input', function() {
     });
   });
 
-  describe('#isCursorAtEnd', function() {
-    it('should return true if the text cursor is at the end', function() {
+  describe('#isCursorAtEnd', function () {
+    it('should return true if the text cursor is at the end', function () {
       this.view.setInputValue('boo');
 
       setCursorPosition(this.$input, 3);
       expect(this.view.isCursorAtEnd()).toBe(true);
     });
 
-    it('should return false if the text cursor is not at the end', function() {
+    it('should return false if the text cursor is not at the end', function () {
       this.view.setInputValue('boo');
 
       setCursorPosition(this.$input, 1);
@@ -376,8 +380,8 @@ describe('Input', function() {
     });
   });
 
-  describe('#destroy', function() {
-    it('should remove event handlers', function() {
+  describe('#destroy', function () {
+    it('should remove event handlers', function () {
       var $input, $hint;
 
       $hint = this.view.$hint;
@@ -392,7 +396,7 @@ describe('Input', function() {
       expect($input.off).toHaveBeenCalledWith('.tt');
     });
 
-    it('should null out its reference to DOM elements', function() {
+    it('should null out its reference to DOM elements', function () {
       this.view.destroy();
 
       expect(this.view.$hint).toBeNull();

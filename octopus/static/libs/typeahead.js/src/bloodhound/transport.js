@@ -4,13 +4,13 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var Transport = (function() {
+var Transport = (function () {
   'use strict';
 
   var pendingRequestsCount = 0,
-      pendingRequests = {},
-      maxPendingRequests = 6,
-      sharedCache = new LruCache(10);
+    pendingRequests = {},
+    maxPendingRequests = 6,
+    sharedCache = new LruCache(10);
 
   // constructor
   // -----------
@@ -46,12 +46,14 @@ var Transport = (function() {
 
     // ### private
 
-    _get: function(url, o, cb) {
+    _get: function (url, o, cb) {
       var that = this, jqXhr;
 
       // #149: don't make a network request if there has been a cancellation
       // or if the url doesn't match the last url Transport#get was invoked with
-      if (this.cancelled || url !== this.lastUrl) { return; }
+      if (this.cancelled || url !== this.lastUrl) {
+        return;
+      }
 
       // a request is already in progress, piggyback off of it
       if (jqXhr = pendingRequests[url]) {
@@ -93,7 +95,7 @@ var Transport = (function() {
 
     // ### public
 
-    get: function(url, o, cb) {
+    get: function (url, o, cb) {
       var resp;
 
       if (_.isFunction(o)) {
@@ -107,7 +109,9 @@ var Transport = (function() {
       // in-memory cache hit
       if (resp = this._cache.get(url)) {
         // defer to stay consistent with behavior of ajax call
-        _.defer(function() { cb && cb(null, resp); });
+        _.defer(function () {
+          cb && cb(null, resp);
+        });
       }
 
       else {
@@ -118,7 +122,7 @@ var Transport = (function() {
       return !!resp;
     },
 
-    cancel: function() {
+    cancel: function () {
       this.cancelled = true;
     }
   });
@@ -139,13 +143,17 @@ var Transport = (function() {
       function onSuccess(resp) {
         // defer in case fn is synchronous, otherwise done
         // and always handlers will be attached after the resolution
-        _.defer(function() { deferred.resolve(resp); });
+        _.defer(function () {
+          deferred.resolve(resp);
+        });
       }
 
       function onError(err) {
         // defer in case fn is synchronous, otherwise done
         // and always handlers will be attached after the resolution
-        _.defer(function() { deferred.reject(err); });
+        _.defer(function () {
+          deferred.reject(err);
+        });
       }
     };
   }

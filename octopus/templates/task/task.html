@@ -1,0 +1,187 @@
+{% extends "layout.html" %}
+{% from "macros/render_link.html" import render_user_link, render_case_link%}
+
+{% block content %}
+
+  <h2 class="text-center">{{ task.task_name|default('Task Not Found') }}</h2>
+  {# Begin Core Task Panel #}
+  <div class="panel-group" id="coreTaskEditAccordian" role="tablist"
+       aria-multiselectable="true">
+    <div class="panel panel-default">
+
+      <div class="panel-heading clearfix" role="tab">
+        <span>Core Task Details</span>
+
+        <div class="pull-right">
+          <a href="{{ url_for('task.edit', task_id=task.id,
+          edit_form='core') }}">
+            <span class="glyphicon glyphicon-edit"></span>
+          </a>
+          <a class="panel-collapse-switch" data-toggle="collapse"
+             data-parent="#accordion"
+             href="#coreTaskEditPanel" aria-expanded="true"
+             aria-controls="coreTaskEditPanel">
+          </a>
+        </div>
+      </div>
+
+      <div id="coreTaskEditPanel" class="panel-collapse collapse in"
+           role="tabpanel" aria-labelledby="coreTaskEditPanel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-5">
+              <table class="table table-condensed table-striped
+              table-bordered">
+                <thead class="">
+                 <tr>
+                   Basic Information
+                 </tr>
+                 </thead>
+                <tbody class="">
+                <tr>
+                  <td>Task ID #</td>
+                  <td>{{ task.id }}</td>
+                </tr>
+                <tr>
+                  <td>Start Date</td>
+                  <td>{{ task.start_date }}</td>
+                </tr>
+                <tr>
+                  <td>End Date</td>
+                  {% if task.end_date %}
+                    <td>{{ task.end_date }}</td>
+                  {% else %}
+                    <td>Still Open</td>
+                  {% endif %}
+                </tr>
+                <tr>
+                  <td>Task Creator</td>
+                  <td>
+                    <a href = {{ render_user_link(creator) }}>
+                      {{ creator.full_name }}
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Parent Case</td>
+                  <td>
+                  {% if not parent %}
+                    None
+                  {% else %}
+                    <a href = {{ render_case_link(parent) }}>
+                    {{ parent.case_name }}
+                    </a>
+                  {% endif %}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-lg-5">
+               <table class="table table-condensed table-bordered table-striped">
+                 <thead class=""">
+                   <tr>
+                     Assigned Staff
+                   </tr>
+                 </thead>
+                 <tbody class="">
+                 {%  if not task.assignees %}
+                 <tr>
+                     <td>None</td>
+                 </tr>
+                 {% else %}
+                   {% for i in task.assignees %}
+                     <tr>
+                       <td>
+                         <a href = {{ render_user_link(i) }}>
+                           {{ i.full_name }}
+                         </a>
+                       </td>
+                     </tr>
+                   {% endfor %}
+                 {% endif %}
+               </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <h4>Description</h4>
+
+                  <p class="text-justify">{{ task.task_desc|markdown }}</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# End Core Task Details Panel #}
+
+  {# Begin Task Staff Panel #}
+ {#  <div class="panel-group" id="taskStaffAccordian" role="tablist"
+       aria-multiselectable="true">
+    <div class="panel panel-default">
+
+      <div class="panel-heading clearfix" role="tab">
+        <span>Task Assignees</span>
+
+        <div class="pull-right">
+          <a href="{{ url_for('task.edit', task_id=task.id, edit_form='task_staff') }}">
+            <span class="glyphicon glyphicon-edit"></span>
+          </a>
+          <a class="panel-collapse-switch" data-toggle="collapse"
+             data-parent="#accordion"
+             href="#taskStaffPanel" aria-expanded="true"
+             aria-controls="taskStaffPanel">
+          </a>
+        </div>
+      </div>
+
+      <div id="taskStaffPanel" class="panel-collapse collapse in"
+           role="tabpanel" aria-labelledby="taskStaffPanel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <h4>Task Lead</h4>
+
+              <div class="well">
+                <ul class="list-inline list-inline-labels">
+                  <li>
+                    {% if lead %}
+                      {{ lead[0].full_name }}
+                    {% else %}
+                      None
+                    {% endif %}
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <h4>Other Staff</h4>
+
+              <div class="well">
+                <ul class="list-inline list-inline-labels">
+                  {% if staff %}
+                    {% for i in staff %}
+                      <li>{{ i.full_name }}</li>
+                    {% endfor %}
+                  {% else %}
+                    <li>None</li>
+                  {% endif %}
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {# End Task Staff Panel #}
+
+{% endblock %}

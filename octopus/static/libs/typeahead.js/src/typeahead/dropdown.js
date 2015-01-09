@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var Dropdown = (function() {
+var Dropdown = (function () {
   'use strict';
 
   // constructor
@@ -12,7 +12,7 @@ var Dropdown = (function() {
 
   function Dropdown(o) {
     var that = this, onSuggestionClick, onSuggestionMouseEnter,
-        onSuggestionMouseLeave;
+      onSuggestionMouseLeave;
 
     o = o || {};
 
@@ -31,11 +31,11 @@ var Dropdown = (function() {
     onSuggestionMouseLeave = _.bind(this._onSuggestionMouseLeave, this);
 
     this.$menu = $(o.menu)
-    .on('click.tt', '.tt-suggestion', onSuggestionClick)
-    .on('mouseenter.tt', '.tt-suggestion', onSuggestionMouseEnter)
-    .on('mouseleave.tt', '.tt-suggestion', onSuggestionMouseLeave);
+      .on('click.tt', '.tt-suggestion', onSuggestionClick)
+      .on('mouseenter.tt', '.tt-suggestion', onSuggestionMouseEnter)
+      .on('mouseleave.tt', '.tt-suggestion', onSuggestionMouseLeave);
 
-    _.each(this.datasets, function(dataset) {
+    _.each(this.datasets, function (dataset) {
       that.$menu.append(dataset.getRoot());
       dataset.onSync('rendered', that._onRendered, that);
     });
@@ -68,14 +68,16 @@ var Dropdown = (function() {
 
       this.trigger('datasetRendered');
 
-      function isDatasetEmpty(dataset) { return dataset.isEmpty(); }
+      function isDatasetEmpty(dataset) {
+        return dataset.isEmpty();
+      }
     },
 
-    _hide: function() {
+    _hide: function () {
       this.$menu.hide();
     },
 
-    _show: function() {
+    _show: function () {
       // can't use jQuery#show because $menu is a span element we want
       // display: block; not dislay: inline;
       this.$menu.css('display', 'block');
@@ -102,7 +104,9 @@ var Dropdown = (function() {
     _moveCursor: function moveCursor(increment) {
       var $suggestions, $oldCursor, newCursorIndex, $newCursor;
 
-      if (!this.isOpen) { return; }
+      if (!this.isOpen) {
+        return;
+      }
 
       $oldCursor = this._getCursor();
       $suggestions = this._getSuggestions();
@@ -137,8 +141,8 @@ var Dropdown = (function() {
       elBottom = elTop + $el.outerHeight(true);
       menuScrollTop = this.$menu.scrollTop();
       menuHeight = this.$menu.height() +
-        parseInt(this.$menu.css('paddingTop'), 10) +
-        parseInt(this.$menu.css('paddingBottom'), 10);
+      parseInt(this.$menu.css('paddingTop'), 10) +
+      parseInt(this.$menu.css('paddingBottom'), 10);
 
       if (elTop < 0) {
         this.$menu.scrollTop(menuScrollTop + elTop);
@@ -209,14 +213,18 @@ var Dropdown = (function() {
     update: function update(query) {
       _.each(this.datasets, updateDataset);
 
-      function updateDataset(dataset) { dataset.update(query); }
+      function updateDataset(dataset) {
+        dataset.update(query);
+      }
     },
 
     empty: function empty() {
       _.each(this.datasets, clearDataset);
       this.isEmpty = true;
 
-      function clearDataset(dataset) { dataset.clear(); }
+      function clearDataset(dataset) {
+        dataset.clear();
+      }
     },
 
     isVisible: function isVisible() {
@@ -230,7 +238,9 @@ var Dropdown = (function() {
 
       _.each(this.datasets, destroyDataset);
 
-      function destroyDataset(dataset) { dataset.destroy(); }
+      function destroyDataset(dataset) {
+        dataset.destroy();
+      }
     }
   });
 

@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Twitter, Inc. and other contributors; Licensed MIT
  */
 
-var PersistentStorage = (function() {
+var PersistentStorage = (function () {
   'use strict';
 
   var ls, methods;
@@ -37,17 +37,17 @@ var PersistentStorage = (function() {
 
       // ### private
 
-      _prefix: function(key) {
+      _prefix: function (key) {
         return this.prefix + key;
       },
 
-      _ttlKey: function(key) {
+      _ttlKey: function (key) {
         return this._prefix(key) + this.ttlKey;
       },
 
       // ### public
 
-      get: function(key) {
+      get: function (key) {
         if (this.isExpired(key)) {
           this.remove(key);
         }
@@ -55,7 +55,7 @@ var PersistentStorage = (function() {
         return decode(ls.getItem(this._prefix(key)));
       },
 
-      set: function(key, val, ttl) {
+      set: function (key, val, ttl) {
         if (_.isNumber(ttl)) {
           ls.setItem(this._ttlKey(key), encode(now() + ttl));
         }
@@ -67,14 +67,14 @@ var PersistentStorage = (function() {
         return ls.setItem(this._prefix(key), encode(val));
       },
 
-      remove: function(key) {
+      remove: function (key) {
         ls.removeItem(this._ttlKey(key));
         ls.removeItem(this._prefix(key));
 
         return this;
       },
 
-      clear: function() {
+      clear: function () {
         var i, key, keys = [], len = ls.length;
 
         for (i = 0; i < len; i++) {
@@ -91,7 +91,7 @@ var PersistentStorage = (function() {
         return this;
       },
 
-      isExpired: function(key) {
+      isExpired: function (key) {
         var ttl = decode(ls.getItem(this._ttlKey(key)));
 
         return _.isNumber(ttl) && now() > ttl ? true : false;

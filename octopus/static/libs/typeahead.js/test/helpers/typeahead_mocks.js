@@ -1,4 +1,4 @@
-(function(root) {
+(function (root) {
   var components;
 
   components = [
@@ -9,7 +9,7 @@
     'Input',
     'Dataset',
     'Dropdown'
-    ];
+  ];
 
   for (var i = 0; i < components.length; i++) {
     makeMockable(components[i]);
@@ -21,7 +21,7 @@
     Original = root[component];
     Mock = mock(Original);
 
-    jasmine[component] = { useMock: useMock, uninstallMock: uninstallMock };
+    jasmine[component] = {useMock: useMock, uninstallMock: uninstallMock};
 
     function useMock() {
       root[component] = Mock;
