@@ -2,7 +2,7 @@
 #octopus
 ===============================
 
-A case and task tracker for the QAU
+A case and task tracker
 
 ##Installation and Management
 
